@@ -1,4 +1,4 @@
-package com.movieapp.customers;
+package com.movieapp.users;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
