@@ -39,6 +39,18 @@ class UserControllerTest {
         validateUser(request, user);
     }
 
+    @ParameterizedTest
+    @CsvSource({
+            "testuseruser.com, password123, Michael, Protas",
+            "homersimpson@buzz.com, ho, Homer, Simpson"
+    })
+    void shouldRejectInvalidCredentials(String email, String password, String firstName, String lastName) {
+        UserRegisterRequest request = new UserRegisterRequest(email, password, firstName, lastName);
+        webClient.getResponseSpecForRequestBody(request)
+                .expectStatus()
+                .isBadRequest();
+    }
+
     private void validateUser(UserRegisterRequest request, UserDTO user) {
         assertNotNull(user);
         assertNotNull(user.email());
