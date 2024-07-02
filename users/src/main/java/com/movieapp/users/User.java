@@ -23,4 +23,13 @@ class User {
     private String firstName;
     @NotBlank
     private String lastName;
+
+    public static User register(UserRegisterRequest request) {
+        User user = new User();
+        user.setEmail(request.email());
+        user.setPassword(request.password());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        return user;
+    }
 }
