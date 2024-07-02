@@ -96,6 +96,14 @@ class UserControllerTest {
                 .isNoContent();
     }
 
+    @Test
+    void shouldThrowWhenDeleteNonExistingId() {
+        long userCount = userRepository.count() + 5000;
+        webClient.getDeleteWithIdResponseSpec(userCount)
+                .expectStatus()
+                .isBadRequest();
+    }
+
     private void validateUser(UserRegisterRequest request, UserDTO user) {
         assertNotNull(user);
         assertNotNull(user.email());

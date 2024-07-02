@@ -28,6 +28,8 @@ public class CredentialsUserService implements UserService {
 
     @Override
     public void deleteById(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(EntityNotFoundException::new);
+        userRepository.deleteById(user.getId());
     }
 }
