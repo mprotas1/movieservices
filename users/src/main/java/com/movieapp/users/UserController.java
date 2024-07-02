@@ -3,6 +3,7 @@ package com.movieapp.users;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,5 +28,12 @@ public class UserController {
         UserDTO user = userService.findById(id);
         log.info("Found user DTO: {}", user);
         return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    void delete(@PathVariable("id") Long id) {
+        log.info("Deleting user by id: {}", id);
+        userService.deleteById(id);
     }
 }

@@ -37,6 +37,14 @@ class UsersTestClient {
                 .uri(path);
     }
 
+    public ResponseSpec getDeleteWithIdResponseSpec(Long id) {
+        return this.newWebClient()
+                .delete()
+                .uri(path + "/{id}", id)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange();
+    }
+
     public ResponseSpec requestSpecForGetById(int id) {
         return this.newWebClient()
                 .get()
