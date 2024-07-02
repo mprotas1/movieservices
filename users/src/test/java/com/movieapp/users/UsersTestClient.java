@@ -2,6 +2,7 @@ package com.movieapp.users;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.reactive.server.WebTestClient.*;
@@ -24,11 +25,23 @@ class UsersTestClient {
     }
 
     public ResponseSpec getResponseSpecForRequestBody(Object request) {
+        return this.getPostRequestBodySpec()
+                .bodyValue(request)
+                .exchange();
+    }
+
+    public RequestBodySpec getPostRequestBodySpec() {
         return this
                 .newWebClient()
                 .post()
-                .uri(path)
-                .bodyValue(request)
+                .uri(path);
+    }
+
+    public ResponseSpec requestSpecForGetById(int id) {
+        return this.newWebClient()
+                .get()
+                .uri(path + "/{id}", id)
+                .accept(MediaType.APPLICATION_JSON)
                 .exchange();
     }
 
