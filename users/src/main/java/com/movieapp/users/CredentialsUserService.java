@@ -30,4 +30,9 @@ public class CredentialsUserService implements UserService {
                 .map(user -> new UserDTO(user.getId(), user.getEmail()))
                 .orElseThrow(EntityNotFoundException::new);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
+    }
 }

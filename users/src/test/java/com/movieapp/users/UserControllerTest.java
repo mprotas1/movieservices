@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +24,10 @@ class UserControllerTest {
 
     @Autowired
     private UserService userService;
+    private final UserRegisterRequest validRequest = new UserRegisterRequest("testuser@gmail.com",
+            "pass123",
+            "Test",
+            "User");
 
     @BeforeEach
     void setUp() {
@@ -72,15 +77,23 @@ class UserControllerTest {
 
     @Test
     void shouldThrowWhenFindingNonExistingId() {
-        UserRegisterRequest request = new UserRegisterRequest("testuser@gmail.com", "pass123", "Test", "User");
-        UserDTO register = userService.register(request);
+        UserDTO register = userService.register(validRequest);
         int id = register.id().intValue() + 10000;
 
-        EntityExchangeResult<RestExceptionMessage> restExceptionMessageEntityExchangeResult = webClient.requestSpecForGetById(id)
+        webClient.requestSpecForGetById(id)
                 .expectStatus()
                 .isBadRequest()
                 .expectBody(RestExceptionMessage.class)
                 .returnResult();
+    }
+
+    @Test
+    void shouldDeleteUserById() {
+        UserDTO user = userService.register(validRequest);
+        Long id = user.id();
+        webClient.getDeleteWithIdResponseSpec(id)
+                .expectStatus()
+                .isNoContent();
     }
 
     private void validateUser(UserRegisterRequest request, UserDTO user) {
