@@ -14,12 +14,7 @@ public class CredentialsUserService implements UserService {
     @Override
     public UserDTO register(UserRegisterRequest request) {
         log.info("Registering user request: {}", request);
-        User userToRegister = new User();
-        userToRegister.setEmail(request.email());
-        userToRegister.setPassword(request.password());
-        userToRegister.setFirstName(request.firstName());
-        userToRegister.setLastName(request.lastName());
-
+        User userToRegister = User.register(request);
         User registered = userRepository.save(userToRegister);
         return new UserDTO(registered.getId(), registered.getEmail());
     }
