@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -15,14 +17,13 @@ import lombok.NoArgsConstructor;
 @Builder @Table(name = "\"user\"")
 class User {
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
-    @Email @NotBlank
-    private String email;
-    @NotBlank
-    private String password;
-    @NotBlank
-    private String firstName;
-    @NotBlank
-    private String lastName;
+    private @Email @NotBlank String email;
+    private @NotBlank String password;
+    private @NotBlank String firstName;
+    private @NotBlank String lastName;
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Role.class)
+    @JoinTable(inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    private List<Role> roles;
 
     public static User register(UserRegisterRequest request) {
         User user = new User();
@@ -32,4 +33,5 @@ class User {
         user.setLastName(request.lastName());
         return user;
     }
+
 }
