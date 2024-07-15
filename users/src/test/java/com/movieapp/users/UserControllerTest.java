@@ -6,7 +6,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -54,9 +56,13 @@ class UserControllerTest {
     })
     void shouldRejectInvalidCredentials(String email, String password, String firstName, String lastName) {
         UserRegisterRequest request = new UserRegisterRequest(email, password, firstName, lastName);
-        webClient.getResponseSpecForRequestBody(request)
+        FluxExchangeResult<String> restExceptionMessageEntityExchangeResult = webClient.getResponseSpecForRequestBody(request)
                 .expectStatus()
-                .isBadRequest(); // todo: get response's body
+                .isBadRequest()
+                .returnResult(String.class);
+
+        String exceptionResult = restExceptionMessageEntityExchangeResult.getResponseBody().blockFirst();
+        assertNotNull(exceptionResult);
     }
 
     @Test
