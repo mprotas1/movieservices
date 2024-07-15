@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class CredentialsUserService implements UserService {
+class CredentialsUserService implements UserService {
     private final UserRepository userRepository;
 
     @Override
@@ -23,6 +23,7 @@ public class CredentialsUserService implements UserService {
 
     @Override
     public UserDTO findById(Long id) {
+        log.info("Finding user by id: {}", id);
         return userRepository.findById(id)
                 .map(user -> new UserDTO(user.getId(), user.getEmail()))
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
@@ -30,6 +31,7 @@ public class CredentialsUserService implements UserService {
 
     @Override
     public void deleteById(Long id) {
+        log.info("Deleting user by id: {}", id);
         User user = userRepository.findById(id)
                 .orElseThrow(EntityNotFoundException::new);
         userRepository.deleteById(user.getId());

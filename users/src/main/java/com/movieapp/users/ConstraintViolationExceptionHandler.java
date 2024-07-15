@@ -20,18 +20,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class ConstraintViolationExceptionHandler  extends ResponseEntityExceptionHandler {
+class ConstraintViolationExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
-        String errorsMessage = ex.getBindingResult().getFieldErrors().stream().map(error ->
-                error.getField() + error.getDefaultMessage()).collect(Collectors.joining("\n", "", ""));
-
+        String errorsMessage = buildErrorsMessage(ex);
         RestExceptionMessage message = new RestExceptionMessage(LocalDateTime.now(), errorsMessage, ex.getStatusCode().value());
-
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
@@ -42,6 +39,12 @@ public class ConstraintViolationExceptionHandler  extends ResponseEntityExceptio
         ex.getConstraintViolations().forEach(violation ->
                 errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    private static String buildErrorsMessage(MethodArgumentNotValidException ex) {
+        return ex.getBindingResult().getFieldErrors().stream().map(error ->
+                error.getField() + error.getDefaultMessage())
+                .collect(Collectors.joining("\n", "", ""));
     }
 
 }
