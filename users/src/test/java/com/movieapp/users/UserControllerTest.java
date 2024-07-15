@@ -6,6 +6,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
@@ -43,10 +44,11 @@ class UserControllerTest {
     void shouldCorrectlyCreateUser(String email, String password, String firstName, String lastName) {
         UserRegisterRequest request = new UserRegisterRequest(email, password, firstName, lastName);
         ResponseSpec spec = webClient.getResponseSpecForRequestBody(request);
-        UserDTO user = spec.expectBody(UserDTO.class)
-                .returnResult()
-                .getResponseBody();
-        validateUser(request, user);
+        EntityExchangeResult<UserDTO> entityExchangeResult = spec.expectBody(UserDTO.class)
+                .returnResult();
+
+        assertNotNull(entityExchangeResult.getResponseHeaders().get(HttpHeaders.LOCATION));
+        validateUser(request, entityExchangeResult.getResponseBody());
     }
 
     @ParameterizedTest

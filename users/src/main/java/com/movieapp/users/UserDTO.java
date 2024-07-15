@@ -1,4 +1,3 @@
 package com.movieapp.users;
 
-record UserDTO(Long id, String email) {
-}
+record UserDTO(Long id, String email) {}
