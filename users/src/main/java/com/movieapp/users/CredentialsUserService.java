@@ -1,6 +1,7 @@
 package com.movieapp.users;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,11 +11,13 @@ import org.springframework.stereotype.Service;
 @Slf4j
 class CredentialsUserService implements UserService {
     private final UserRepository userRepository;
+    private final RoleService roleService;
 
     @Override
-    public UserDTO register(UserRegisterRequest request) {
+    public UserDTO register(@Valid UserRegisterRequest request) {
         log.info("Registering user request: {}", request);
         User userToRegister = User.register(request);
+        roleService.addToRole(userToRegister, "USER");
         User registered = userRepository.save(userToRegister);
         UserDTO registeredUserDTO = new UserDTO(registered.getId(), registered.getEmail(), registered.getRoles());
         log.info("User registered: {}", registeredUserDTO);

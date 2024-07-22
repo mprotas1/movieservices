@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
-import org.springframework.test.web.reactive.server.FluxExchangeResult;
 
 import java.util.List;
 
@@ -29,6 +28,6 @@ public class RoleControllerTest {
         List<Role> roles = userDTO.roles();
         assertNotNull(locationHeader);
         assertEquals(roles.size(), 1);
-        assertTrue(roles.contains("USER"));
+        assertTrue(roles.stream().map(Role::getRoleName).toList().contains("USER"));
     }
 }

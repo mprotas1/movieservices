@@ -7,10 +7,13 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -109,6 +112,22 @@ class UserControllerTest {
         webClient.getDeleteWithIdResponseSpec(userCount)
                 .expectStatus()
                 .isBadRequest();
+    }
+
+    @Test
+    void shouldFindAllUsers() {
+        userService.register(validRequest);
+        EntityExchangeResult<List<UserDTO>> listEntityExchangeResult = webClient.newWebClient()
+                .get().uri("/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectBodyList(UserDTO.class)
+                .value(users -> {
+                    assertNotNull(users);
+                    assertEquals(1, users.size());
+                    assertThat(users).isNotEmpty();
+                })
+                .returnResult();
     }
 
     private void validateUser(UserRegisterRequest request, UserDTO user) {
