@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -26,11 +27,18 @@ class UserController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserDTO> findById(@PathVariable("id") Long id) {
+    ResponseEntity<UserDTO> findById(@PathVariable Long id) {
         log.info("Finding user by id: {}", id);
         UserDTO user = userService.findById(id);
         log.info("Found user DTO: {}", user);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping
+    ResponseEntity<List<UserDTO>> findAll() {
+        log.info("Finding all users");
+        var users = userService.findAll();
+        return ResponseEntity.ok(users);
     }
 
     @DeleteMapping("/{id}")

@@ -3,9 +3,9 @@ package com.movieapp.users;
 import java.util.List;
 
 interface RoleService {
-    Role findRole(String roleName);
+    Role findRole(RoleType roleType);
     void addRole(Role role);
     void addToRole(User user, Role role);
-    void addToRole(User user, String roleName);
-    List<User> findUsersByRole(String role);
+    void addToRole(User user, RoleType role);
+    List<UserDTO> findUsersByRole(RoleType role);
 }

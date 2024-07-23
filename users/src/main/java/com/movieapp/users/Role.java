@@ -1,13 +1,12 @@
 package com.movieapp.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
@@ -18,13 +17,15 @@ final class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true, name = "name")
-    private String roleName;
+    @Convert(converter = RoleTypeConverter.class)
+    private RoleType roleName;
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class)
+    @JsonIgnore
     private List<User> users = new ArrayList<>();
 
-    public static Role ofRoleName(String roleName) {
+    public static Role ofRoleName(RoleType roleType) {
         Role role = new Role();
-        role.setRoleName(roleName);
+        role.setRoleName(roleType);
         return role;
     }
 

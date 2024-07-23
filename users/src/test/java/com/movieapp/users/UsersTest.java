@@ -1,6 +1,7 @@
 package com.movieapp.users;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class UsersTest {
     @Mock
     private UserService userService;
+    @InjectMocks
+    private UserRepository userRepository;
 
     @Test
     void shouldCreateUserWithValidCredentials() {
