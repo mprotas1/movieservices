@@ -20,6 +20,9 @@ final class Role {
     @Convert(converter = RoleTypeConverter.class)
     private RoleType roleName;
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIgnore
     private List<User> users = new ArrayList<>();
 

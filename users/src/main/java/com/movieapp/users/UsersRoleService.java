@@ -1,5 +1,6 @@
 package com.movieapp.users;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,9 @@ class UsersRoleService implements RoleService {
     @Override
     public void addRole(Role role) {
         log.info("Adding role: {}", role.getRoleName());
+        if(roleRepository.findByRoleName(role.getRoleName()).isPresent()) {
+            throw new EntityExistsException("Role with name: " + role.getRoleName() + " already exists");
+        }
         roleRepository.save(role);
     }
 

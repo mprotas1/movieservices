@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "\"user\"")
+@Table(name = "\"users\"")
 class User {
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private @Email @NotBlank String email;
@@ -24,7 +24,9 @@ class User {
     private @NotBlank String firstName;
     private @NotBlank String lastName;
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = Role.class)
-    @JoinTable(name = "", inverseJoinColumns = @JoinColumn(name = "roles_id"))
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
 
     public static User register(UserRegisterRequest request) {
