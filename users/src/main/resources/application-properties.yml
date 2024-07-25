@@ -2,11 +2,24 @@ spring:
   application:
     name: customer-service
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER
-    driverClassName: org.h2.Driver
-    username: sa
-    password: password
+    url: jdbc:postgresql://localhost:5432/usersdb
+    driverClassName: org.postgresql.Driver
+    username: user
+    password: secret
   jpa:
-      database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: validate
+    properties:
       hibernate:
-        ddl-auto: none
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show_sql: true
+  flyway:
+    enabled: true
+    url: jdbc:postgresql://localhost:5432/usersdb
+    user: user
+    password: secret
+server:
+  port: 8080
+  servlet:
+    context-path: /users

@@ -6,9 +6,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
+import org.springframework.test.web.reactive.server.FluxExchangeResult;
 
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -42,10 +47,11 @@ class UserControllerTest {
     void shouldCorrectlyCreateUser(String email, String password, String firstName, String lastName) {
         UserRegisterRequest request = new UserRegisterRequest(email, password, firstName, lastName);
         ResponseSpec spec = webClient.getResponseSpecForRequestBody(request);
-        UserDTO user = spec.expectBody(UserDTO.class)
-                .returnResult()
-                .getResponseBody();
-        validateUser(request, user);
+        EntityExchangeResult<UserDTO> entityExchangeResult = spec.expectBody(UserDTO.class)
+                .returnResult();
+
+        assertNotNull(entityExchangeResult.getResponseHeaders().get(HttpHeaders.LOCATION));
+        validateUser(request, entityExchangeResult.getResponseBody());
     }
 
     @ParameterizedTest
@@ -55,9 +61,13 @@ class UserControllerTest {
     })
     void shouldRejectInvalidCredentials(String email, String password, String firstName, String lastName) {
         UserRegisterRequest request = new UserRegisterRequest(email, password, firstName, lastName);
-        webClient.getResponseSpecForRequestBody(request)
+        FluxExchangeResult<String> restExceptionMessageEntityExchangeResult = webClient.getResponseSpecForRequestBody(request)
                 .expectStatus()
-                .isBadRequest(); // todo: get response's body
+                .isBadRequest()
+                .returnResult(String.class);
+
+        String exceptionResult = restExceptionMessageEntityExchangeResult.getResponseBody().blockFirst();
+        assertNotNull(exceptionResult);
     }
 
     @Test
@@ -102,6 +112,22 @@ class UserControllerTest {
         webClient.getDeleteWithIdResponseSpec(userCount)
                 .expectStatus()
                 .isBadRequest();
+    }
+
+    @Test
+    void shouldFindAllUsers() {
+        userService.register(validRequest);
+        EntityExchangeResult<List<UserDTO>> listEntityExchangeResult = webClient.newWebClient()
+                .get().uri("/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectBodyList(UserDTO.class)
+                .value(users -> {
+                    assertNotNull(users);
+                    assertEquals(1, users.size());
+                    assertThat(users).isNotEmpty();
+                })
+                .returnResult();
     }
 
     private void validateUser(UserRegisterRequest request, UserDTO user) {
