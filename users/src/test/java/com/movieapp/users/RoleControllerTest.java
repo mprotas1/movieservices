@@ -32,7 +32,7 @@ public class RoleControllerTest extends TestContainersBase {
         List<Role> roles = userDTO.roles();
         assertNotNull(locationHeader);
         assertEquals(roles.size(), 1);
-        assertTrue(roles.stream().map(Role::getRoleName).toList().contains(RoleType.USER));
+        assertTrue(roles.stream().map(Role::getRoleType).toList().contains(RoleType.USER));
     }
 
 }

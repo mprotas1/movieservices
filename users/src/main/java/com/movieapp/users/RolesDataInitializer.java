@@ -1,7 +1,6 @@
 package com.movieapp.users;
 
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,11 +31,11 @@ public class RolesDataInitializer {
             return;
         }
         log.debug("Initialized {} role", role);
-        roleService.addRole(Role.ofRoleName(role));
+        roleService.addRole(Role.ofRoleType(role));
     }
 
     private boolean roleExists(RoleType roleType) {
-        return roleRepository.findByRoleName(roleType).isPresent();
+        return roleRepository.findByRoleType(roleType).isPresent();
     }
 
 }
