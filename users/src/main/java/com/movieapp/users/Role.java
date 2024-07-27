@@ -2,23 +2,25 @@ package com.movieapp.users;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "roles")
-@Data
-@NoArgsConstructor
-final class Role {
+@NoArgsConstructor @Getter @Setter
+class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true, name = "name")
+
+    @Column(nullable = false, unique = true, name = "role_type")
     @Convert(converter = RoleTypeConverter.class)
-    private RoleType roleName;
+    private RoleType roleType;
+
     @ManyToMany(fetch = FetchType.LAZY, targetEntity = User.class)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -26,10 +28,15 @@ final class Role {
     @JsonIgnore
     private List<User> users = new ArrayList<>();
 
-    public static Role ofRoleName(RoleType roleType) {
+    public static Role ofRoleType(RoleType roleType) {
         Role role = new Role();
-        role.setRoleName(roleType);
+        role.setRoleType(roleType);
         return role;
+    }
+
+    @Override
+    public String toString() {
+        return "[id=" + id + ", roleName=" + roleType + "]";
     }
 
 }

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
-public class RoleControllerTest {
+public class RoleControllerTest extends TestContainersBase {
     @Autowired
     private UsersTestClient webClient;
 
@@ -32,7 +32,7 @@ public class RoleControllerTest {
         List<Role> roles = userDTO.roles();
         assertNotNull(locationHeader);
         assertEquals(roles.size(), 1);
-        assertTrue(roles.stream().map(Role::getRoleName).toList().contains(RoleType.USER));
+        assertTrue(roles.stream().map(Role::getRoleType).toList().contains(RoleType.USER));
     }
 
 }

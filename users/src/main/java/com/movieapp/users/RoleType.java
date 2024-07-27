@@ -18,4 +18,10 @@ public enum RoleType {
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
     }
+
+    @Override
+    public String toString() {
+        return getRoleTypeName();
+    }
+
 }

@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,22 +16,22 @@ class UsersRoleService implements RoleService {
 
     @Override
     public Role findRole(RoleType role) {
-        return roleRepository.findByRoleName(role)
+        return roleRepository.findByRoleType(role)
                 .orElseThrow(() -> new EntityNotFoundException("Could not find role with name: " + role));
     }
 
     @Override
     public void addRole(Role role) {
-        log.info("Adding role: {}", role.getRoleName());
-        if(roleRepository.findByRoleName(role.getRoleName()).isPresent()) {
-            throw new EntityExistsException("Role with name: " + role.getRoleName() + " already exists");
+        log.info("Adding role: {}", role.getRoleType());
+        if(roleRepository.findByRoleType(role.getRoleType()).isPresent()) {
+            throw new EntityExistsException("Role with name: " + role.getRoleType() + " already exists");
         }
         roleRepository.save(role);
     }
 
     @Override
     public void addToRole(User user, Role role) {
-        log.debug("Adding user: {} to the Role: {}", user.getEmail(), role.getRoleName().name());
+        log.debug("Adding user: {} to the Role: {}", user.getEmail(), role.getRoleType().name());
         user.addRole(role);
     }
 

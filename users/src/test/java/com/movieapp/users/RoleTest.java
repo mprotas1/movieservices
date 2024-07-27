@@ -27,7 +27,7 @@ class RoleTest {
     @BeforeEach
     void setUp() {
         adminRole = new Role();
-        adminRole.setRoleName(RoleType.ADMIN);
+        adminRole.setRoleType(RoleType.ADMIN);
 
         user = new User();
         user.setEmail("test@example.com");
@@ -41,7 +41,7 @@ class RoleTest {
 
         Role fetchedRole = usersRoleService.findRole(RoleType.ADMIN);
         assertNotNull(fetchedRole);
-        assertEquals(RoleType.ADMIN, fetchedRole.getRoleName());
+        assertEquals(RoleType.ADMIN, fetchedRole.getRoleType());
         verify(roleRepository, times(1)).findByRoleName(RoleType.ADMIN);
     }
 
@@ -49,14 +49,6 @@ class RoleTest {
     void shouldNotFindAdminRoleIfItDoesNotExist () {
         when(roleRepository.findByRoleName(RoleType.ADMIN)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> usersRoleService.findRole(RoleType.ADMIN));
-    }
-
-    @Test
-    void shouldAddUserToSpecificRole() {
-    }
-
-    Role buildUserRole() {
-        return Role.ofRoleName(RoleType.USER);
     }
 
 }
