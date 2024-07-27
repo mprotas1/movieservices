@@ -51,12 +51,4 @@ class RoleTest {
         assertThrows(EntityNotFoundException.class, () -> usersRoleService.findRole(RoleType.ADMIN));
     }
 
-    @Test
-    void shouldAddUserToSpecificRole() {
-    }
-
-    Role buildUserRole() {
-        return Role.ofRoleName(RoleType.USER);
-    }
-
 }

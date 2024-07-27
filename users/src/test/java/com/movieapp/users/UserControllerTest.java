@@ -1,5 +1,6 @@
 package com.movieapp.users;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +21,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-class UserControllerTest {
+class UserControllerTest extends TestContainersBase {
     @Autowired
     private UsersTestClient webClient;
 
@@ -33,6 +34,9 @@ class UserControllerTest {
             "pass123",
             "Test",
             "User");
+
+    @Autowired
+    private static UsersRoleService usersRoleService;
 
     @BeforeEach
     void setUp() {
