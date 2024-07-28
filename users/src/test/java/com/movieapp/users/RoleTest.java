@@ -52,11 +52,9 @@ class RoleTest {
 
     @Test
     void shouldRejectCreatingRoleIfItExists() {
-        Role role = Role.ofRoleType(RoleType.USER);
+        when(roleRepository.findByRoleType(RoleType.USER)).thenReturn(Optional.of(userRole));
 
-        when(roleRepository.findByRoleType(RoleType.USER)).thenReturn(Optional.of(role));
-
-        assertThrows(EntityExistsException.class, () -> usersRoleService.addRole(role));
+        assertThrows(EntityExistsException.class, () -> usersRoleService.addRole(userRole));
         verify(roleRepository, times(1)).findByRoleType(RoleType.USER);
     }
 
@@ -69,6 +67,7 @@ class RoleTest {
         List<UserDTO> usersByRole = usersRoleService.findUsersByRole(RoleType.USER);
         assertNotNull(usersByRole);
         assertEquals(mockList.size(), usersByRole.size());
+        verify(roleRepository, times(1)).findAllUsersWithRole(RoleType.USER);
     }
 
     @Test
@@ -87,6 +86,30 @@ class RoleTest {
         when(roleRepository.findByRoleType(RoleType.ADMIN)).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> usersRoleService.findRole(RoleType.ADMIN));
         verify(roleRepository, times(1)).findByRoleType(RoleType.ADMIN);
+    }
+
+    @Test
+    void shouldAddUserToRoleByRoleType() {
+        // given
+        RoleType roleType = RoleType.USER;
+        User user = getTemplateUser();
+
+        // when
+        when(roleRepository.findByRoleType(roleType)).thenReturn(Optional.of(userRole));
+
+        // then
+        usersRoleService.addToRole(user, roleType);
+        assertTrue(user.getRoles().stream().map(Role::getRoleType).toList().contains(roleType));
+        verify(roleRepository, times(1)).findByRoleType(roleType);
+    }
+
+    private User getTemplateUser() {
+        User user = new User();
+        user.setFirstName("User");
+        user.setLastName("Test");
+        user.setEmail("testemail@gmail.com");
+        user.setPassword("password123");
+        return user;
     }
 
 }
