@@ -66,7 +66,6 @@ class UserBusinessRulesTest {
         Long id = 1L;
         when(userRepository.findById(id)).thenReturn(Optional.ofNullable(any()));
 
-
     }
 
     private User setUpUserFromRegisterRequest(UserRegisterRequest request) {
