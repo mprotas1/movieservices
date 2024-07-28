@@ -1,5 +1,6 @@
 package com.movieapp.users;
 
+import com.movieapp.users.testcontainers.TestContainersBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

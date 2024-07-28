@@ -1,5 +1,6 @@
 package com.movieapp.users;
 
+import com.movieapp.users.testcontainers.TestContainersBase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;

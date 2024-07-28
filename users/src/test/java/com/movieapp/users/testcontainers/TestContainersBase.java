@@ -1,10 +1,9 @@
-package com.movieapp.users;
+package com.movieapp.users.testcontainers;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -16,8 +15,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
-@TestPropertySource(locations = "/application-properties.yml")
+@TestPropertySource(locations = "/application-test-properties.yml")
 @Testcontainers
 public class TestContainersBase {
 
