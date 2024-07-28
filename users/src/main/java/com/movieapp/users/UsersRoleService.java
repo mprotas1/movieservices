@@ -21,12 +21,12 @@ class UsersRoleService implements RoleService {
     }
 
     @Override
-    public void addRole(Role role) {
+    public Role addRole(Role role) {
         log.info("Adding role: {}", role.getRoleType());
         if(roleRepository.findByRoleType(role.getRoleType()).isPresent()) {
             throw new EntityExistsException("Role with name: " + role.getRoleType() + " already exists");
         }
-        roleRepository.save(role);
+        return roleRepository.save(role);
     }
 
     @Override
