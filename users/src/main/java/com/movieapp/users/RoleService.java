@@ -8,4 +8,5 @@ interface RoleService {
     void addToRole(User user, Role role);
     void addToRole(User user, RoleType role);
     List<UserDTO> findUsersByRole(RoleType role);
+    boolean roleExists(RoleType role);
 }

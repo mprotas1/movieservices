@@ -1,11 +1,14 @@
 package com.movieapp.users;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 
 import java.util.Optional;
 
@@ -14,13 +17,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UsersTest {
+@MockitoSettings(strictness = Strictness.LENIENT)
+class UserBusinessRulesTest {
     @Mock
-    private UserService userService;
+    private RoleService roleService;
     @Mock
     private UserRepository userRepository;
     @Mock
     private RoleRepository roleRepository;
+    @InjectMocks
+    private CredentialsUserService userService;
+
+    @BeforeEach
+    void setUp() {
+
+    }
 
     @Test
     void shouldCreateUserWithValidCredentials() {
@@ -41,7 +52,6 @@ public class UsersTest {
 
         // when
         when(userRepository.save(user)).thenReturn(user);
-        when(roleRepository.findByRoleType(RoleType.USER)).thenReturn(Optional.of(Role.ofRoleType(RoleType.USER)));
 
         // then
         UserDTO registered = userService.register(request);
@@ -49,6 +59,13 @@ public class UsersTest {
         assertNotNull(registered);
         assertEquals(request.email(), registered.email());
         verify(userRepository, times(1)).save(user);
+    }
+
+    @Test
+    void shouldDeleteUserById() {
+        Long id = 1L;
+        when(userRepository.findById(id)).thenReturn(Optional.ofNullable(any()));
+
     }
 
     private User setUpUserFromRegisterRequest(UserRegisterRequest request) {

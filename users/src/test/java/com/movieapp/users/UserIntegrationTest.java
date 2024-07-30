@@ -1,5 +1,6 @@
 package com.movieapp.users;
 
+import com.movieapp.users.testcontainers.TestContainersBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,6 +8,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.FluxExchangeResult;
@@ -33,9 +35,6 @@ class UserIntegrationTest extends TestContainersBase {
             "pass123",
             "Test",
             "User");
-
-    @Autowired
-    private static UsersRoleService usersRoleService;
 
     @BeforeEach
     void setUp() {
@@ -131,6 +130,8 @@ class UserIntegrationTest extends TestContainersBase {
                     assertThat(users).isNotEmpty();
                 })
                 .returnResult();
+
+        assertEquals(HttpStatus.OK, listEntityExchangeResult.getStatus());
     }
 
     private void validateUser(UserRegisterRequest request, UserDTO user) {

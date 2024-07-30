@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RoleTest {
+class RoleBusinessRulesTest {
     @Mock
     private RoleRepository roleRepository;
 
@@ -90,17 +90,23 @@ class RoleTest {
 
     @Test
     void shouldAddUserToRoleByRoleType() {
-        // given
         RoleType roleType = RoleType.USER;
         User user = getTemplateUser();
 
-        // when
         when(roleRepository.findByRoleType(roleType)).thenReturn(Optional.of(userRole));
 
-        // then
         usersRoleService.addToRole(user, roleType);
         assertTrue(user.getRoles().stream().map(Role::getRoleType).toList().contains(roleType));
         verify(roleRepository, times(1)).findByRoleType(roleType);
+    }
+
+    @Test
+    void shouldCheckWhetherRoleExists() {
+        RoleType role = RoleType.USER;
+        when(roleRepository.existsByRoleType(role)).thenReturn(Boolean.TRUE);
+        boolean isRoleExisting = usersRoleService.roleExists(role);
+        assertTrue(isRoleExisting);
+        verify(roleRepository, times(1)).existsByRoleType(role);
     }
 
     private User getTemplateUser() {

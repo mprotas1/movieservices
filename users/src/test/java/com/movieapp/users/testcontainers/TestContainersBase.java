@@ -1,10 +1,10 @@
-package com.movieapp.users;
+package com.movieapp.users.testcontainers;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -14,10 +14,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
-@TestPropertySource(locations = "/application-properties.yml")
+@TestPropertySource(locations = "/application-test-properties.yml")
 @Testcontainers
 public class TestContainersBase {
 
@@ -36,6 +36,10 @@ public class TestContainersBase {
         System.setProperty("DB_PASSWORD", postgres.getPassword());
     }
 
+    @BeforeEach
+    void beforeEach() {
+    }
+
     @AfterAll
     public static void tearDown() {
         postgres.stop();
@@ -52,6 +56,7 @@ public class TestContainersBase {
     void databaseIsInitialized() {
         assertNotNull(postgres);
         assertNotNull(postgres.getTestQueryString());
+        assertTrue(postgres.isCreated());
     }
 
 }

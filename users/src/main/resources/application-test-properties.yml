@@ -15,10 +15,12 @@ spring:
         format_sql: true
     show_sql: true
   flyway:
-    enabled: true
+    enabled: false
     url: jdbc:postgresql://localhost:5432/usersdb
     user: user
     password: secret
+    clean-disabled: false
+    clean-on-validation-error: true
 server:
   port: 8080
   servlet:

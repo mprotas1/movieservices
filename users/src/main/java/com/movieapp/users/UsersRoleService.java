@@ -51,6 +51,11 @@ class UsersRoleService implements RoleService {
                 .flatMap(users -> users.stream().map(user -> new UserDTO(user.getId(), user.getEmail(), user.getRoles()))).toList();
     }
 
+    @Override
+    public boolean roleExists(RoleType role) {
+        return roleRepository.existsByRoleType(role);
+    }
+
     private boolean isRoleExisting(Role role) {
         return roleRepository.findByRoleType(role.getRoleType()).isPresent();
     }
