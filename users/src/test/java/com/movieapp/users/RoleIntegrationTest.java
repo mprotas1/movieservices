@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -52,6 +53,7 @@ public class RoleIntegrationTest extends TestContainersBase {
         assertEquals(userDTO.roles().size(), 1);
         assertEquals(userEndpointPath + userDTO.id().toString(), userDTOEntityExchangeResult.getResponseHeaders().getLocation().toURL().getPath());
         assertTrue(userDTO.roles().stream().map(Role::getRoleType).toList().contains(RoleType.USER));
+        assertEquals(HttpStatus.CREATED, userDTOEntityExchangeResult.getStatus());
     }
 
     @Test
@@ -68,9 +70,11 @@ public class RoleIntegrationTest extends TestContainersBase {
                 .expectBody(new ParameterizedTypeReference<List<UserDTO>>() {})
                 .returnResult();
 
+        HttpStatus status = (HttpStatus) listEntityExchangeResult.getStatus();
         List<UserDTO> userDTOs = listEntityExchangeResult.getResponseBody();
 
         assertNotNull(userDTOs);
+        assertEquals(HttpStatus.OK, status);
         assertEquals(2, userDTOs.size());
     }
 

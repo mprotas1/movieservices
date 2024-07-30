@@ -106,6 +106,7 @@ class RoleBusinessRulesTest {
         when(roleRepository.existsByRoleType(role)).thenReturn(Boolean.TRUE);
         boolean isRoleExisting = usersRoleService.roleExists(role);
         assertTrue(isRoleExisting);
+        verify(roleRepository, times(1)).existsByRoleType(role);
     }
 
     private User getTemplateUser() {
