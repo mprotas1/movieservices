@@ -24,6 +24,9 @@ class RoleBusinessRulesTest {
     @InjectMocks
     private UsersRoleService usersRoleService;
 
+    @Mock
+    private UserRepository userRepository;
+
     private Role userRole;
     private Role moderatorRole;
     private Role adminRole;
@@ -53,7 +56,6 @@ class RoleBusinessRulesTest {
     @Test
     void shouldRejectCreatingRoleIfItExists() {
         when(roleRepository.findByRoleType(RoleType.USER)).thenReturn(Optional.of(userRole));
-
         assertThrows(EntityExistsException.class, () -> usersRoleService.addRole(userRole));
         verify(roleRepository, times(1)).findByRoleType(RoleType.USER);
     }
