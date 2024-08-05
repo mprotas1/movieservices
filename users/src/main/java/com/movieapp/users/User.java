@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Table(name = "\"users\"")
-class User {
+public class User {
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private @Email @NotBlank String email;
     private @NotBlank String password;
@@ -28,15 +28,6 @@ class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
-
-    public static User register(UserRegisterRequest request) {
-        User user = new User();
-        user.setEmail(request.email());
-        user.setPassword(request.password());
-        user.setFirstName(request.firstName());
-        user.setLastName(request.lastName());
-        return user;
-    }
 
     public void addRole(Role role) {
         boolean containsRole = this.roles.contains(role);
