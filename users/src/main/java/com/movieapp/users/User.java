@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "\"users\"")
 public class User {
     private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
-    private @Email @NotBlank String email;
+    private @Email @NotBlank @Column(nullable = false, unique = true) String email;
     private @NotBlank String password;
     private @NotBlank String firstName;
     private @NotBlank String lastName;

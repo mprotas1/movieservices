@@ -1,5 +1,6 @@
 package com.movieapp.users;
 
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,8 +12,7 @@ import org.mockito.quality.Strictness;
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,6 +56,14 @@ class UserBusinessRulesTest {
         userService.deleteById(id);
         verify(userRepository, times(1)).deleteById(id);
         verify(userRepository, times(1)).findById(id);
+    }
+
+    @Test
+    void shouldRejectUserWithExistingEmailAddress() {
+        UserRegisterRequest request = new UserRegisterRequest("someemail@gmail.com", "password123", "test", "test");
+        when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(mock(User.class)));
+        assertThrows(EntityExistsException.class, () -> userService.register(request));
+        verify(userRepository, times(1)).findByEmail(request.email());
     }
 
     private User setUpUserFromRegisterRequest(UserRegisterRequest request) {
