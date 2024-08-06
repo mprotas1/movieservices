@@ -14,6 +14,7 @@ import java.util.List;
 @Slf4j
 class UsersRoleService implements RoleService {
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Role findRole(RoleType role) {
@@ -25,7 +26,7 @@ class UsersRoleService implements RoleService {
     @Transactional
     public Role addRole(Role role) {
         log.info("Adding role: {}", role.getRoleType());
-        if(isRoleExisting(role)) {
+        if(roleExists(role.getRoleType())) {
             throw new EntityExistsException("Role with name: " + role.getRoleType() + " already exists");
         }
         return roleRepository.save(role);
@@ -35,14 +36,8 @@ class UsersRoleService implements RoleService {
     @Transactional
     public void addToRole(User user, RoleType roleType) {
         Role role = findRole(roleType);
-        addToRole(user, role);
-    }
-
-    @Override
-    @Transactional
-    public void addToRole(User user, Role role) {
-        log.debug("Adding user: {} to the Role: {}", user.getEmail(), role.getRoleType().name());
         user.addRole(role);
+        userRepository.save(user);
     }
 
     @Override
@@ -54,10 +49,6 @@ class UsersRoleService implements RoleService {
     @Override
     public boolean roleExists(RoleType role) {
         return roleRepository.existsByRoleType(role);
-    }
-
-    private boolean isRoleExisting(Role role) {
-        return roleRepository.findByRoleType(role.getRoleType()).isPresent();
     }
 
 }

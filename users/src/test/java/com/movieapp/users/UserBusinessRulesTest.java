@@ -1,19 +1,18 @@
 package com.movieapp.users;
 
-import org.junit.jupiter.api.BeforeEach;
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -22,50 +21,49 @@ class UserBusinessRulesTest {
     @Mock
     private RoleService roleService;
     @Mock
+    private RoleRepository roleRepository;
+    @Mock
     private UserRepository userRepository;
     @Mock
-    private RoleRepository roleRepository;
+    private UserMapper mapper;
     @InjectMocks
     private CredentialsUserService userService;
-
-    @BeforeEach
-    void setUp() {
-
-    }
 
     @Test
     void shouldCreateUserWithValidCredentials() {
         UserRegisterRequest request = new UserRegisterRequest("someemail@gmail.com", "somepassword123", "Michał", "Protas");
-        UserDTO dto = Mockito.mock(UserDTO.class);
-        when(userService.register(request)).thenReturn(dto);
-
-        UserDTO register = userService.register(request);
-        System.out.println(register);
-    }
-
-
-    @Test
-    void shouldRegisterUserWithValidCredentials() {
-        // given
-        UserRegisterRequest request = new UserRegisterRequest("testuser@gmail.com", "user", "Test", "User");
         User user = setUpUserFromRegisterRequest(request);
 
-        // when
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.save(any())).thenReturn(user);
+        when(mapper.toEntity(request)).thenReturn(user);
+        when(mapper.toDTO(user)).thenReturn(new UserDTO(user.getId(), user.getEmail(), user.getRoles()));
 
-        // then
-        UserDTO registered = userService.register(request);
+        UserDTO register = userService.register(request);
 
-        assertNotNull(registered);
-        assertEquals(request.email(), registered.email());
-        verify(userRepository, times(1)).save(user);
+        assertNotNull(register);
+        assertEquals(request.email(), register.email());
+        assertEquals(1, register.roles().size());
+
+        verify(userRepository, times(1)).save(any());
+        verify(mapper, times(1)).toEntity(any(UserRegisterRequest.class));
+        verify(mapper, times(1)).toDTO(any());
     }
 
     @Test
     void shouldDeleteUserById() {
         Long id = 1L;
-        when(userRepository.findById(id)).thenReturn(Optional.ofNullable(any()));
+        when(userRepository.findById(id)).thenReturn(Optional.of(mock(User.class)));
+        userService.deleteById(id);
+        verify(userRepository, times(1)).deleteById(id);
+        verify(userRepository, times(1)).findById(id);
+    }
 
+    @Test
+    void shouldRejectUserWithExistingEmailAddress() {
+        UserRegisterRequest request = new UserRegisterRequest("someemail@gmail.com", "password123", "test", "test");
+        when(userRepository.findByEmail(request.email())).thenReturn(Optional.of(mock(User.class)));
+        assertThrows(EntityExistsException.class, () -> userService.register(request));
+        verify(userRepository, times(1)).findByEmail(request.email());
     }
 
     private User setUpUserFromRegisterRequest(UserRegisterRequest request) {
@@ -74,6 +72,7 @@ class UserBusinessRulesTest {
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setPassword(request.password());
+        user.setRoles(Collections.singletonList(Role.ofRoleType(RoleType.USER)));
         return user;
     }
 

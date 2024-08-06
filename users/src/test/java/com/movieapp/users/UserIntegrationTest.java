@@ -23,6 +23,8 @@ import static org.springframework.test.web.reactive.server.WebTestClient.Respons
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class UserIntegrationTest extends TestContainersBase {
+    private final String BASE_URL = "/users/";
+
     @Autowired
     private UsersTestClient webClient;
 
@@ -53,6 +55,8 @@ class UserIntegrationTest extends TestContainersBase {
                 .returnResult();
 
         assertNotNull(entityExchangeResult.getResponseHeaders().get(HttpHeaders.LOCATION));
+        String expectedLocationHeader = BASE_URL + entityExchangeResult.getResponseBody().id();
+        assertEquals(expectedLocationHeader, entityExchangeResult.getResponseHeaders().getLocation().getPath());
         validateUser(request, entityExchangeResult.getResponseBody());
     }
 
@@ -136,8 +140,10 @@ class UserIntegrationTest extends TestContainersBase {
 
     private void validateUser(UserRegisterRequest request, UserDTO user) {
         assertNotNull(user);
+        assertNotNull(user.id());
         assertNotNull(user.email());
         assertEquals(request.email(), user.email());
+        assertEquals(1, user.roles().size());
     }
 
 }
