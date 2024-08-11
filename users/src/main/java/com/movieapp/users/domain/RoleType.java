@@ -1,4 +1,4 @@
-package com.movieapp.users;
+package com.movieapp.users.domain;
 
 import java.util.Arrays;
 
@@ -6,6 +6,11 @@ public enum RoleType {
     USER,
     MODERATOR,
     ADMIN;
+
+    @Override
+    public String toString() {
+        return getRoleTypeName();
+    }
 
     public String getRoleTypeName() {
         return "ROLE_" + this.name();
@@ -17,11 +22,6 @@ public enum RoleType {
                         .equals(value))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
-    }
-
-    @Override
-    public String toString() {
-        return getRoleTypeName();
     }
 
 }

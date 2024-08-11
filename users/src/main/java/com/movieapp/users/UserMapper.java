@@ -1,6 +1,6 @@
 package com.movieapp.users;
 
-import org.modelmapper.ModelMapper;
+import com.movieapp.users.domain.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 

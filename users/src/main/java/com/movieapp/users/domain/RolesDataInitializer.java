@@ -1,4 +1,4 @@
-package com.movieapp.users;
+package com.movieapp.users.domain;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;

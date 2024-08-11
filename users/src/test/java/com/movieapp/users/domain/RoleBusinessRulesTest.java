@@ -1,5 +1,6 @@
-package com.movieapp.users;
+package com.movieapp.users.domain;
 
+import com.movieapp.users.UserDTO;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;

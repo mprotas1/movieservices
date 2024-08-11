@@ -1,5 +1,7 @@
-package com.movieapp.users;
+package com.movieapp.users.domain;
 
+import com.movieapp.users.UserDTO;
+import com.movieapp.users.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +36,10 @@ class UsersRoleService implements RoleService {
 
     @Override
     @Transactional
-    public void addToRole(User user, RoleType roleType) {
+    public User addToRole(User user, RoleType roleType) {
         Role role = findRole(roleType);
         user.addRole(role);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     @Override
