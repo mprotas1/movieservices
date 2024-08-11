@@ -1,4 +1,4 @@
-package com.movieapp.users;
+package com.movieapp.users.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

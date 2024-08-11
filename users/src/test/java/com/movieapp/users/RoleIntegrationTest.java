@@ -1,24 +1,24 @@
 package com.movieapp.users;
 
+import com.movieapp.users.domain.CredentialsUserService;
+import com.movieapp.users.domain.Role;
+import com.movieapp.users.domain.RoleType;
+import com.movieapp.users.domain.UserRepository;
 import com.movieapp.users.testcontainers.TestContainersBase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient

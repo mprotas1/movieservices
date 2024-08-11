@@ -1,5 +1,8 @@
-package com.movieapp.users;
+package com.movieapp.users.web;
 
+import com.movieapp.users.UserDTO;
+import com.movieapp.users.UserRegisterRequest;
+import com.movieapp.users.domain.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

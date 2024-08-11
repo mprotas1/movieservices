@@ -1,6 +1,9 @@
 package com.movieapp.users;
 
+import com.movieapp.users.domain.UserRepository;
+import com.movieapp.users.domain.UserService;
 import com.movieapp.users.testcontainers.TestContainersBase;
+import com.movieapp.users.web.RestExceptionMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

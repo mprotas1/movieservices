@@ -1,5 +1,8 @@
-package com.movieapp.users;
+package com.movieapp.users.web;
 
+import com.movieapp.users.domain.RoleType;
+import com.movieapp.users.UserDTO;
+import com.movieapp.users.domain.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,5 +1,6 @@
-package com.movieapp.users;
+package com.movieapp.users.domain;
 
+import com.movieapp.users.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,19 +15,7 @@ import java.util.List;
 @Slf4j
 class CredentialsUserService implements UserService {
     private final UserRepository userRepository;
-    private final RoleService roleService;
     private final UserMapper userMapper;
-
-    @Override
-    @Transactional
-    public UserDTO register(@Valid UserRegisterRequest request) {
-        log.info("Registering user request: {}", request);
-        User userToRegister = userMapper.toEntity(request);
-        User registered = userRepository.save(userToRegister);
-        roleService.addToRole(registered, RoleType.USER);
-        log.info("User registered: {}", registered.getEmail());
-        return userMapper.toDTO(registered);
-    }
 
     @Override
     public UserDTO findById(Long id) {

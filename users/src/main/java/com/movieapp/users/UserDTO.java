@@ -1,5 +1,7 @@
 package com.movieapp.users;
 
+import com.movieapp.users.domain.Role;
+
 import java.util.List;
 
-record UserDTO(Long id, String email, List<Role> roles) {}
+public record UserDTO(Long id, String email, List<Role> roles) {}
