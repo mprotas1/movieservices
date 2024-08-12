@@ -1,6 +1,7 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.movieapp.users.domain.RoleTypeConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,5 +1,8 @@
 package com.movieapp.users.domain;
 
+import com.movieapp.users.domain.entity.Role;
+import com.movieapp.users.domain.entity.RoleType;
+import com.movieapp.users.domain.repository.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

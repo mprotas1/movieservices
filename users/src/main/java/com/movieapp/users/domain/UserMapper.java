@@ -1,6 +1,9 @@
-package com.movieapp.users;
+package com.movieapp.users.domain;
 
-import com.movieapp.users.domain.User;
+import com.movieapp.users.domain.entity.User;
+import com.movieapp.users.web.dto.UserDTO;
+import com.movieapp.users.web.dto.UserRegisterRequest;
+import com.movieapp.users.web.dto.UserUpdateRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -16,20 +19,19 @@ public class UserMapper {
         return new UserDTO(user.getId(), user.getEmail(), user.getRoles());
     }
 
-    public User toEntity(UserDTO userDTO) {
-        User user = new User();
-        user.setId(userDTO.id());
-        user.setEmail(userDTO.email());
-        user.setRoles(userDTO.roles());
-        return user;
-    }
-
     public User toEntity(UserRegisterRequest request) {
         User user = new User();
         user.setFirstName(request.firstName());
         user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPassword(encoder.encode(request.password()));
+        return user;
+    }
+
+    public User updateEntity(User user, UserUpdateRequest updateData) {
+        user.setFirstName(updateData.firstName());
+        user.setLastName(updateData.lastName());
+        user.setEmail(updateData.email());
         return user;
     }
 

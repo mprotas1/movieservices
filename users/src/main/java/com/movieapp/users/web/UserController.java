@@ -1,9 +1,7 @@
 package com.movieapp.users.web;
 
-import com.movieapp.users.UserDTO;
-import com.movieapp.users.UserRegisterRequest;
+import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.domain.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,14 +18,6 @@ import java.util.List;
 @Slf4j
 class UserController {
     private final UserService userService;
-
-    @PostMapping
-    ResponseEntity<UserDTO> register(@RequestBody @Valid UserRegisterRequest registerRequest) {
-        log.info("Registering user: {}", registerRequest);
-        UserDTO user = userService.register(registerRequest);
-        log.info("Registered user DTO: {}", user);
-        return ResponseEntity.created(buildRegisterUri(user)).body(user);
-    }
 
     @GetMapping("/{id}")
     ResponseEntity<UserDTO> findById(@PathVariable Long id) {

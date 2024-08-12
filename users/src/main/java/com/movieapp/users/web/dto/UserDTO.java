@@ -1,6 +1,6 @@
-package com.movieapp.users;
+package com.movieapp.users.web.dto;
 
-import com.movieapp.users.domain.Role;
+import com.movieapp.users.domain.entity.Role;
 
 import java.util.List;
 

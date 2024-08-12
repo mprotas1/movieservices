@@ -1,4 +1,4 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -27,7 +27,7 @@ public class User implements UserDetails {
     private @NotBlank String password;
     private @NotBlank String firstName;
     private @NotBlank String lastName;
-    @ManyToMany(fetch = FetchType.LAZY, targetEntity = Role.class)
+    @ManyToMany(fetch = FetchType.EAGER, targetEntity = Role.class)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -42,7 +42,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getRoles().stream()
+        return roles.stream()
                 .map(Role::getRoleType)
                 .map(RoleType::toString)
                 .map(SimpleGrantedAuthority::new)

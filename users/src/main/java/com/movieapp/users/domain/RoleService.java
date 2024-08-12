@@ -1,10 +1,13 @@
 package com.movieapp.users.domain;
 
-import com.movieapp.users.UserDTO;
+import com.movieapp.users.domain.entity.Role;
+import com.movieapp.users.domain.entity.RoleType;
+import com.movieapp.users.domain.entity.User;
+import com.movieapp.users.web.dto.UserDTO;
 
 import java.util.List;
 
-interface RoleService {
+public interface RoleService {
     Role findRole(RoleType roleType);
     Role addRole(Role role);
     User addToRole(User user, RoleType role);

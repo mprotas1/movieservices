@@ -1,4 +1,4 @@
-package com.movieapp.users;
+package com.movieapp.users.web.dto;
 
 import jakarta.validation.constraints.Email;
 import org.hibernate.validator.constraints.Length;

@@ -1,6 +1,5 @@
 package com.movieapp.users.web;
 
-import com.movieapp.users.RestExceptionMessage;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

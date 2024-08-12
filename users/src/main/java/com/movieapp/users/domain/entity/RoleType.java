@@ -1,4 +1,4 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.entity;
 
 import java.util.Arrays;
 

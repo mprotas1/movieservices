@@ -1,6 +1,11 @@
 package com.movieapp.users.domain;
 
-import com.movieapp.users.UserDTO;
+import com.movieapp.users.domain.entity.Role;
+import com.movieapp.users.domain.entity.RoleType;
+import com.movieapp.users.domain.entity.User;
+import com.movieapp.users.domain.repository.RoleRepository;
+import com.movieapp.users.domain.repository.UserRepository;
+import com.movieapp.users.web.dto.UserDTO;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
