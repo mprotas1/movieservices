@@ -1,12 +1,11 @@
 package com.movieapp.users.domain;
 
-import com.movieapp.users.UserDTO;
-import com.movieapp.users.UserLoginRequest;
-import com.movieapp.users.UserRegisterRequest;
+import com.movieapp.users.web.dto.UserDTO;
+import com.movieapp.users.web.dto.UserLoginRequest;
+import com.movieapp.users.web.dto.UserRegisterRequest;
+import jakarta.validation.Valid;
 
 public interface AuthenticationService {
-
-    UserDTO register(UserRegisterRequest request);
+    UserDTO register(@Valid UserRegisterRequest request);
     UserDTO authenticate(UserLoginRequest request);
-
 }

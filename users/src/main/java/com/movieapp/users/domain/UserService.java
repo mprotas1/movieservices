@@ -1,12 +1,13 @@
 package com.movieapp.users.domain;
 
-import com.movieapp.users.UserDTO;
-import com.movieapp.users.UserRegisterRequest;
+import com.movieapp.users.web.dto.UserDTO;
+import com.movieapp.users.web.dto.UserUpdateRequest;
 
 import java.util.List;
 
-interface UserService {
+public interface UserService {
     UserDTO findById(Long id);
+    UserDTO update(Long userId, UserUpdateRequest updateData);
     List<UserDTO> findAll();
     void deleteById(Long id);
 }

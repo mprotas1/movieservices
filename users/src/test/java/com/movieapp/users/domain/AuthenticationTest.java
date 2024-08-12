@@ -1,9 +1,12 @@
 package com.movieapp.users.domain;
 
-import com.movieapp.users.UserDTO;
-import com.movieapp.users.UserLoginRequest;
-import com.movieapp.users.UserMapper;
-import com.movieapp.users.UserRegisterRequest;
+import com.movieapp.users.domain.entity.Role;
+import com.movieapp.users.domain.entity.RoleType;
+import com.movieapp.users.domain.entity.User;
+import com.movieapp.users.domain.repository.UserRepository;
+import com.movieapp.users.web.dto.UserDTO;
+import com.movieapp.users.web.dto.UserLoginRequest;
+import com.movieapp.users.web.dto.UserRegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

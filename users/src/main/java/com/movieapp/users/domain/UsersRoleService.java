@@ -1,7 +1,11 @@
 package com.movieapp.users.domain;
 
-import com.movieapp.users.UserDTO;
-import com.movieapp.users.UserRepository;
+import com.movieapp.users.domain.entity.Role;
+import com.movieapp.users.domain.entity.RoleType;
+import com.movieapp.users.domain.entity.User;
+import com.movieapp.users.domain.repository.RoleRepository;
+import com.movieapp.users.domain.repository.UserRepository;
+import com.movieapp.users.web.dto.UserDTO;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +32,7 @@ class UsersRoleService implements RoleService {
     @Transactional
     public Role addRole(Role role) {
         log.info("Adding role: {}", role.getRoleType());
-        if(roleExists(role.getRoleType())) {
-            throw new EntityExistsException("Role with name: " + role.getRoleType() + " already exists");
-        }
+        checkIfRoleExists(role);
         return roleRepository.save(role);
     }
 
@@ -53,4 +55,10 @@ class UsersRoleService implements RoleService {
         return roleRepository.existsByRoleType(role);
     }
 
+    private void checkIfRoleExists(Role role) {
+        if(roleExists(role.getRoleType())) {
+            throw new EntityExistsException("Role with name: " + role.getRoleType() + " already exists");
+        }
+    }
+    
 }

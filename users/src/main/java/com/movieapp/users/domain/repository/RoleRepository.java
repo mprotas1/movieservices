@@ -1,5 +1,8 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.repository;
 
+import com.movieapp.users.domain.entity.Role;
+import com.movieapp.users.domain.entity.RoleType;
+import com.movieapp.users.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-interface RoleRepository extends JpaRepository<Role, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
     Optional<Role> findByRoleType(@Param(value = "role_type") RoleType roleType);
 

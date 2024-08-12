@@ -1,5 +1,6 @@
 package com.movieapp.users.domain;
 
+import com.movieapp.users.domain.entity.RoleType;
 import jakarta.persistence.AttributeConverter;
 
 public class RoleTypeConverter implements AttributeConverter<RoleType, String> {
