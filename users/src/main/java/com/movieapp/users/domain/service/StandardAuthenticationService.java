@@ -1,5 +1,6 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
+import com.movieapp.users.domain.mapper.UserMapper;
 import com.movieapp.users.domain.entity.RoleType;
 import com.movieapp.users.domain.entity.User;
 import com.movieapp.users.domain.repository.UserRepository;
@@ -9,8 +10,6 @@ import com.movieapp.users.web.dto.UserRegisterRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
-import org.springframework.security.authorization.event.AuthorizationEvent;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

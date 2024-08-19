@@ -1,5 +1,6 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
+import com.movieapp.users.domain.mapper.UserMapper;
 import com.movieapp.users.domain.entity.Role;
 import com.movieapp.users.domain.entity.RoleType;
 import com.movieapp.users.domain.entity.User;

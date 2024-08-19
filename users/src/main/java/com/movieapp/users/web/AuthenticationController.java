@@ -2,7 +2,7 @@ package com.movieapp.users.web;
 
 import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.web.dto.UserRegisterRequest;
-import com.movieapp.users.domain.AuthenticationService;
+import com.movieapp.users.domain.service.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +20,7 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping
+    @PostMapping("/register")
     ResponseEntity<UserDTO> register(@RequestBody UserRegisterRequest request) {
         log.info("Registering user with email address: {}", request.email());
         UserDTO user = authenticationService.register(request);

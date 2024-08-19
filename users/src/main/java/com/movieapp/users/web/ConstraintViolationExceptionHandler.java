@@ -1,5 +1,6 @@
 package com.movieapp.users.web;
 
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,28 +22,34 @@ import java.util.stream.Collectors;
 class ConstraintViolationExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers,
                                                                   HttpStatusCode status,
                                                                   WebRequest request) {
-        String errorsMessage = buildErrorsMessage(ex);
-        RestExceptionMessage message = new RestExceptionMessage(LocalDateTime.now(), errorsMessage, ex.getStatusCode().value());
+        String errorsMessage = buildErrorsMessage(exception);
+        RestExceptionMessage message = new RestExceptionMessage(LocalDateTime.now(), errorsMessage, exception.getStatusCode().value());
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getConstraintViolations().forEach(violation ->
-                errors.put(violation.getPropertyPath().toString(), violation.getMessage()));
+    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException exception) {
+        Map<String, String> errors = constraintViolationErrors(exception);
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    private static String buildErrorsMessage(MethodArgumentNotValidException ex) {
+    private String buildErrorsMessage(MethodArgumentNotValidException ex) {
         return ex.getBindingResult().getFieldErrors().stream().map(error ->
                 error.getField() + error.getDefaultMessage())
                 .collect(Collectors.joining("\n", "", ""));
+    }
+
+    private Map<String, String> constraintViolationErrors(ConstraintViolationException ex) {
+        return ex.getConstraintViolations().stream().collect(Collectors.toMap(
+                violation -> violation.getPropertyPath().toString(),
+                ConstraintViolation::getMessage
+        ));
     }
 
 }

@@ -1,4 +1,4 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

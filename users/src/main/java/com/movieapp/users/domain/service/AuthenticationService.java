@@ -1,4 +1,4 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
 import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.web.dto.UserLoginRequest;

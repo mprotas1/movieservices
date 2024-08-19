@@ -2,7 +2,7 @@ package com.movieapp.users.web;
 
 import com.movieapp.users.domain.entity.RoleType;
 import com.movieapp.users.web.dto.UserDTO;
-import com.movieapp.users.domain.RoleService;
+import com.movieapp.users.domain.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
