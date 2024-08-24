@@ -1,4 +1,4 @@
-package com.movieapp.users.web;
+package com.movieapp.users.web.exception;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;

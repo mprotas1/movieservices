@@ -1,4 +1,4 @@
-package com.movieapp.users.web;
+package com.movieapp.users.web.controller;
 
 import com.movieapp.users.domain.entity.RoleType;
 import com.movieapp.users.web.dto.UserDTO;

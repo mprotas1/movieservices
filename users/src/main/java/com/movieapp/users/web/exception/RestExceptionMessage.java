@@ -1,4 +1,4 @@
-package com.movieapp.users.web;
+package com.movieapp.users.web.exception;
 
 import java.time.LocalDateTime;
 
