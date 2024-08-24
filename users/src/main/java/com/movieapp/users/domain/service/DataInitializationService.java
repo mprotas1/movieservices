@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class DataInitializationService {
+class DataInitializationService {
     private final RoleService roleService;
     private final RoleRepository roleRepository;
 
