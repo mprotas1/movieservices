@@ -1,4 +1,4 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

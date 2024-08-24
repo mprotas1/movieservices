@@ -1,4 +1,4 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
 import com.movieapp.users.domain.entity.Role;
 import com.movieapp.users.domain.entity.RoleType;
@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class RolesDataInitializer {
+class DataInitializationService {
     private final RoleService roleService;
     private final RoleRepository roleRepository;
 
-    public RolesDataInitializer(UsersRoleService roleService, RoleRepository roleRepository) {
+    public DataInitializationService(RoleService roleService, RoleRepository roleRepository) {
         this.roleService = roleService;
         this.roleRepository = roleRepository;
     }

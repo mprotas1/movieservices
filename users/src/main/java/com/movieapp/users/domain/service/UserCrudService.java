@@ -1,5 +1,6 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
+import com.movieapp.users.domain.mapper.UserMapper;
 import com.movieapp.users.domain.entity.User;
 import com.movieapp.users.domain.repository.UserRepository;
 import com.movieapp.users.web.dto.UserDTO;

@@ -1,5 +1,6 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.service;
 
+import com.movieapp.users.domain.mapper.UserMapper;
 import com.movieapp.users.domain.entity.Role;
 import com.movieapp.users.domain.entity.RoleType;
 import com.movieapp.users.domain.entity.User;
@@ -8,7 +9,6 @@ import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.web.dto.UserRegisterRequest;
 import com.movieapp.users.web.dto.UserUpdateRequest;
 import jakarta.persistence.EntityNotFoundException;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

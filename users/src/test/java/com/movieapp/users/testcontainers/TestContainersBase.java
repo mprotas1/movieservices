@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @TestPropertySource(locations = "/application-test-properties.yml")
 @Testcontainers
-public class TestContainersBase {
+public abstract class TestContainersBase {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
@@ -28,16 +28,11 @@ public class TestContainersBase {
             .withPassword("secret")
             .withExposedPorts(5432);
 
-    @BeforeAll
-    public static void init() {
+    public TestContainersBase() {
         postgres.start();
         System.setProperty("DB_URL", postgres.getJdbcUrl());
         System.setProperty("DB_USERNAME", postgres.getUsername());
         System.setProperty("DB_PASSWORD", postgres.getPassword());
-    }
-
-    @BeforeEach
-    void beforeEach() {
     }
 
     @AfterAll
@@ -52,11 +47,5 @@ public class TestContainersBase {
         registry.add("spring.datasource.password", postgres::getPassword);
     }
 
-    @Test
-    void databaseIsInitialized() {
-        assertNotNull(postgres);
-        assertNotNull(postgres.getTestQueryString());
-        assertTrue(postgres.isCreated());
-    }
 
 }

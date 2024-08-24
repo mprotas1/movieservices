@@ -1,4 +1,4 @@
-package com.movieapp.users.domain;
+package com.movieapp.users.domain.mapper;
 
 import com.movieapp.users.domain.entity.User;
 import com.movieapp.users.web.dto.UserDTO;
