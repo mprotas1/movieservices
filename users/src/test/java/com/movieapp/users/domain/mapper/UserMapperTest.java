@@ -1,9 +1,8 @@
-package com.movieapp.users.mapper;
+package com.movieapp.users.domain.mapper;
 
 import com.movieapp.users.domain.entity.Role;
 import com.movieapp.users.domain.entity.RoleType;
 import com.movieapp.users.domain.entity.User;
-import com.movieapp.users.domain.mapper.UserMapper;
 import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.web.dto.UserRegisterRequest;
 import com.movieapp.users.web.dto.UserUpdateRequest;
