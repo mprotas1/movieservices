@@ -15,18 +15,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 public class AuthenticationIntegrationTest extends TestContainersBase {
     @Autowired
     TestRestTemplate restTemplate;
@@ -84,11 +81,7 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
         ResponseEntity<RestExceptionMessage> response = restTemplate.postForEntity(BASIC_API_URL + "/register", request, RestExceptionMessage.class);
         RestExceptionMessage body = response.getBody();
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertNotNull(body);
-        assertNotNull(body.message());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), body.statusCode());
-        assertNotNull(body.timeStamp());
+        validateRestExceptionMessage(response, body);
     }
 
     @Test
@@ -105,12 +98,7 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
         RestExceptionMessage failedBody = failedResponse.getBody();
 
         // assert
-        assertTrue(failedResponse.getStatusCode().is4xxClientError());
-        assertEquals(HttpStatus.BAD_REQUEST, failedResponse.getStatusCode());
-        assertNotNull(failedBody);
-        assertNotNull(failedBody.message());
-        assertEquals(HttpStatus.BAD_REQUEST.value(), failedBody.statusCode());
-        assertNotNull(failedBody.timeStamp());
+        validateRestExceptionMessage(failedResponse, failedBody);
     }
 
     @Test
@@ -141,6 +129,15 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
     private void initBasicHeaders() {
         headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+    }
+
+    private void validateRestExceptionMessage(ResponseEntity<RestExceptionMessage> failedResponse, RestExceptionMessage failedBody) {
+        assertTrue(failedResponse.getStatusCode().is4xxClientError());
+        assertEquals(HttpStatus.BAD_REQUEST, failedResponse.getStatusCode());
+        assertNotNull(failedBody);
+        assertNotNull(failedBody.message());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), failedBody.statusCode());
+        assertNotNull(failedBody.timeStamp());
     }
 
 }
