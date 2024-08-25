@@ -92,6 +92,28 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
     }
 
     @Test
+    @DisplayName("Should not register user when there is a existing one with same e-mail address")
+    void shouldFailToRegisterUserWithAlreadyExistingEmailAddress() {
+        // arrange
+        HttpEntity<UserRegisterRequest> request = new HttpEntity<>(registerRequest, headers);
+        authenticationService.register(registerRequest);
+
+        // act
+        ResponseEntity<RestExceptionMessage> failedResponse = restTemplate.postForEntity(BASIC_API_URL + "/register",
+                                                                                             request,
+                                                                                             RestExceptionMessage.class);
+        RestExceptionMessage failedBody = failedResponse.getBody();
+
+        // assert
+        assertTrue(failedResponse.getStatusCode().is4xxClientError());
+        assertEquals(HttpStatus.BAD_REQUEST, failedResponse.getStatusCode());
+        assertNotNull(failedBody);
+        assertNotNull(failedBody.message());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), failedBody.statusCode());
+        assertNotNull(failedBody.timeStamp());
+    }
+
+    @Test
     @DisplayName("Should successfully login valid user")
     void shouldSuccessfullyLoginValidUser() {
         // arrange
