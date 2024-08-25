@@ -33,9 +33,10 @@ class ConstraintViolationExceptionHandler extends ResponseEntityExceptionHandler
 
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<Map<String, String>> handleConstraintViolationException(ConstraintViolationException exception) {
+    public ResponseEntity<RestExceptionMessage> handleConstraintViolationException(ConstraintViolationException exception) {
         Map<String, String> errors = constraintViolationErrors(exception);
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        RestExceptionMessage message = new RestExceptionMessage(LocalDateTime.now(), errors.toString(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
 
     private String buildErrorsMessage(MethodArgumentNotValidException ex) {
