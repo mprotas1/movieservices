@@ -7,6 +7,7 @@ import com.movieapp.users.domain.exception.FailedAuthenticationException;
 import com.movieapp.users.domain.mapper.UserMapper;
 import com.movieapp.users.domain.repository.UserRepository;
 import com.movieapp.users.web.dto.UserAuthenticationResponse;
+import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.web.dto.UserLoginRequest;
 import com.movieapp.users.web.dto.UserRegisterRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +59,7 @@ class AuthenticationMockTest {
         when(userRepository.save(any(User.class))).thenReturn(validUser);
         when(userMapper.toEntity(any(UserRegisterRequest.class))).thenReturn(validUser);
         when(roleService.addToRole(validUser, RoleType.USER)).thenReturn(validUser);
+        when(userMapper.toDTO(validUser)).thenReturn(new UserDTO(validUser.getId(), validUser.getEmail(), validUser.getRoles()));
         when(tokenService.generateToken(validUser)).thenReturn("token");
 
         UserAuthenticationResponse authenticationResponse = authenticationService.register(registerRequest);
@@ -68,6 +70,7 @@ class AuthenticationMockTest {
     void shouldAuthenticateUserWithValidCredentials() {
         when(userDetailsService.loadUserByUsername(anyString())).thenReturn(validUser);
         when(passwordEncoder.matches(anyString(), eq(validUser.getPassword()))).thenReturn(true);
+        when(userMapper.toDTO(validUser)).thenReturn(new UserDTO(validUser.getId(), validUser.getEmail(), validUser.getRoles()));
         when(tokenService.generateToken(any(User.class))).thenReturn("token");
 
         UserAuthenticationResponse authenticationResponse = authenticationService.authenticate(loginRequest);
@@ -91,6 +94,9 @@ class AuthenticationMockTest {
     void validateAuthenticationResponse(UserAuthenticationResponse authenticationResponse) {
         assertNotNull(authenticationResponse);
         assertNotNull(authenticationResponse.token());
+        assertNotNull(authenticationResponse.user());
+        assertFalse(authenticationResponse.user().email().isEmpty());
+        assertFalse(authenticationResponse.user().roles().isEmpty());
         assertFalse(authenticationResponse.token().isEmpty());
     }
 
