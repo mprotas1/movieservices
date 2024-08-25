@@ -10,22 +10,20 @@ import com.movieapp.users.testcontainers.TestContainersBase;
 import com.movieapp.users.web.dto.UserAuthenticationResponse;
 import com.movieapp.users.web.dto.UserLoginRequest;
 import com.movieapp.users.web.dto.UserRegisterRequest;
+import com.movieapp.users.web.exception.RestExceptionMessage;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
 import java.net.URI;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 public class AuthenticationIntegrationTest extends TestContainersBase {
     @Autowired
     TestRestTemplate restTemplate;
@@ -54,7 +52,7 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
     }
 
     @Test
-    @DisplayName("Should successfully register valid user")
+    @DisplayName("Should successfully register a valid user")
     void shouldSuccessfullyRegisterUser() {
         // arrange
         HttpEntity<UserRegisterRequest> request = new HttpEntity<>(registerRequest, headers);
@@ -75,15 +73,32 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
     }
 
     @Test
-    @DisplayName("Should fail to register user with invalid email")
+    @DisplayName("Should not register user with invalid formatted e-mail")
     void shouldFailToRegisterUserWithInvalidEmail() {
         UserRegisterRequest invalidEmailRequest = new UserRegisterRequest("invalidmail", "password123", "John", "Doe");
         HttpEntity<UserRegisterRequest> request = new HttpEntity<>(invalidEmailRequest, headers);
 
-        ResponseEntity<Map> response = restTemplate.postForEntity(BASIC_API_URL + "/register", request, Map.class);
-        System.out.println(response.toString());
+        ResponseEntity<RestExceptionMessage> response = restTemplate.postForEntity(BASIC_API_URL + "/register", request, RestExceptionMessage.class);
+        RestExceptionMessage body = response.getBody();
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        validateRestExceptionMessage(response, body);
+    }
+
+    @Test
+    @DisplayName("Should not register user when there is a existing one with same e-mail address")
+    void shouldFailToRegisterUserWithAlreadyExistingEmailAddress() {
+        // arrange
+        HttpEntity<UserRegisterRequest> request = new HttpEntity<>(registerRequest, headers);
+        authenticationService.register(registerRequest);
+
+        // act
+        ResponseEntity<RestExceptionMessage> failedResponse = restTemplate.postForEntity(BASIC_API_URL + "/register",
+                                                                                             request,
+                                                                                             RestExceptionMessage.class);
+        RestExceptionMessage failedBody = failedResponse.getBody();
+
+        // assert
+        validateRestExceptionMessage(failedResponse, failedBody);
     }
 
     @Test
@@ -114,6 +129,15 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
     private void initBasicHeaders() {
         headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+    }
+
+    private void validateRestExceptionMessage(ResponseEntity<RestExceptionMessage> failedResponse, RestExceptionMessage failedBody) {
+        assertTrue(failedResponse.getStatusCode().is4xxClientError());
+        assertEquals(HttpStatus.BAD_REQUEST, failedResponse.getStatusCode());
+        assertNotNull(failedBody);
+        assertNotNull(failedBody.message());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), failedBody.statusCode());
+        assertNotNull(failedBody.timeStamp());
     }
 
 }

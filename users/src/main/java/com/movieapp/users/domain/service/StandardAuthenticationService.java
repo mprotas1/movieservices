@@ -9,14 +9,12 @@ import com.movieapp.users.web.dto.UserAuthenticationResponse;
 import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.web.dto.UserLoginRequest;
 import com.movieapp.users.web.dto.UserRegisterRequest;
+import jakarta.persistence.EntityExistsException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,12 +29,12 @@ class StandardAuthenticationService implements AuthenticationService {
     private final TokenService tokenService;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
 
     @Override
     @Transactional
     public UserAuthenticationResponse register(@Valid UserRegisterRequest request) {
         log.debug("Registering the user with email address: {}", request.email());
+        validateEmail(request.email());
         User user = userMapper.toEntity(request);
         User registered = userRepository.save(user);
         User userWithRole = roleService.addToRole(registered, RoleType.USER);
@@ -59,6 +57,13 @@ class StandardAuthenticationService implements AuthenticationService {
         log.debug("Successfully authenticated user with e-mail: {}", request.email());
         UserDTO dto = userMapper.toDTO(details);
         return new UserAuthenticationResponse(dto, token);
+    }
+
+    private void validateEmail(String email) {
+        if (userRepository.existsByEmail(email)) {
+            log.debug("User with email: {} already exists", email);
+            throw new EntityExistsException("User with email: " + email + " already exists");
+        }
     }
 
     private boolean passwordIsInvalid(UserLoginRequest request, UserDetails details) {
