@@ -20,6 +20,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
 import java.net.URI;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,7 +53,6 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
         userRepository.deleteAll();
     }
 
-    // 1. Test whether the User can be registered successfully
     @Test
     @DisplayName("Should successfully register valid user")
     void shouldSuccessfullyRegisterUser() {
@@ -74,7 +74,18 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
         assertTrue(userRepository.findByEmail(responseBody.user().email()).isPresent());
     }
 
-    // 2. Test whether the User can be logged in successfully
+    @Test
+    @DisplayName("Should fail to register user with invalid email")
+    void shouldFailToRegisterUserWithInvalidEmail() {
+        UserRegisterRequest invalidEmailRequest = new UserRegisterRequest("invalidmail", "password123", "John", "Doe");
+        HttpEntity<UserRegisterRequest> request = new HttpEntity<>(invalidEmailRequest, headers);
+
+        ResponseEntity<Map> response = restTemplate.postForEntity(BASIC_API_URL + "/register", request, Map.class);
+        System.out.println(response.toString());
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
     @Test
     @DisplayName("Should successfully login valid user")
     void shouldSuccessfullyLoginValidUser() {
@@ -99,13 +110,6 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
     // 4. Test invalid login for non-existing user
 
     // 5. Test invalid login for incorrect password
-
-    // 6. Test invalid login for invalid JWT token
-
-    // 7. Test invalid login for expired JWT token
-
-    // 8. Test invalid login for missing JWT token
-
 
     private void initBasicHeaders() {
         headers = new HttpHeaders();

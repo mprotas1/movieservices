@@ -15,22 +15,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AuthenticationTest {
+class AuthenticationMockTest {
     private UserRegisterRequest registerRequest;
     private UserLoginRequest loginRequest;
     private User validUser;
@@ -49,8 +45,6 @@ class AuthenticationTest {
     private TokenService tokenService;
     @Mock
     private UserDetailsService userDetailsService;
-    @Mock
-    private AuthenticationManager manager;
 
     @BeforeEach
     void setUp() {
