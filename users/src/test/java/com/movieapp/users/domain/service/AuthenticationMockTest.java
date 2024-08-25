@@ -10,6 +10,7 @@ import com.movieapp.users.web.dto.UserAuthenticationResponse;
 import com.movieapp.users.web.dto.UserDTO;
 import com.movieapp.users.web.dto.UserLoginRequest;
 import com.movieapp.users.web.dto.UserRegisterRequest;
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -89,6 +90,12 @@ class AuthenticationMockTest {
         when(userDetailsService.loadUserByUsername(anyString())).thenReturn(validUser);
         when(passwordEncoder.matches(anyString(), eq(validUser.getPassword()))).thenReturn(false);
         assertThrows(FailedAuthenticationException.class, () -> authenticationService.authenticate(loginRequest));
+    }
+
+    @Test
+    void shouldNotRegisterUserWithAlreadyExistingEmailAddress() {
+        when(userRepository.existsByEmail(anyString())).thenReturn(true);
+        assertThrows(EntityExistsException.class, () -> authenticationService.register(registerRequest));
     }
 
     void validateAuthenticationResponse(UserAuthenticationResponse authenticationResponse) {
