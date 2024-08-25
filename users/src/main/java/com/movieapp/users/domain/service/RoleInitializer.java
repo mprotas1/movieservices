@@ -9,17 +9,17 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-class DataInitializationService {
+class RoleInitializer {
     private final RoleService roleService;
     private final RoleRepository roleRepository;
 
-    public DataInitializationService(RoleService roleService, RoleRepository roleRepository) {
+    public RoleInitializer(RoleService roleService, RoleRepository roleRepository) {
         this.roleService = roleService;
         this.roleRepository = roleRepository;
     }
 
     @PostConstruct
-    private void initializeRoles() {
+    void initializeRoles() {
         log.debug("Initializing User Role if they are not existing...");
 
         initializeSingleRole(RoleType.USER);
