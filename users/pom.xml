@@ -48,6 +48,12 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Flyway DB Migration -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+
         <!-- Flyway PostgreSQL -->
         <dependency>
             <groupId>org.flywaydb</groupId>
@@ -94,4 +100,5 @@
         </dependency>
 
     </dependencies>
+
 </project>
