@@ -29,10 +29,40 @@ services:
       - postgres
     restart: unless-stopped
 
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo:/var/lib/mongo
+    networks:
+      - mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: cinemasdb
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: unless-stopped
+    ports:
+      - 8081:8081
+    networks:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
 networks:
   postgres:
+    driver: bridge
+  mongo:
     driver: bridge
 
 volumes:
   postgres:
   pgadmin:
+  mongo:
