@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 import java.util.Optional;
 
-@EnableMongoRepositories
 public interface CinemaRepository extends MongoRepository<Cinema, ObjectId> {
     Optional<Cinema> findByName(String name);
 }
