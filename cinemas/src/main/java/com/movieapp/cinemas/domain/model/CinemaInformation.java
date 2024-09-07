@@ -1,3 +1,6 @@
 package com.movieapp.cinemas.domain.model;
 
-public record CinemaInformation(String name, AddressInformation address) {}
+import jakarta.validation.constraints.NotBlank;
+
+public record CinemaInformation(@NotBlank String name,
+                                AddressInformation address) {}

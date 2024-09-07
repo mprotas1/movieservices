@@ -3,11 +3,9 @@ spring:
     name: cinemas-service
   data:
     mongodb:
-      uri: mongodb://localhost:27017/cinemasdb
+      uri: 'mongodb://root:example@localhost:27017/cinemasdb'
       username: root
       password: example
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
 server:
   port: 8001
   servlet:

@@ -6,26 +6,32 @@ import com.movieapp.cinemas.domain.exception.DocumentNotFoundException;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
 class TheatreService implements CinemaService {
+    private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
     private final AddressService addressService;
     private final CinemaRepository cinemaRepository;
 
     @Override
-    public CinemaDTO createCinema(CinemaInformation cinema) {
-        // 1. Create the Cinema object with the CinemaInformation object
+    @Transactional
+    public CinemaDTO createCinema(@Valid CinemaInformation cinema) {
+        log.debug("Creating cinema: {}", cinema);
         Address address = addressService.save(cinema.address());
         Cinema toSave = Cinema.create(cinema.name(), address);
 
-        // 2. Save the Cinema object using the cinemaRepository
         Cinema saved = cinemaRepository.save(toSave);
+        log.debug("Saved cinema: {}", saved);
 
-        // 3. Return the CinemaDTO object created from the saved Cinema object
         return CinemaDTO.fromEntity(saved);
     }
 
