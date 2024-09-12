@@ -1,21 +1,22 @@
 package com.movieapp.cinemas.domain.entity;
 
+import jakarta.persistence.*;
 import lombok.Data;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
-@Document(collection = "cinemas")
+@Entity(name = "cinemas")
 @Data
 public class Cinema {
-    private @MongoId ObjectId id;
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private String name;
-    private ObjectId addressId;
+    private @OneToOne(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true,
+            optional = false) Address address;
 
     public static Cinema create(String name, Address address) {
         Cinema cinema = new Cinema();
         cinema.setName(name);
-        cinema.setAddressId(address.id());
+        cinema.setAddress(address);
         return cinema;
     }
 

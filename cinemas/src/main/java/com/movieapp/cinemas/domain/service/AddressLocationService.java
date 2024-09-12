@@ -5,7 +5,6 @@ import com.movieapp.cinemas.domain.exception.DocumentNotFoundException;
 import com.movieapp.cinemas.domain.model.AddressInformation;
 import com.movieapp.cinemas.domain.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,7 +16,7 @@ public class AddressLocationService implements AddressService {
     private final AddressRepository addressRepository;
 
     @Override
-    public AddressInformation findById(ObjectId id) {
+    public AddressInformation findById(Long id) {
         log.debug("Finding address with id: {}", id);
         return addressRepository.findById(id)
                 .map(AddressInformation::fromEntity)
@@ -31,10 +30,9 @@ public class AddressLocationService implements AddressService {
     }
 
     @Override
-    public void deleteById(ObjectId id) {
+    public void deleteById(Long id) {
         log.debug("Deleting address with id: {}", id);
         addressRepository.deleteById(id);
     }
-
 
 }
