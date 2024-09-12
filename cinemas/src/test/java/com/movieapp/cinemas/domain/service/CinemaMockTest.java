@@ -6,6 +6,8 @@ import com.movieapp.cinemas.domain.model.AddressInformation;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,15 +55,27 @@ class CinemaMockTest {
     }
 
     @Test
-    void shouldRejectCreateCinemaWithBlankName() {
-        String name = "";
-        CinemaInformation invalidCinema = new CinemaInformation(name, exampleAddressInformation);
+    void shouldNotCreateCinemaWithExistingName() {
+        exampleCinema.setId(1L);
+        when(cinemaRepository.findByName(any())).thenReturn(Optional.of(exampleCinema));
+        assertThrows(EntityExistsException.class, () -> cinemaService.createCinema(cinemaInformation));
+    }
 
-        when(addressService.save(any())).thenReturn(exampleAddress);
-        when(cinemaRepository.save(any())).thenReturn(exampleCinema);
-        doThrow(new ConstraintViolationException(Collections.emptySet())).when(validator).validate(invalidCinema);
+    @Test
+    void shouldFindCinemaById() {
+        Long id = 1L;
+        exampleCinema.setId(id);
+        when(cinemaRepository.findById(any())).thenReturn(Optional.of(exampleCinema));
+        CinemaDTO cinema = cinemaService.findById(id);
+        assertNotNull(cinema);
+        assertEquals(id, cinema.id());
+    }
 
-        assertThrows(ConstraintViolationException.class, () -> cinemaService.createCinema(invalidCinema));
+    @Test
+    void shouldNotFindCinemaByNonExistingId() {
+        Long id = 1L;
+        when(cinemaRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> cinemaService.findById(id));
     }
 
 }

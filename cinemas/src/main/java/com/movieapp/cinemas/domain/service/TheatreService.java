@@ -39,6 +39,7 @@ class TheatreService implements CinemaService {
 
     @Override
     public CinemaDTO findById(Long id) {
+        log.debug("Finding cinema with id: {}", id);
         return cinemaRepository.findById(id)
                 .map(cinema -> new CinemaDTO(cinema.getId(), cinema.getName()))
                 .orElseThrow(() -> new EntityNotFoundException("Did not find cinema with id: " + id));
@@ -46,6 +47,7 @@ class TheatreService implements CinemaService {
 
     @Override
     public CinemaDTO findByName(String name) {
+        log.debug("Finding cinema with name: {}", name);
         return cinemaRepository.findByName(name)
                 .map(cinema -> new CinemaDTO(cinema.getId(), cinema.getName()))
                 .orElseThrow(() -> new EntityNotFoundException("Did not find cinema with name: " + name));
@@ -53,8 +55,10 @@ class TheatreService implements CinemaService {
 
     @Override
     public void deleteById(Long id) {
+        log.debug("Deleting cinema with id: {}", id);
         Cinema toBeDeleted = cinemaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Did not find cinema with id: " + id + " to delete"));
+        log.debug("Attempting to delete cinema: {} - {}", toBeDeleted.getId(), toBeDeleted.getName());
         cinemaRepository.delete(toBeDeleted);
         log.debug("Deleted cinema: {}", toBeDeleted);
     }
