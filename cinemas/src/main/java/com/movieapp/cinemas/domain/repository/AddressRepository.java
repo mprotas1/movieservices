@@ -1,7 +1,8 @@
 package com.movieapp.cinemas.domain.repository;
 
 import com.movieapp.cinemas.domain.entity.Address;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface AddressRepository extends MongoRepository<Address, ObjectId> {}
+@Repository
+public interface AddressRepository extends JpaRepository<Address, Long> {}

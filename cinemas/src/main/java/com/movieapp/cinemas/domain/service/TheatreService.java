@@ -3,12 +3,11 @@ package com.movieapp.cinemas.domain.service;
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.exception.DocumentNotFoundException;
-import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
+import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -17,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 class TheatreService implements CinemaService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
     private final AddressService addressService;
@@ -36,7 +36,7 @@ class TheatreService implements CinemaService {
     }
 
     @Override
-    public CinemaDTO findById(ObjectId id) {
+    public CinemaDTO findById(Long id) {
         return cinemaRepository.findById(id)
                 .map(cinema -> new CinemaDTO(cinema.getId(), cinema.getName()))
                 .orElseThrow(() -> new DocumentNotFoundException("Did not find cinema with id: " + id));
@@ -50,10 +50,11 @@ class TheatreService implements CinemaService {
     }
 
     @Override
-    public void deleteById(ObjectId id) {
+    public void deleteById(Long id) {
         Cinema toBeDeleted = cinemaRepository.findById(id)
                 .orElseThrow(() -> new DocumentNotFoundException("Did not find cinema with id: " + id + " to delete"));
         cinemaRepository.delete(toBeDeleted);
+        log.debug("Deleted cinema: {}", toBeDeleted);
     }
 
 }

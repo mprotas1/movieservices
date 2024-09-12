@@ -29,40 +29,43 @@ services:
       - postgres
     restart: unless-stopped
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo:/var/lib/mongo
-    networks:
-      - mongo
+  mysql:
+    container_name: mysql
+    image: mysql:latest
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
-      MONGO_INITDB_DATABASE: cinemasdb
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=cinemasdb
+    ports:
+        - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - mysql
     restart: unless-stopped
 
-  mongo-express:
-    image: mongo-express:latest
-    restart: unless-stopped
-    ports:
-      - "8081:8081"
-    networks:
-      - mongo
+  mysqladmin:
+    container_name: mysqladmin
+    image: phpmyadmin/phpmyadmin:latest
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH: false
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: user
+      PMA_PASSWORD: secret
+    ports:
+      - "8001:80"
+    networks:
+      - mysql
+    restart: unless-stopped
 
 networks:
   postgres:
     driver: bridge
-  mongo:
+  mysql:
     driver: bridge
 
 volumes:
   postgres:
   pgadmin:
-  mongo:
+  mysql:

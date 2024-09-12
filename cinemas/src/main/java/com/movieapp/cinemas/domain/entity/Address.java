@@ -1,19 +1,27 @@
 package com.movieapp.cinemas.domain.entity;
 
 import com.movieapp.cinemas.domain.model.AddressInformation;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Document(collection = "addresses")
-public record Address(@MongoId ObjectId id,
-                      String street,
-                      String city,
-                      String postalCode,
-                      ObjectId cinemaId) {
+@Entity
+@Table(name = "addresses") @Data @NoArgsConstructor
+public class Address {
+    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
+    private String street;
+    private String city;
+    private String postalCode;
+
+    public Address(Long id, String street, String city, String postalCode) {
+        this.id = id;
+        this.street = street;
+        this.city = city;
+        this.postalCode = postalCode;
+    }
 
     public static Address create(AddressInformation information) {
-        return new Address(new ObjectId(), information.street(), information.city(), information.postalCode(), null);
+        return new Address(null, information.street(), information.city(), information.postalCode());
     }
 
 }
