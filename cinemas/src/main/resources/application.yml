@@ -2,7 +2,7 @@ spring:
   application:
     name: cinemas-service
   datasource:
-    url: jdbc:mysql://localhost:3306/cinemas_db
+    url: jdbc:mysql://localhost:3306/cinemasdb
     username: root
     password: secret
     driver-class-name: com.mysql.cj.jdbc.Driver

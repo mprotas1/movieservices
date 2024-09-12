@@ -7,7 +7,6 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -20,9 +19,9 @@ public abstract class Containers {
 
     @Container
     public static final MySQLContainer<?> mySqlContainer = new MySQLContainer<>("mysql:latest")
-            .withDatabaseName("cinemas")
-            .withUsername("root")
-            .withPassword("pass")
+            .withDatabaseName("cinemasdb")
+            .withUsername("user")
+            .withPassword("secret")
             .withExposedPorts(3306);
 
     public Containers() {
