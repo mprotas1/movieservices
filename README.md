@@ -15,6 +15,7 @@ The Cinema Microservices Application is a model for an enterprise application th
 ## Microservices
 * users service [Java 22 + PostgreSQL stack]
 * cinemas service [Java 22 + MongoDB stack]
+* cloud gateway [Java Spring Cloud Gateway implementation]
 * recommendations service
 
 ## Technology stack
