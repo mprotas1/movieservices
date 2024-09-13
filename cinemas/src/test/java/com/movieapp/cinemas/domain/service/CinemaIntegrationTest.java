@@ -1,8 +1,12 @@
 package com.movieapp.cinemas.domain.service;
 
+import com.movieapp.cinemas.domain.entity.Address;
+import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.model.AddressInformation;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
+import com.movieapp.cinemas.domain.repository.AddressRepository;
+import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.testcontainers.Containers;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +29,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class CinemaIntegrationTest extends Containers {
     @Autowired
     private CinemaService cinemaService;
+    @Autowired
+    private CinemaRepository cinemaRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
     @Test
     @DisplayName("Should create cinema with valid data")
@@ -112,16 +120,20 @@ class CinemaIntegrationTest extends Containers {
     }
 
     @Test
-    @DisplayName("Should delete cinema by id")
-    void shouldDeleteCinemaById() {
+    @DisplayName("Should delete cinema and cascade delete address by id")
+    void shouldCascadeDeleteAddressById() {
         CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
-                                              new AddressInformation("Blank Street", "Blank City", "00-000")
+                new AddressInformation("Blank Street", "Blank City", "00-000")
         );
 
         CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
+        Cinema foundCinema = cinemaRepository.findById(cinema.id()).orElseThrow();
+        Address foundAddress = foundCinema.getAddress();
+
         cinemaService.deleteById(cinema.id());
 
         assertThrows(EntityNotFoundException.class, () -> cinemaService.findById(cinema.id()));
+        assertFalse(addressRepository.existsById(foundAddress.getId()));
     }
 
     @Test
