@@ -3,11 +3,13 @@ package com.movieapp.cinemas.domain.service;
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.model.AddressInformation;
 import com.movieapp.cinemas.domain.repository.AddressRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,6 +29,11 @@ public class AddressLocationService implements AddressService {
     @Override
     public Address save(@Valid AddressInformation addressInformation) {
         log.debug("Saving address: {}", addressInformation);
+
+        if(addressExists(addressInformation)) {
+            throw new EntityExistsException("Address already exists: " + addressInformation);
+        }
+
         return addressRepository.save(Address.create(addressInformation));
     }
 
@@ -34,6 +41,14 @@ public class AddressLocationService implements AddressService {
     public void deleteById(Long id) {
         log.debug("Deleting address with id: {}", id);
         addressRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean addressExists(AddressInformation addressInformation) {
+        log.debug("Checking if address exists: {}", addressInformation);
+        Address address = Address.create(addressInformation);
+        Example<Address> addressExample = Example.of(address);
+        return addressRepository.exists(addressExample);
     }
 
 }
