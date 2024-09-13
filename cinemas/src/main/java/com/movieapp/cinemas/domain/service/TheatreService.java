@@ -30,10 +30,8 @@ class TheatreService implements CinemaService {
         validateCinemaExistsByName(cinema.name());
         Address address = addressService.save(cinema.address());
         Cinema toSave = Cinema.create(cinema.name(), address);
-
         Cinema saved = cinemaRepository.save(toSave);
         log.debug("Saved cinema: {}", saved);
-
         return CinemaDTO.fromEntity(saved);
     }
 
@@ -41,7 +39,7 @@ class TheatreService implements CinemaService {
     public CinemaDTO findById(Long id) {
         log.debug("Finding cinema with id: {}", id);
         return cinemaRepository.findById(id)
-                .map(cinema -> new CinemaDTO(cinema.getId(), cinema.getName()))
+                .map(CinemaDTO::fromEntity)
                 .orElseThrow(() -> new EntityNotFoundException("Did not find cinema with id: " + id));
     }
 
@@ -49,11 +47,12 @@ class TheatreService implements CinemaService {
     public CinemaDTO findByName(String name) {
         log.debug("Finding cinema with name: {}", name);
         return cinemaRepository.findByName(name)
-                .map(cinema -> new CinemaDTO(cinema.getId(), cinema.getName()))
+                .map(CinemaDTO::fromEntity)
                 .orElseThrow(() -> new EntityNotFoundException("Did not find cinema with name: " + name));
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         log.debug("Deleting cinema with id: {}", id);
         Cinema toBeDeleted = cinemaRepository.findById(id)
@@ -64,8 +63,8 @@ class TheatreService implements CinemaService {
     }
 
     private void validateCinemaExistsByName(String name) {
-        cinemaRepository.findByName(name).ifPresent(cinema -> {
-            throw new EntityExistsException("Cinema with name: " + name + " already exists");
+        cinemaRepository.findByName(name).ifPresent(_ -> {
+            throw new EntityExistsException("Cinema with dsname: " + name + " already exists");
         });
     }
 

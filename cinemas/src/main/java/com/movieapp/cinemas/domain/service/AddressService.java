@@ -8,4 +8,5 @@ public interface AddressService {
     Address save(@Valid AddressInformation addressInformation);
     AddressInformation findById(Long id);
     void deleteById(Long id);
+    boolean addressExists(AddressInformation addressInformation);
 }

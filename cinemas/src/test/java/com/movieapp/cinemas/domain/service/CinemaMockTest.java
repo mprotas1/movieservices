@@ -8,20 +8,16 @@ import com.movieapp.cinemas.domain.model.CinemaInformation;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,8 +28,6 @@ class CinemaMockTest {
     private CinemaRepository cinemaRepository;
     @Mock
     private AddressLocationService addressService;
-    @Mock
-    private Validator validator;
 
     AddressInformation exampleAddressInformation = new AddressInformation("Al. Wyzwolenia", "Szczecin", "71-210");
     CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name", exampleAddressInformation);
@@ -50,6 +44,7 @@ class CinemaMockTest {
         CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
 
         assertNotNull(cinema);
+        assertEquals("71-210 Szczecin, Al. Wyzwolenia", cinema.formattedAddress());
         assertFalse(cinema.id().toString().isEmpty());
         assertFalse(cinema.name().isEmpty());
     }
@@ -76,6 +71,38 @@ class CinemaMockTest {
         Long id = 1L;
         when(cinemaRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> cinemaService.findById(id));
+    }
+
+    @Test
+    void shouldFindCinemaByName() {
+        String name = "Cinema Name";
+        exampleCinema.setId(1L);
+        when(cinemaRepository.findByName(any())).thenReturn(Optional.of(exampleCinema));
+        CinemaDTO cinema = cinemaService.findByName(name);
+        assertNotNull(cinema);
+        assertEquals(name, cinema.name());
+    }
+
+    @Test
+    void shouldNotFindCinemaByNonExistingName() {
+        String name = "Cinema Name";
+        when(cinemaRepository.findByName(name)).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> cinemaService.findByName(name));
+    }
+
+    @Test
+    void shouldDeleteCinemaById() {
+        Long id = 1L;
+        exampleCinema.setId(id);
+        when(cinemaRepository.findById(any())).thenReturn(Optional.of(exampleCinema));
+        assertDoesNotThrow(() -> cinemaService.deleteById(id));
+    }
+
+    @Test
+    void shouldNotDeleteCinemaByNonExistingId() {
+        Long id = 1L;
+        when(cinemaRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> cinemaService.deleteById(id));
     }
 
 }
