@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -27,7 +29,7 @@ public class AddressMockTest {
     void shouldCreateAddressWithValidData() {
         Address address = Address.create(exampleAddressInformation);
         address.setId(1L);
-        when(addressRepository.exists(any())).thenReturn(false);
+        when(addressRepository.findByAddressInformation(exampleAddressInformation)).thenReturn(Optional.empty());
         when(addressRepository.save(any())).thenReturn(address);
 
         Address created = addressService.save(exampleAddressInformation);
@@ -41,7 +43,7 @@ public class AddressMockTest {
 
     @Test
     void shouldNotCreateExistingAddress() {
-        when(addressRepository.exists(any())).thenReturn(true);
+        when(addressRepository.findByAddressInformation(exampleAddressInformation)).thenReturn(Optional.of(Address.create(exampleAddressInformation)));
         assertThrows(EntityExistsException.class, () -> addressService.save(exampleAddressInformation));
     }
 
