@@ -19,6 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
 
@@ -46,7 +47,26 @@ class CinemaIntegrationTest extends Containers {
         assertNotNull(cinema);
         assertNotNull(cinema.id());
         assertNotNull(cinema.name());
+        assertEquals("00-000 Blank City, Blank Street", cinema.formattedAddress());
         assertEquals("Cinema Name", cinema.name());;
+    }
+
+    @Test
+    @DisplayName("Should create corresponding address with cinema")
+    @Transactional
+    void shouldCreateCorrespondingAddressWithCinema() {
+        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
+                                              new AddressInformation("Blank Street", "Blank City", "00-000")
+        );
+
+        CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
+        Cinema foundCinema = cinemaRepository.findById(cinema.id()).orElseThrow();
+        Address foundAddress = foundCinema.getAddress();
+
+        assertNotNull(foundAddress);
+        assertEquals("Blank Street", foundAddress.getStreet());
+        assertEquals("Blank City", foundAddress.getCity());
+        assertEquals("00-000", foundAddress.getPostalCode());
     }
 
 
@@ -78,6 +98,7 @@ class CinemaIntegrationTest extends Containers {
     }
 
     @Test
+    @Transactional
     @DisplayName("Should find cinema by id")
     void shouldFindCinemaById() {
         CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
@@ -93,6 +114,7 @@ class CinemaIntegrationTest extends Containers {
     }
 
     @Test
+    @Transactional
     @DisplayName("Should find cinema by name")
     void shouldFindCinemaByName() {
         CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
@@ -140,6 +162,19 @@ class CinemaIntegrationTest extends Containers {
     @DisplayName("Should not delete cinema by non-existing id")
     void shouldNotDeleteCinemaByNonExistingId() {
         assertThrows(EntityNotFoundException.class, () -> cinemaService.deleteById(1L));
+    }
+
+    @Test
+    @DisplayName("Should not create Cinema with existing address")
+    void shouldNotCreateCinemaWithExistingAddress() {
+        Address address = Address.create(new AddressInformation("Blank Street", "Blank City", "00-000"));
+        addressRepository.save(address);
+
+        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
+                new AddressInformation("Blank Street", "Blank City", "00-000")
+        );
+
+        assertThrows(EntityExistsException.class, () -> cinemaService.createCinema(cinemaInformation));
     }
 
     private static Stream<Arguments> provideInvalidCinemaInformation() {

@@ -44,6 +44,7 @@ class CinemaMockTest {
         CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
 
         assertNotNull(cinema);
+        assertEquals("71-210 Szczecin, Al. Wyzwolenia", cinema.formattedAddress());
         assertFalse(cinema.id().toString().isEmpty());
         assertFalse(cinema.name().isEmpty());
     }
