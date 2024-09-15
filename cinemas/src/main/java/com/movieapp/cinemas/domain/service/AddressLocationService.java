@@ -9,7 +9,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -46,9 +45,7 @@ public class AddressLocationService implements AddressService {
     @Override
     public boolean addressExists(AddressInformation addressInformation) {
         log.debug("Checking if address exists: {}", addressInformation);
-        Address address = Address.create(addressInformation);
-        Example<Address> addressExample = Example.of(address);
-        return addressRepository.exists(addressExample);
+        return addressRepository.findByAddressInformation(addressInformation).isPresent();
     }
 
 }
