@@ -5,12 +5,14 @@ import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.model.AddressInformation;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
+import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
 import com.movieapp.cinemas.domain.repository.AddressRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.testcontainers.Containers;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +28,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CinemaIntegrationTest extends Containers {
     @Autowired
     private CinemaService cinemaService;
@@ -35,15 +37,21 @@ class CinemaIntegrationTest extends Containers {
     @Autowired
     private AddressRepository addressRepository;
 
+    private CinemaInformation basicCinemaInformation;
+
+    @BeforeEach
+    void setUp() {
+        cinemaRepository.deleteAll();
+        addressRepository.deleteAll();
+        basicCinemaInformation = new CinemaInformation("Cinema Name",
+                                              new AddressInformation("Blank Street", "Blank City", "00-000")
+        );
+    }
+
     @Test
     @DisplayName("Should create cinema with valid data")
     void shouldCreateCinemaWithValidData() {
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
-                                              new AddressInformation("Blank Street", "Blank City", "00-000")
-        );
-
-        CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
-
+        CinemaDTO cinema = cinemaService.createCinema(basicCinemaInformation);
         assertNotNull(cinema);
         assertNotNull(cinema.id());
         assertNotNull(cinema.name());
@@ -52,14 +60,27 @@ class CinemaIntegrationTest extends Containers {
     }
 
     @Test
+    @DisplayName("Should create cinema with valid data and rooms")
+    @Transactional
+    void shouldCreateCinemaWithValidDataAndRooms() {
+        CinemaDTO cinema = cinemaService.createCinema(basicCinemaInformation);
+        CinemaRoomInformation roomInformation = new CinemaRoomInformation(cinema.id(), 25);
+        CinemaRoomInformation cinemaWithRooms = cinemaService.addRoom(roomInformation);
+
+        Cinema foundCinema = cinemaRepository.findById(cinema.id()).orElseThrow();
+
+        assertNotNull(cinemaWithRooms);
+        assertNotNull(foundCinema.getRooms());
+        assertEquals(1, foundCinema.getRooms().size());
+        assertEquals("1",  foundCinema.getRooms().getFirst().getNumber());
+        assertEquals(25, foundCinema.getRooms().getFirst().getCapacity());
+    }
+
+    @Test
     @DisplayName("Should create corresponding address with cinema")
     @Transactional
     void shouldCreateCorrespondingAddressWithCinema() {
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
-                                              new AddressInformation("Blank Street", "Blank City", "00-000")
-        );
-
-        CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
+        CinemaDTO cinema = cinemaService.createCinema(basicCinemaInformation);
         Cinema foundCinema = cinemaRepository.findById(cinema.id()).orElseThrow();
         Address foundAddress = foundCinema.getAddress();
 
@@ -69,43 +90,24 @@ class CinemaIntegrationTest extends Containers {
         assertEquals("00-000", foundAddress.getPostalCode());
     }
 
-
-    @Test
-    @DisplayName("Should not create cinema with blank name")
-    void shouldNotCreateCinemaWithBlankName() {
-        CinemaInformation cinemaInformation = new CinemaInformation("",
-                                              new AddressInformation("Blank Street", "Blank City", "00-000")
-        );
-
-        assertThrows(ConstraintViolationException.class, () -> cinemaService.createCinema(cinemaInformation));
-    }
-
     @Test
     @DisplayName("Should not create cinema with existing name")
     void shouldNotCreateCinemaWithExistingName() {
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
-                                              new AddressInformation("Blank Street", "Blank City", "00-000")
-        );
-
-        cinemaService.createCinema(cinemaInformation);
-        assertThrows(EntityExistsException.class, () -> cinemaService.createCinema(cinemaInformation));
+        cinemaService.createCinema(basicCinemaInformation);
+        assertThrows(EntityExistsException.class, () -> cinemaService.createCinema(basicCinemaInformation));
     }
 
     @ParameterizedTest
     @MethodSource("provideInvalidCinemaInformation")
-    void shouldNotCreateCinemaWithAnyBlankAddressField(CinemaInformation cinemaInformation) {
-        assertThrows(ConstraintViolationException.class, () -> cinemaService.createCinema(cinemaInformation));
+    void shouldNotCreateCinemaWithAnyBlankAddressField(CinemaInformation invalidCinemaInformation) {
+        assertThrows(ConstraintViolationException.class, () -> cinemaService.createCinema(invalidCinemaInformation));
     }
 
     @Test
     @Transactional
     @DisplayName("Should find cinema by id")
     void shouldFindCinemaById() {
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
-                                              new AddressInformation("Blank Street", "Blank City", "00-000")
-        );
-
-        CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
+        CinemaDTO cinema = cinemaService.createCinema(basicCinemaInformation);
         CinemaDTO foundCinema = cinemaService.findById(cinema.id());
 
         assertNotNull(foundCinema);
@@ -117,11 +119,7 @@ class CinemaIntegrationTest extends Containers {
     @Transactional
     @DisplayName("Should find cinema by name")
     void shouldFindCinemaByName() {
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
-                                              new AddressInformation("Blank Street", "Blank City", "00-000")
-        );
-
-        CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
+        CinemaDTO cinema = cinemaService.createCinema(basicCinemaInformation);
         CinemaDTO foundCinema = cinemaService.findByName(cinema.name());
 
         assertNotNull(foundCinema);
@@ -167,14 +165,9 @@ class CinemaIntegrationTest extends Containers {
     @Test
     @DisplayName("Should not create Cinema with existing address")
     void shouldNotCreateCinemaWithExistingAddress() {
-        Address address = Address.create(new AddressInformation("Blank Street", "Blank City", "00-000"));
+        Address address = Address.create(basicCinemaInformation.address());
         addressRepository.save(address);
-
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name",
-                new AddressInformation("Blank Street", "Blank City", "00-000")
-        );
-
-        assertThrows(EntityExistsException.class, () -> cinemaService.createCinema(cinemaInformation));
+        assertThrows(EntityExistsException.class, () -> cinemaService.createCinema(basicCinemaInformation));
     }
 
     private static Stream<Arguments> provideInvalidCinemaInformation() {

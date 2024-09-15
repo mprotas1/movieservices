@@ -2,8 +2,10 @@ package com.movieapp.cinemas.domain.service;
 
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
+import com.movieapp.cinemas.domain.entity.CinemaRoom;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
+import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -62,9 +64,29 @@ class TheatreService implements CinemaService {
         log.debug("Deleted cinema: {}", toBeDeleted);
     }
 
+    @Override
+    @Transactional
+    public CinemaRoomInformation addRoom(CinemaRoomInformation roomInformation) {
+        log.debug("Adding room with capacity: {} to cinema with id: {}", roomInformation.capacity(), roomInformation.cinemaId());
+        Cinema cinema = cinemaRepository.findById(roomInformation.cinemaId())
+                .orElseThrow(() -> new EntityNotFoundException("Did not find cinema with id: " + roomInformation.cinemaId()));
+        Long roomNumber = getRoomNumberForCinema(cinema);
+        CinemaRoom cinemaRoom = CinemaRoom.roomInCinema(cinema, roomInformation.capacity(), roomNumber);
+        log.debug("Created CinemaRoom: {}", cinemaRoom);
+        Cinema cinemaWithRoom = cinemaRepository.save(cinema);
+        log.debug("Saved Cinema: [{} - {}] with room: {}, currently has {} rooms",
+                cinemaWithRoom.getId(), cinemaWithRoom.getName(), cinemaRoom.getId(), cinemaWithRoom.getRooms().size());
+        return new CinemaRoomInformation(cinemaWithRoom.getId(), cinemaRoom.getCapacity());
+    }
+
+    private Long getRoomNumberForCinema(Cinema cinema) {
+        int numberOfRooms = cinema.getRooms().size();
+        return (long) numberOfRooms + 1;
+    }
+
     private void validateCinemaExistsByName(String name) {
         cinemaRepository.findByName(name).ifPresent(_ -> {
-            throw new EntityExistsException("Cinema with dsname: " + name + " already exists");
+            throw new EntityExistsException("Cinema with name: " + name + " already exists");
         });
     }
 
