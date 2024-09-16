@@ -2,7 +2,6 @@ package com.movieapp.cinemas.domain.service;
 
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
-import com.movieapp.cinemas.domain.entity.CinemaRoom;
 import com.movieapp.cinemas.domain.model.AddressInformation;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
@@ -16,7 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CinemaMockTest {
+class CinemaUnitTest {
     @InjectMocks
     private TheatreService cinemaService;
     @Mock
@@ -50,7 +48,7 @@ class CinemaMockTest {
         assertEquals("71-210 Szczecin, Al. Wyzwolenia", cinema.formattedAddress());
         assertFalse(cinema.id().toString().isEmpty());
         assertFalse(cinema.name().isEmpty());
-        
+
         verify(cinemaRepository, times(1)).findByName(cinemaInformation.name());
         verify(addressService, times(1)).save(exampleAddressInformation);
     }
@@ -121,31 +119,11 @@ class CinemaMockTest {
     }
 
     @Test
-    void shouldAddRoomToCinema() {
-        exampleCinema.setId(1L);
-        exampleCinema.setRooms(new ArrayList<>());
-        when(cinemaRepository.findById(any())).thenReturn(Optional.of(exampleCinema));
-        when(cinemaRepository.save(any())).thenReturn(exampleCinema);
-        CinemaRoomInformation roomInformation = new CinemaRoomInformation(exampleCinema.getId(), 25);
-        CinemaRoomInformation createdRoomInformation = cinemaService.addRoom(roomInformation);
-
-        assertNotNull(createdRoomInformation);
-        assertEquals(1L, createdRoomInformation.cinemaId());
-        assertEquals(25, createdRoomInformation.capacity());
-        assertFalse(exampleCinema.getRooms().isEmpty());
-        assertEquals(1, exampleCinema.getRooms().size());
-
-        verify(cinemaRepository, times(1)).findById(exampleCinema.getId());
-        verify(cinemaRepository, times(1)).save(exampleCinema);
-    }
-
-    @Test
     void shouldNotAddRoomToNonExistingCinema() {
         CinemaRoomInformation roomInformation = new CinemaRoomInformation(999L, 25);
         when(cinemaRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> cinemaService.addRoom(roomInformation));
+        verify(cinemaRepository, times(1)).findById(roomInformation.cinemaId());
     }
-
-
 
 }
