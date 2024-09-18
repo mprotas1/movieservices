@@ -5,6 +5,7 @@ import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaRoom;
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
+import com.movieapp.cinemas.domain.model.CinemaRoomDTO;
 import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import jakarta.persistence.EntityExistsException;
@@ -66,22 +67,22 @@ class TheatreService implements CinemaService {
 
     @Override
     @Transactional
-    public CinemaRoomInformation addRoom(CinemaRoomInformation roomInformation) {
+    public CinemaRoomDTO addRoom(CinemaRoomInformation roomInformation) {
         log.debug("Adding room with capacity: {} to cinema with id: {}", roomInformation.capacity(), roomInformation.cinemaId());
         Cinema cinema = cinemaRepository.findById(roomInformation.cinemaId())
                 .orElseThrow(() -> new EntityNotFoundException("Did not find cinema with id: " + roomInformation.cinemaId()));
-        Long roomNumber = getRoomNumberForCinema(cinema);
+        int roomNumber = getRoomNumberForCinema(cinema);
         CinemaRoom cinemaRoom = CinemaRoom.roomInCinema(cinema, roomInformation.capacity(), roomNumber);
         log.debug("Created CinemaRoom: {}", cinemaRoom);
         Cinema cinemaWithRoom = cinemaRepository.save(cinema);
         log.debug("Saved Cinema: [{} - {}] with room: {}, currently has {} rooms",
                 cinemaWithRoom.getId(), cinemaWithRoom.getName(), cinemaRoom.getId(), cinemaWithRoom.getRooms().size());
-        return new CinemaRoomInformation(cinemaWithRoom.getId(), cinemaRoom.getCapacity());
+        return new CinemaRoomDTO(cinemaWithRoom.getId(), roomNumber, cinemaRoom.getCapacity());
     }
 
-    private Long getRoomNumberForCinema(Cinema cinema) {
+    private int getRoomNumberForCinema(Cinema cinema) {
         int numberOfRooms = cinema.getRooms().size();
-        return (long) numberOfRooms + 1;
+        return ++numberOfRooms;
     }
 
     private void validateCinemaExistsByName(String name) {

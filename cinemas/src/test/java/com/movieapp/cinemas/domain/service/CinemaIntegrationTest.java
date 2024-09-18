@@ -2,10 +2,7 @@ package com.movieapp.cinemas.domain.service;
 
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
-import com.movieapp.cinemas.domain.model.AddressInformation;
-import com.movieapp.cinemas.domain.model.CinemaDTO;
-import com.movieapp.cinemas.domain.model.CinemaInformation;
-import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
+import com.movieapp.cinemas.domain.model.*;
 import com.movieapp.cinemas.domain.repository.AddressRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.testcontainers.Containers;
@@ -65,14 +62,14 @@ class CinemaIntegrationTest extends Containers {
     void shouldCreateCinemaWithValidDataAndRooms() {
         CinemaDTO cinema = cinemaService.createCinema(basicCinemaInformation);
         CinemaRoomInformation roomInformation = new CinemaRoomInformation(cinema.id(), 25);
-        CinemaRoomInformation cinemaWithRooms = cinemaService.addRoom(roomInformation);
+        CinemaRoomDTO cinemaWithRooms = cinemaService.addRoom(roomInformation);
 
         Cinema foundCinema = cinemaRepository.findById(cinema.id()).orElseThrow();
 
         assertNotNull(cinemaWithRooms);
         assertNotNull(foundCinema.getRooms());
         assertEquals(1, foundCinema.getRooms().size());
-        assertEquals("1",  foundCinema.getRooms().getFirst().getNumber());
+        assertEquals(1,  foundCinema.getRooms().getFirst().getNumber());
         assertEquals(25, foundCinema.getRooms().getFirst().getCapacity());
     }
 
