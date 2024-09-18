@@ -2,6 +2,7 @@ package com.movieapp.cinemas.domain.service;
 
 import com.movieapp.cinemas.domain.model.CinemaDTO;
 import com.movieapp.cinemas.domain.model.CinemaInformation;
+import com.movieapp.cinemas.domain.model.CinemaRoomDTO;
 import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
 import jakarta.validation.Valid;
 
@@ -10,5 +11,5 @@ public interface CinemaService {
     CinemaDTO findById(Long id);
     CinemaDTO findByName(String name);
     void deleteById(Long id);
-    CinemaRoomInformation addRoom(@Valid CinemaRoomInformation roomInformation);
+    CinemaRoomDTO addRoom(@Valid CinemaRoomInformation roomInformation);
 }

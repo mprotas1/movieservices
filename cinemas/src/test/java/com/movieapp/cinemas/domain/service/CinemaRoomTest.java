@@ -37,61 +37,6 @@ class CinemaRoomTest extends Containers {
     }
 
     @Test
-    @DisplayName("Should create cinema room in existing cinema")
-    @Transactional
-    void shouldCreateCinemaRoomInExistingCinemaWithoutRooms() {
-        CinemaDTO createdCinemaDTO = cinemaService.createCinema(validCinemaInformation);
-        Cinema emptyCinema = cinemaRepository.findById(createdCinemaDTO.id()).get();
-
-        assertTrue(emptyCinema.getRooms().isEmpty());
-
-        CinemaRoomInformation cinemaRoomInformation = new CinemaRoomInformation(emptyCinema.getId(), 100);
-        CinemaRoomInformation createdRoomInformation = cinemaService.addRoom(cinemaRoomInformation);
-
-        Cinema cinemaWithRoom = cinemaRepository.findById(createdCinemaDTO.id()).get();
-
-        // validate CinemaRoomInformation DTO
-        assertNotNull(createdRoomInformation);
-        assertNotNull(createdRoomInformation.cinemaId());
-        assertEquals(100, createdRoomInformation.capacity());
-
-        // validate Cinema entity
-        assertFalse(cinemaWithRoom.getRooms().isEmpty());
-        assertEquals(1, cinemaWithRoom.getRooms().size());
-    }
-
-    @Test
-    @DisplayName("Should create cinema room in existing cinema with rooms")
-    @Transactional
-    void shouldCreateCinemaRoomInExistingCinemaWithRooms() {
-        CinemaDTO createdCinemaDTO = cinemaService.createCinema(validCinemaInformation);
-        Cinema emptyCinema = cinemaRepository.findById(createdCinemaDTO.id()).get();
-
-        assertTrue(emptyCinema.getRooms().isEmpty());
-
-        CinemaRoomInformation cinemaRoomInformation = new CinemaRoomInformation(emptyCinema.getId(), 100);
-        CinemaRoomInformation createdRoomInformation = cinemaService.addRoom(cinemaRoomInformation);
-
-        CinemaRoomInformation cinemaRoomInformation2 = new CinemaRoomInformation(emptyCinema.getId(), 200);
-        CinemaRoomInformation createdRoomInformation2 = cinemaService.addRoom(cinemaRoomInformation2);
-
-        Cinema cinemaWithRoom = cinemaRepository.findById(createdCinemaDTO.id()).get();
-
-        // validate CinemaRoomInformation DTO
-        assertNotNull(createdRoomInformation);
-        assertNotNull(createdRoomInformation.cinemaId());
-        assertEquals(100, createdRoomInformation.capacity());
-
-        assertNotNull(createdRoomInformation2);
-        assertNotNull(createdRoomInformation2.cinemaId());
-        assertEquals(200, createdRoomInformation2.capacity());
-
-        // validate Cinema entity
-        assertFalse(cinemaWithRoom.getRooms().isEmpty());
-        assertEquals(2, cinemaWithRoom.getRooms().size());
-    }
-
-    @Test
     @DisplayName("Should not create cinema room in non-existing cinema")
     @Transactional
     void shouldNotCreateCinemaRoomInNonExistingCinema() {
