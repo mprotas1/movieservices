@@ -118,12 +118,4 @@ class CinemaUnitTest {
         verify(cinemaRepository, times(1)).findById(id);
     }
 
-    @Test
-    void shouldNotAddRoomToNonExistingCinema() {
-        CinemaRoomInformation roomInformation = new CinemaRoomInformation(999L, 25);
-        when(cinemaRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> cinemaService.addRoom(roomInformation));
-        verify(cinemaRepository, times(1)).findById(roomInformation.cinemaId());
-    }
-
 }

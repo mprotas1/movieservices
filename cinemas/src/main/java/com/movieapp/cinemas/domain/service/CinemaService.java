@@ -11,5 +11,4 @@ public interface CinemaService {
     CinemaDTO findById(Long id);
     CinemaDTO findByName(String name);
     void deleteById(Long id);
-    CinemaRoomDTO addRoom(@Valid CinemaRoomInformation roomInformation);
 }

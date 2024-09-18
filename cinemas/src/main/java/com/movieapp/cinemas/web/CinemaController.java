@@ -23,12 +23,6 @@ public class CinemaController {
         return ResponseEntity.created(getResponseURI(cinema)).body(cinema);
     }
 
-    @PostMapping
-    public ResponseEntity<?> addRoom(@RequestBody CinemaRoomInformation cinemaRoomInformation) {
-        cinemaService.addRoom(cinemaRoomInformation);
-        return ResponseEntity.noContent().build();
-    }
-
     private URI getResponseURI(CinemaDTO cinemaDTO) {
         return ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
