@@ -57,23 +57,6 @@ class CinemaIntegrationTest extends Containers {
     }
 
     @Test
-    @DisplayName("Should create cinema with valid data and rooms")
-    @Transactional
-    void shouldCreateCinemaWithValidDataAndRooms() {
-        CinemaDTO cinema = cinemaService.createCinema(basicCinemaInformation);
-        CinemaRoomInformation roomInformation = new CinemaRoomInformation(cinema.id(), 25);
-        CinemaRoomDTO cinemaWithRooms = cinemaService.addRoom(roomInformation);
-
-        Cinema foundCinema = cinemaRepository.findById(cinema.id()).orElseThrow();
-
-        assertNotNull(cinemaWithRooms);
-        assertNotNull(foundCinema.getRooms());
-        assertEquals(1, foundCinema.getRooms().size());
-        assertEquals(1,  foundCinema.getRooms().getFirst().getNumber());
-        assertEquals(25, foundCinema.getRooms().getFirst().getCapacity());
-    }
-
-    @Test
     @DisplayName("Should create corresponding address with cinema")
     @Transactional
     void shouldCreateCorrespondingAddressWithCinema() {

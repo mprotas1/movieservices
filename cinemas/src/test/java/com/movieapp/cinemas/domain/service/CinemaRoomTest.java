@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class CinemaRoomTest extends Containers {
     @Autowired
-    private TheatreService cinemaService;
+    private CinemaRoomService cinemaService;
     @Autowired
     private CinemaRepository cinemaRepository;
     @Autowired
