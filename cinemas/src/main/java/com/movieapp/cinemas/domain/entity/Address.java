@@ -1,27 +1,29 @@
 package com.movieapp.cinemas.domain.entity;
 
-import com.movieapp.cinemas.domain.model.AddressInformation;
-import jakarta.persistence.*;
+import jakarta.persistence.Embeddable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "addresses") @Data @NoArgsConstructor
+@Embeddable
+@Data
+@NoArgsConstructor
 public class Address {
-    private @Id @GeneratedValue(strategy = GenerationType.IDENTITY) Long id;
     private String street;
     private String city;
     private String postalCode;
 
-    public Address(Long id, String street, String city, String postalCode) {
-        this.id = id;
+    public Address(String street, String city, String postalCode) {
         this.street = street;
         this.city = city;
         this.postalCode = postalCode;
     }
 
-    public static Address create(AddressInformation information) {
-        return new Address(null, information.street(), information.city(), information.postalCode());
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Address address = (Address) obj;
+        return street.equals(address.street) && city.equals(address.city) && postalCode.equals(address.postalCode);
     }
 
 }
