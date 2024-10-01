@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping
@@ -21,6 +22,21 @@ public class CinemaController {
     public ResponseEntity<CinemaDTO> create(@RequestBody CinemaInformation cinemaInformation) {
         CinemaDTO cinema = cinemaService.createCinema(cinemaInformation);
         return ResponseEntity.created(getResponseURI(cinema)).body(cinema);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CinemaDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.of(cinemaService.readCinema(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<CinemaDTO> findByName(@RequestParam String name) {
+        return ResponseEntity.of(cinemaService.findByName(name));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CinemaDTO>> findAll() {
+        return ResponseEntity.ok(cinemaService.findAll());
     }
 
     private URI getResponseURI(CinemaDTO cinemaDTO) {

@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-class JpaCinemaReadRepository implements CinemaReadRepository {
+class JpaCinemaRepository implements CinemaRepository {
     private final CinemaJpaRepository cinemaJpaRepository;
 
     @Override
@@ -31,4 +31,5 @@ class JpaCinemaReadRepository implements CinemaReadRepository {
     public List<Cinema> findByCity(String city) {
         return cinemaJpaRepository.findByCity(city);
     }
+
 }

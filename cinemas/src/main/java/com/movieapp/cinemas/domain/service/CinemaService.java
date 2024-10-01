@@ -6,7 +6,10 @@ import com.movieapp.cinemas.domain.model.CinemaRoomDTO;
 import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 public interface CinemaService {
+    List<CinemaDTO> findAll();
     CinemaDTO createCinema(@Valid CinemaInformation cinema);
     CinemaDTO findById(Long id);
     CinemaDTO findByName(String name);

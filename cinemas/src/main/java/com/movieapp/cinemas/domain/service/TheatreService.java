@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Validated
@@ -24,12 +26,17 @@ class TheatreService implements CinemaService {
     private final CinemaRepository cinemaRepository;
 
     @Override
+    public List<CinemaDTO> findAll() {
+        return List.of();
+    }
+
+    @Override
     @Transactional
     public CinemaDTO createCinema(@Valid CinemaInformation cinema) {
         log.debug("Creating cinema: {}", cinema);
         validateCinemaExistsByName(cinema.name());
         Address address = addressService.save(cinema.address());
-        Cinema toSave = Cinema.create(cinema.name(), address);
+        Cinema toSave = new Cinema(cinema.name(), address);
         Cinema saved = cinemaRepository.save(toSave);
         log.debug("Saved cinema: {}", saved);
         return CinemaDTO.fromEntity(saved);
