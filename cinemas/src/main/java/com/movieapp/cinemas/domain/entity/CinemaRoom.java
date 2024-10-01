@@ -12,8 +12,7 @@ public class CinemaRoom {
     private @EmbeddedId CinemaRoomId id;
     private int number;
     private int capacity;
-    private @ManyToOne @JoinColumn(name = "cinema_id",
-                                   nullable = false) Cinema cinema;
+    private @ManyToOne @JoinColumn(name = "cinema_id", nullable = false) Cinema cinema;
 
     public CinemaRoom(int number, int capacity, Cinema cinema) {
         checkCinemaRoomConstraints(number, capacity, cinema);
