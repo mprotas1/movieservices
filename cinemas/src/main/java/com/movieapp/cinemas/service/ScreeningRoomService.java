@@ -1,9 +1,11 @@
-package com.movieapp.cinemas.domain.service;
+package com.movieapp.cinemas.service;
 
 import com.movieapp.cinemas.domain.entity.Cinema;
+import com.movieapp.cinemas.domain.entity.CinemaId;
 import com.movieapp.cinemas.domain.entity.CinemaRoom;
-import com.movieapp.cinemas.domain.model.CinemaRoomDTO;
-import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
+import com.movieapp.cinemas.domain.entity.CinemaRoomId;
+import com.movieapp.cinemas.service.model.CinemaRoomDTO;
+import com.movieapp.cinemas.service.model.CinemaRoomInformation;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.function.Predicate;
 
 @Service
 @RequiredArgsConstructor
@@ -22,27 +26,30 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     @Transactional
     public CinemaRoomDTO addRoom(CinemaRoomInformation roomInformation) {
-        Cinema contextCinema = cinemaRepository.findById(roomInformation.cinemaId())
+        Cinema contextCinema = cinemaRepository.findById(new CinemaId())
                 .orElseThrow(() -> new EntityNotFoundException("Cinema with id " + roomInformation.cinemaId() + " not found"));
-        int roomNumber = getSequentialRoomNumber(contextCinema);
-        CinemaRoom room = CinemaRoom.roomInCinema(contextCinema, roomInformation.capacity(), roomNumber);
+        int roomNumber = contextCinema.getNextRoomNumber();
+        CinemaRoom room = new CinemaRoom(roomNumber, roomInformation.capacity(), contextCinema);
         CinemaRoom savedRoom = cinemaRoomRepository.save(room);
-        return new CinemaRoomDTO(contextCinema.getId(), savedRoom.getNumber(), savedRoom.getCapacity());
+        UUID cinemaId = savedRoom.getCinema().getIdValue();
+        return new CinemaRoomDTO(cinemaId, savedRoom.getNumber(), savedRoom.getCapacity());
     }
 
     @Override
     public CinemaRoomDTO updateCapacity(Long roomId, int newCapacity) {
-        CinemaRoom room = cinemaRoomRepository.findById(roomId)
+        CinemaRoom room = cinemaRoomRepository.findById(new CinemaRoomId(roomId).getValue())
                 .orElseThrow(() -> new EntityNotFoundException("Room with id " + roomId + " not found"));
-        room.setCapacity(newCapacity);
+        room.updateCapacity(newCapacity);
         CinemaRoom updatedRoom = cinemaRoomRepository.save(room);
-        return new CinemaRoomDTO(updatedRoom.getCinema().getId(), updatedRoom.getNumber(), updatedRoom.getCapacity());
+        UUID cinemaId = updatedRoom.getCinema().getIdValue();
+        return new CinemaRoomDTO(cinemaId, updatedRoom.getNumber(), updatedRoom.getCapacity());
     }
 
     @Override
-    public List<CinemaRoomDTO> findByCinemaId(Long cinemaId) {
-        return cinemaRoomRepository.findByCinemaId(cinemaId).stream()
-                .map(room -> new CinemaRoomDTO(room.getCinema().getId(), room.getNumber(), room.getCapacity()))
+    public List<CinemaRoomDTO> findByCinemaId(UUID cinemaId) {
+
+        return cinemaRoomRepository.findByCinemaId(cinemaId.toString()).stream()
+                .map(room -> new CinemaRoomDTO(room.getCinema().getIdValue(), room.getNumber(), room.getCapacity()))
                 .toList();
     }
 
@@ -52,26 +59,17 @@ class ScreeningRoomService implements CinemaRoomService {
     }
 
     @Override
-    public void deleteByNumber(Long cinemaId, int roomNumber) {
-        cinemaRoomRepository.findByCinemaId(cinemaId).stream().filter(room -> room.getNumber() == roomNumber)
+    public void deleteByNumber(UUID cinemaId, int roomNumber) {
+        cinemaRoomRepository.findByCinemaId(cinemaId.toString()).stream()
+                .filter(isSameNumber(roomNumber))
                 .findFirst()
                 .ifPresentOrElse(cinemaRoomRepository::delete, () -> {
                     throw new EntityNotFoundException("Room with number " + roomNumber + " not found in cinema with id " + cinemaId);
                 });
     }
 
-    private int getSequentialRoomNumber(Cinema contextCinema) {
-        List<CinemaRoom> rooms = contextCinema.getRooms();
-
-        int roomNumber = 1;
-        for (CinemaRoom room : rooms) {
-            if (room.getNumber() != roomNumber) {
-                return roomNumber;
-            }
-            roomNumber++;
-        }
-
-        return roomNumber;
+    private static Predicate<CinemaRoom> isSameNumber(int roomNumber) {
+        return room -> room.getNumber() == roomNumber;
     }
 
 }

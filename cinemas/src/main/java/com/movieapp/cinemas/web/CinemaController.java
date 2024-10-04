@@ -1,16 +1,19 @@
 package com.movieapp.cinemas.web;
 
-import com.movieapp.cinemas.domain.model.CinemaDTO;
-import com.movieapp.cinemas.domain.model.CinemaInformation;
-import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
-import com.movieapp.cinemas.domain.service.CinemaService;
+import com.movieapp.cinemas.domain.entity.CinemaId;
+import com.movieapp.cinemas.service.model.CinemaDTO;
+import com.movieapp.cinemas.service.model.CinemaInformation;
+import com.movieapp.cinemas.service.CinemaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping
@@ -25,24 +28,32 @@ public class CinemaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CinemaDTO> findById(@PathVariable Long id) {
-        return ResponseEntity.of(cinemaService.readCinema(id));
+    public ResponseEntity<CinemaDTO> findById(@PathVariable String id) {
+        CinemaId cinemaId = new CinemaId(UUID.fromString(id));
+        CinemaDTO dto = cinemaService.findById(cinemaId);
+        return ResponseEntity.ok(dto);
     }
 
     @GetMapping
-    public ResponseEntity<CinemaDTO> findByName(@RequestParam String name) {
-        return ResponseEntity.of(cinemaService.findByName(name));
+    public ResponseEntity<List<CinemaDTO>> findAll(@PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
+        return ResponseEntity.ok(cinemaService.findAll(pageable.getPageNumber(), pageable.getPageSize()));
     }
-
-    @GetMapping
-    public ResponseEntity<List<CinemaDTO>> findAll() {
-        return ResponseEntity.ok(cinemaService.findAll());
+    @GetMapping("/search")
+    public ResponseEntity<CinemaDTO> findByName(@RequestParam(name = "name") String name) {
+        return ResponseEntity.ok(cinemaService.findByName(name));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable String id) {
+        CinemaId cinemaId = new CinemaId(UUID.fromString(id));
+        cinemaService.deleteById(cinemaId);
+        return ResponseEntity.noContent().build();
     }
 
     private URI getResponseURI(CinemaDTO cinemaDTO) {
         return ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(cinemaDTO.id()).toUri();
+                .buildAndExpand(cinemaDTO.id())
+                .toUri();
     }
 
 }

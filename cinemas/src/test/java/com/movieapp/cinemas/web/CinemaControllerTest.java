@@ -1,8 +1,8 @@
 package com.movieapp.cinemas.web;
 
-import com.movieapp.cinemas.domain.model.AddressInformation;
-import com.movieapp.cinemas.domain.model.CinemaDTO;
-import com.movieapp.cinemas.domain.model.CinemaInformation;
+import com.movieapp.cinemas.service.model.AddressInformation;
+import com.movieapp.cinemas.service.model.CinemaDTO;
+import com.movieapp.cinemas.service.model.CinemaInformation;
 import com.movieapp.cinemas.testcontainers.Containers;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;

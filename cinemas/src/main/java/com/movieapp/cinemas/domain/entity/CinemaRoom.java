@@ -9,16 +9,28 @@ import org.springframework.util.Assert;
 @Data
 @NoArgsConstructor
 public class CinemaRoom {
-    private @EmbeddedId CinemaRoomId id;
+    @EmbeddedId
+    private CinemaRoomId id;
+
     private int number;
+
     private int capacity;
-    private @ManyToOne @JoinColumn(name = "cinema_id", nullable = false) Cinema cinema;
+
+    @ManyToOne
+    @JoinColumn(name = "cinema_id", nullable = false)
+    private Cinema cinema;
 
     public CinemaRoom(int number, int capacity, Cinema cinema) {
         checkCinemaRoomConstraints(number, capacity, cinema);
+        this.id = new CinemaRoomId();
         this.number = number;
         this.capacity = capacity;
         this.cinema = cinema;
+    }
+
+    public void updateCapacity(int capacity) {
+        Assert.isTrue(capacity > 0, "Cinema room capacity must be greater than 0");
+        this.capacity = capacity;
     }
 
     private void checkCinemaRoomConstraints(int number, int capacity, Cinema cinema) {
