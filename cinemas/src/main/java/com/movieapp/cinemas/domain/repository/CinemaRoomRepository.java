@@ -11,6 +11,6 @@ import java.util.List;
 public interface CinemaRoomRepository extends JpaRepository<CinemaRoom, Long> {
 
     @Query("SELECT cinema_room FROM CinemaRoom cinema_room WHERE cinema_room.cinema.id = :cinemaId")
-    List<CinemaRoom> findByCinemaId(Long cinemaId);
+    List<CinemaRoom> findByCinemaId(String cinemaId);
 
 }

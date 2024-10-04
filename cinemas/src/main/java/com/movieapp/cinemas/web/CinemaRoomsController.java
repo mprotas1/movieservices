@@ -1,8 +1,8 @@
 package com.movieapp.cinemas.web;
 
-import com.movieapp.cinemas.domain.model.CinemaRoomDTO;
-import com.movieapp.cinemas.domain.model.CinemaRoomInformation;
-import com.movieapp.cinemas.domain.service.CinemaRoomService;
+import com.movieapp.cinemas.service.model.CinemaRoomDTO;
+import com.movieapp.cinemas.service.model.CinemaRoomInformation;
+import com.movieapp.cinemas.service.CinemaRoomService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

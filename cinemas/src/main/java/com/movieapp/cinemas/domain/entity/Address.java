@@ -5,24 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Embeddable
-@Data
-@NoArgsConstructor
-public class Address {
-    private String street;
-    private String city;
-    private String postalCode;
-
-    public Address(String street, String city, String postalCode) {
-        this.street = street;
-        this.city = city;
-        this.postalCode = postalCode;
-    }
+public record Address(String street, String city, String postalCode) {
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Address address = (Address) obj;
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        Address address = (Address) other;
         return street.equals(address.street) && city.equals(address.city) && postalCode.equals(address.postalCode);
     }
 

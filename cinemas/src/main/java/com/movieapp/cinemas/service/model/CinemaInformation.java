@@ -1,4 +1,4 @@
-package com.movieapp.cinemas.domain.model;
+package com.movieapp.cinemas.service.model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

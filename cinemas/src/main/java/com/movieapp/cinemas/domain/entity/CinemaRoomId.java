@@ -1,9 +1,23 @@
 package com.movieapp.cinemas.domain.entity;
 
-import org.springframework.util.Assert;
+import jakarta.persistence.Embeddable;
 
-public record CinemaRoomId(Long id) {
-    public CinemaRoomId {
-        Assert.notNull(id, "Cinema room id must not be null");
+@Embeddable
+public class CinemaRoomId {
+    private Long id;
+
+    public CinemaRoomId() {}
+
+    public CinemaRoomId(Long cinemaRoomId) {
+        setValue(cinemaRoomId);
     }
+
+    public Long getValue() {
+        return id;
+    }
+
+    public void setValue(Long id) {
+        this.id = id;
+    }
+
 }
