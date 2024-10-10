@@ -86,6 +86,28 @@ public class CinemaUnitTest {
         verify(cinemaRepository, times(1)).findByName("CinemaName");
     }
 
+    @Test
+    @DisplayName("Should not find Cinema by name")
+    void shouldNotFindCinemaByName() {
+        when(cinemaRepository.findByName("CinemaName")).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> cinemaService.findByName("CinemaName"));
+        verify(cinemaRepository, times(1)).findByName("CinemaName");
+    }
 
+    @Test
+    @DisplayName("Should delete Cinema by id")
+    void shouldDeleteCinemaById() {
+        when(cinemaRepository.findById(any())).thenReturn(Optional.of(exampleCinema));
+        cinemaService.deleteById(exampleCinema.getId());
+        verify(cinemaRepository, times(1)).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("Should not delete Cinema by id")
+    void shouldNotDeleteCinemaById() {
+        when(cinemaRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(EntityNotFoundException.class, () -> cinemaService.deleteById(exampleCinema.getId()));
+        verify(cinemaRepository, never()).deleteById(any());
+    }
 
 }
