@@ -12,6 +12,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 class ScreeningRoomService implements CinemaRoomService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+    @Qualifier("cinemaDatabaseRepository")
     private final CinemaRepository cinemaRepository;
     private final JpaCinemaRoomRepository jpaCinemaRoomRepository;
 
@@ -43,7 +45,7 @@ class ScreeningRoomService implements CinemaRoomService {
 
     @Override
     public CinemaRoomDTO updateCapacity(Long roomId, int newCapacity) {
-        CinemaRoom room = jpaCinemaRoomRepository.findById(new CinemaRoomId(roomId).getValue())
+        CinemaRoom room = jpaCinemaRoomRepository.findById(new CinemaRoomId(roomId))
                 .orElseThrow(() -> new EntityNotFoundException("Room with id " + roomId + " not found"));
         log.debug("Updating capacity for room with id {} from {} to {}", roomId, room.getCapacity(), newCapacity);
         room.updateCapacity(newCapacity);
@@ -63,7 +65,7 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     public void deleteRoom(Long roomId) {
         log.debug("Attempting to delete room with id {}", roomId);
-        jpaCinemaRoomRepository.deleteById(roomId);
+        jpaCinemaRoomRepository.deleteById(new CinemaRoomId(roomId));
     }
 
     @Override

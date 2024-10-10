@@ -36,18 +36,16 @@ public class CinemaInMemoryRepository implements CinemaRepository {
 
     @Override
     public List<Cinema> findAll(int page, int size) {
-        List<List<Cinema>> partitionedCinemas = new ArrayList<>();
         List<Cinema> cinemasList = new ArrayList<>(cinemas.values());
-        for (int i = 0; i < cinemasList.size(); i += size) {
-            partitionedCinemas.add(cinemasList.subList(i, Math.min(i + size, cinemasList.size())));
-        }
-        return partitionedCinemas.get(page);
+        int fromIndex = page * size;
+        int toIndex = Math.min(fromIndex + size, cinemasList.size());
+        return cinemasList.subList(fromIndex, toIndex);
     }
 
     @Override
     public List<Cinema> findByCity(String city) {
         return cinemas.values().stream()
-                .filter(cinema -> cinema.getAddress().getCity().equals(city))
+                .filter(cinema -> cinema.getAddress().city().equals(city))
                 .toList();
     }
 
@@ -65,4 +63,5 @@ public class CinemaInMemoryRepository implements CinemaRepository {
     public void deleteAll() {
         cinemas.clear();
     }
+
 }
