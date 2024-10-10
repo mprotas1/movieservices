@@ -16,6 +16,11 @@ public class DatabaseCinemaRoomRepository implements CinemaRoomRepository {
     private final JpaCinemaRoomRepository jpaRepository;
 
     @Override
+    public CinemaRoom save(CinemaRoom cinemaRoom) {
+        return jpaRepository.save(cinemaRoom);
+    }
+
+    @Override
     public List<CinemaRoom> findByCinemaId(String cinemaId) {
         return jpaRepository.findByCinemaId(cinemaId);
     }

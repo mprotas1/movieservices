@@ -4,6 +4,7 @@ import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
 import com.movieapp.cinemas.domain.entity.CinemaRoom;
 import com.movieapp.cinemas.domain.entity.CinemaRoomId;
+import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
 import com.movieapp.cinemas.service.model.CinemaRoomInformation;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
@@ -26,7 +27,7 @@ class ScreeningRoomService implements CinemaRoomService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
     @Qualifier("cinemaDatabaseRepository")
     private final CinemaRepository cinemaRepository;
-    private final JpaCinemaRoomRepository jpaCinemaRoomRepository;
+    private final CinemaRoomRepository jpaCinemaRoomRepository;
 
     @Override
     @Transactional
@@ -38,6 +39,7 @@ class ScreeningRoomService implements CinemaRoomService {
         log.debug("Adding room with number {} to cinema with id {}", roomNumber, roomInformation.cinemaId());
         CinemaRoom room = new CinemaRoom(roomNumber, roomInformation.capacity(), contextCinema);
         CinemaRoom savedRoom = jpaCinemaRoomRepository.save(room);
+        contextCinema.addRoom(savedRoom);
         UUID cinemaId = savedRoom.getCinema().getIdValue();
         log.debug("Room with number {} added to cinema with id {}", roomNumber, cinemaId);
         return new CinemaRoomDTO(cinemaId, savedRoom.getNumber(), savedRoom.getCapacity());
@@ -65,18 +67,13 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     public void deleteRoom(Long roomId) {
         log.debug("Attempting to delete room with id {}", roomId);
-        jpaCinemaRoomRepository.deleteById(new CinemaRoomId(roomId));
+        //jpaCinemaRoomRepository.deleteById(new CinemaRoomId(roomId));
     }
 
     @Override
     public void deleteByNumber(UUID cinemaId, int roomNumber) {
         log.debug("Attempting to delete room with number: {} from cinema with id: {}", roomNumber, cinemaId);
-        jpaCinemaRoomRepository.findByCinemaId(cinemaId.toString()).stream()
-                .filter(isSameNumber(roomNumber))
-                .findFirst()
-                .ifPresentOrElse(jpaCinemaRoomRepository::delete, () -> {
-                    throw new EntityNotFoundException("Room with number " + roomNumber + " not found in cinema with id " + cinemaId);
-                });
+
     }
 
     private static Predicate<CinemaRoom> isSameNumber(int roomNumber) {
