@@ -67,7 +67,7 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     public void deleteRoom(Long roomId) {
         log.debug("Attempting to delete room with id {}", roomId);
-        //jpaCinemaRoomRepository.deleteById(new CinemaRoomId(roomId));
+        jpaCinemaRoomRepository.deleteById(new CinemaRoomId(roomId));
     }
 
     @Override

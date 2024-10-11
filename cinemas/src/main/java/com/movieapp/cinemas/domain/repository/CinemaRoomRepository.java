@@ -11,4 +11,5 @@ public interface CinemaRoomRepository {
     List<CinemaRoom> findByCinemaId(String cinemaId);
     Optional<CinemaRoom> findById(CinemaRoomId cinemaRoomId);
     Optional<CinemaRoom> findByCinemaAndNumber(String cinemaId, int number);
+    void deleteById(CinemaRoomId cinemaRoomId);
 }
