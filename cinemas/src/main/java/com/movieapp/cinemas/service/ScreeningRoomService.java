@@ -33,7 +33,7 @@ class ScreeningRoomService implements CinemaRoomService {
     @Transactional
     public CinemaRoomDTO addRoom(CinemaRoomInformation roomInformation) {
         log.debug("Attempting to add room with capacity {} to cinema with id {}", roomInformation.capacity(), roomInformation.cinemaId());
-        Cinema contextCinema = cinemaRepository.findById(new CinemaId())
+        Cinema contextCinema = cinemaRepository.findById(new CinemaId(roomInformation.cinemaId()))
                 .orElseThrow(() -> new EntityNotFoundException("Cinema with id " + roomInformation.cinemaId() + " not found"));
         int roomNumber = contextCinema.getNextRoomNumber();
         log.debug("Adding room with number {} to cinema with id {}", roomNumber, roomInformation.cinemaId());
@@ -46,8 +46,8 @@ class ScreeningRoomService implements CinemaRoomService {
     }
 
     @Override
-    public CinemaRoomDTO updateCapacity(Long roomId, int newCapacity) {
-        CinemaRoom room = jpaCinemaRoomRepository.findById(new CinemaRoomId(roomId))
+    public CinemaRoomDTO updateCapacity(CinemaRoomId roomId, int newCapacity) {
+        CinemaRoom room = jpaCinemaRoomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("Room with id " + roomId + " not found"));
         log.debug("Updating capacity for room with id {} from {} to {}", roomId, room.getCapacity(), newCapacity);
         room.updateCapacity(newCapacity);
@@ -58,20 +58,20 @@ class ScreeningRoomService implements CinemaRoomService {
     }
 
     @Override
-    public List<CinemaRoomDTO> findByCinemaId(UUID cinemaId) {
+    public List<CinemaRoomDTO> findByCinemaId(CinemaId cinemaId) {
         return jpaCinemaRoomRepository.findByCinemaId(cinemaId.toString()).stream()
                 .map(room -> new CinemaRoomDTO(room.getCinema().getIdValue(), room.getNumber(), room.getCapacity()))
                 .toList();
     }
 
     @Override
-    public void deleteRoom(Long roomId) {
+    public void deleteRoom(CinemaRoomId roomId) {
         log.debug("Attempting to delete room with id {}", roomId);
-        jpaCinemaRoomRepository.deleteById(new CinemaRoomId(roomId));
+        jpaCinemaRoomRepository.deleteById(roomId);
     }
 
     @Override
-    public void deleteByNumber(UUID cinemaId, int roomNumber) {
+    public void deleteByNumber(CinemaId cinemaId, int roomNumber) {
         log.debug("Attempting to delete room with number: {} from cinema with id: {}", roomNumber, cinemaId);
 
     }

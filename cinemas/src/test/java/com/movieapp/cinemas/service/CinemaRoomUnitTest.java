@@ -1,9 +1,6 @@
 package com.movieapp.cinemas.service;
 
-import com.movieapp.cinemas.domain.entity.Address;
-import com.movieapp.cinemas.domain.entity.Cinema;
-import com.movieapp.cinemas.domain.entity.CinemaId;
-import com.movieapp.cinemas.domain.entity.CinemaRoom;
+import com.movieapp.cinemas.domain.entity.*;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
@@ -22,8 +19,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CinemaRoomUnitTest {
@@ -49,6 +45,9 @@ public class CinemaRoomUnitTest {
         assertEquals(roomInformation.capacity(), cinemaRoomDTO.capacity());
         assertEquals(roomInformation.cinemaId(), cinemaRoomDTO.cinemaId());
         assertEquals(nextRoomNumber, cinemaRoomDTO.number());
+
+        verify(cinemaRepository, times(1)).findById(any(CinemaId.class));
+        verify(roomRepository, times(1)).save(any(CinemaRoom.class));
     }
 
     @Test
@@ -77,7 +76,7 @@ public class CinemaRoomUnitTest {
         int newCapacity = 200;
         CinemaRoom updatedRoom = new CinemaRoom(1, newCapacity, exampleCinema);
         when(roomRepository.save(any(CinemaRoom.class))).thenReturn(updatedRoom);
-        CinemaRoomDTO cinemaRoomDTO = roomService.updateCapacity(1L, newCapacity);
+        CinemaRoomDTO cinemaRoomDTO = roomService.updateCapacity(updatedRoom.getId(), newCapacity);
         assertNotNull(cinemaRoomDTO);
         assertEquals(newCapacity, cinemaRoomDTO.capacity());
     }
@@ -88,8 +87,9 @@ public class CinemaRoomUnitTest {
         CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
         when(roomRepository.findById(any())).thenReturn(Optional.of(room));
         int newCapacity = -1;
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(1L, newCapacity));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(room.getId(), newCapacity));
         assertEquals("Cinema room capacity [-1] must be greater than 0", exception.getMessage());
+        verify(roomRepository, never()).save(any(CinemaRoom.class));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class CinemaRoomUnitTest {
         CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
         when(roomRepository.findById(any())).thenReturn(Optional.of(room));
         int newCapacity = 0;
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(1L, newCapacity));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(room.getId(), newCapacity));
         assertEquals("Cinema room capacity [0] must be greater than 0", exception.getMessage());
     }
 
@@ -107,9 +107,8 @@ public class CinemaRoomUnitTest {
     void shouldDeleteRoomByCinemaRoomId() {
         CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
         when(roomRepository.findById(any())).thenReturn(Optional.of(room));
-        roomService.deleteRoom(1L);
+        roomService.deleteRoom(room.getId());
         verify(roomRepository).deleteById(any());
     }
-
 
 }
