@@ -8,7 +8,6 @@ import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
 import com.movieapp.cinemas.service.model.CinemaRoomInformation;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
-import com.movieapp.cinemas.domain.repository.JpaCinemaRoomRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -27,7 +26,7 @@ class ScreeningRoomService implements CinemaRoomService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
     @Qualifier("cinemaDatabaseRepository")
     private final CinemaRepository cinemaRepository;
-    private final CinemaRoomRepository jpaCinemaRoomRepository;
+    private final CinemaRoomRepository cinemaRoomRepository;
 
     @Override
     @Transactional
@@ -37,8 +36,9 @@ class ScreeningRoomService implements CinemaRoomService {
                 .orElseThrow(() -> new EntityNotFoundException("Cinema with id " + roomInformation.cinemaId() + " not found"));
         int roomNumber = contextCinema.getNextRoomNumber();
         log.debug("Adding room with number {} to cinema with id {}", roomNumber, roomInformation.cinemaId());
+        validateExistsByNumber(contextCinema, roomNumber);
         CinemaRoom room = new CinemaRoom(roomNumber, roomInformation.capacity(), contextCinema);
-        CinemaRoom savedRoom = jpaCinemaRoomRepository.save(room);
+        CinemaRoom savedRoom = cinemaRoomRepository.save(room);
         contextCinema.addRoom(savedRoom);
         UUID cinemaId = savedRoom.getCinema().getIdValue();
         log.debug("Room with number {} added to cinema with id {}", roomNumber, cinemaId);
@@ -47,11 +47,11 @@ class ScreeningRoomService implements CinemaRoomService {
 
     @Override
     public CinemaRoomDTO updateCapacity(CinemaRoomId roomId, int newCapacity) {
-        CinemaRoom room = jpaCinemaRoomRepository.findById(roomId)
+        CinemaRoom room = cinemaRoomRepository.findById(roomId)
                 .orElseThrow(() -> new EntityNotFoundException("Room with id " + roomId + " not found"));
         log.debug("Updating capacity for room with id {} from {} to {}", roomId, room.getCapacity(), newCapacity);
         room.updateCapacity(newCapacity);
-        CinemaRoom updatedRoom = jpaCinemaRoomRepository.save(room);
+        CinemaRoom updatedRoom = cinemaRoomRepository.save(room);
         UUID cinemaId = updatedRoom.getCinema().getIdValue();
         log.debug("Capacity for room with id {} updated to {}", roomId, newCapacity);
         return new CinemaRoomDTO(cinemaId, updatedRoom.getNumber(), updatedRoom.getCapacity());
@@ -59,7 +59,7 @@ class ScreeningRoomService implements CinemaRoomService {
 
     @Override
     public List<CinemaRoomDTO> findByCinemaId(CinemaId cinemaId) {
-        return jpaCinemaRoomRepository.findByCinemaId(cinemaId.toString()).stream()
+        return cinemaRoomRepository.findByCinemaId(cinemaId.toString()).stream()
                 .map(room -> new CinemaRoomDTO(room.getCinema().getIdValue(), room.getNumber(), room.getCapacity()))
                 .toList();
     }
@@ -67,7 +67,7 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     public void deleteRoom(CinemaRoomId roomId) {
         log.debug("Attempting to delete room with id {}", roomId);
-        jpaCinemaRoomRepository.deleteById(roomId);
+        cinemaRoomRepository.deleteById(roomId);
     }
 
     @Override
@@ -75,6 +75,14 @@ class ScreeningRoomService implements CinemaRoomService {
         log.debug("Attempting to delete room with number: {} from cinema with id: {}", roomNumber, cinemaId);
 
     }
+
+    private void validateExistsByNumber(Cinema contextCinema, int roomNumber) {
+        cinemaRoomRepository.findByCinemaAndNumber(contextCinema.getIdValue().toString(), roomNumber)
+                .ifPresent(room -> {
+                    throw new IllegalArgumentException("Room with number " + roomNumber + " already exists in cinema with id " + contextCinema.getIdValue());
+                });
+    }
+
 
     private static Predicate<CinemaRoom> isSameNumber(int roomNumber) {
         return room -> room.getNumber() == roomNumber;
