@@ -83,7 +83,6 @@ class ScreeningRoomService implements CinemaRoomService {
                 });
     }
 
-
     private static Predicate<CinemaRoom> isSameNumber(int roomNumber) {
         return room -> room.getNumber() == roomNumber;
     }

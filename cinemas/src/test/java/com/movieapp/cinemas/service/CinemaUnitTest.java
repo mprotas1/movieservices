@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CinemaUnitTest {
+class CinemaUnitTest {
     @InjectMocks
     private TheatreService cinemaService;
     @Mock

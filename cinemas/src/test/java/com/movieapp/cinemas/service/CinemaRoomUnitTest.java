@@ -40,12 +40,12 @@ class CinemaRoomUnitTest {
         int nextRoomNumber = exampleCinema.getNextRoomNumber();
         CinemaRoom room = new CinemaRoom(nextRoomNumber, roomInformation.capacity(), exampleCinema);
         when(roomRepository.save(any(CinemaRoom.class))).thenReturn(room);
-        CinemaRoomDTO cinemaRoomDTO = roomService.addRoom(roomInformation);
+        CinemaRoomDTO result = roomService.addRoom(roomInformation);
 
-        assertNotNull(cinemaRoomDTO);
-        assertEquals(roomInformation.capacity(), cinemaRoomDTO.capacity());
-        assertEquals(roomInformation.cinemaId(), cinemaRoomDTO.cinemaId());
-        assertEquals(nextRoomNumber, cinemaRoomDTO.number());
+        assertNotNull(result);
+        assertEquals(roomInformation.capacity(), result.capacity());
+        assertEquals(roomInformation.cinemaId(), result.cinemaId());
+        assertEquals(nextRoomNumber, result.number());
 
         verify(cinemaRepository, times(1)).findById(any(CinemaId.class));
         verify(roomRepository, times(1)).save(any(CinemaRoom.class));
@@ -58,7 +58,6 @@ class CinemaRoomUnitTest {
         int nextRoomNumber = exampleCinema.getNextRoomNumber();
         when(cinemaRepository.findById(any(CinemaId.class))).thenReturn(Optional.of(exampleCinema));
         when(roomRepository.findByCinemaAndNumber(any(String.class), anyInt())).thenReturn(Optional.of(new CinemaRoom(nextRoomNumber, 100, exampleCinema)));
-        CinemaRoom room = new CinemaRoom(nextRoomNumber, roomInformation.capacity(), exampleCinema);
 
         assertThrows(IllegalArgumentException.class, () -> roomService.addRoom(roomInformation));
 
