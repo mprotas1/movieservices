@@ -1,27 +1,28 @@
 package com.movieapp.cinemas.service;
 
-import com.movieapp.cinemas.domain.entity.Address;
-import com.movieapp.cinemas.domain.entity.Cinema;
-import com.movieapp.cinemas.domain.entity.CinemaId;
-import com.movieapp.cinemas.domain.entity.CinemaRoom;
+import com.movieapp.cinemas.domain.entity.*;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
 import com.movieapp.cinemas.service.model.CinemaRoomInformation;
+import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CinemaRoomUnitTest {
+class CinemaRoomUnitTest {
     @InjectMocks
     private ScreeningRoomService roomService;
     @Mock
@@ -32,15 +33,102 @@ public class CinemaRoomUnitTest {
     private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "PostalCode"));
 
     @Test
+    @DisplayName("Should create CinemaRoom with valid data")
     void shouldCreateRoomWithValidData() {
         CinemaRoomInformation roomInformation = new CinemaRoomInformation(exampleCinema.getIdValue(), 100);
         when(cinemaRepository.findById(any(CinemaId.class))).thenReturn(Optional.of(exampleCinema));
         int nextRoomNumber = exampleCinema.getNextRoomNumber();
         CinemaRoom room = new CinemaRoom(nextRoomNumber, roomInformation.capacity(), exampleCinema);
         when(roomRepository.save(any(CinemaRoom.class))).thenReturn(room);
-        CinemaRoomDTO cinemaRoomDTO = roomService.addRoom(roomInformation);
+        CinemaRoomDTO result = roomService.addRoom(roomInformation);
+
+        assertNotNull(result);
+        assertEquals(roomInformation.capacity(), result.capacity());
+        assertEquals(roomInformation.cinemaId(), result.cinemaId());
+        assertEquals(nextRoomNumber, result.number());
+
+        verify(cinemaRepository, times(1)).findById(any(CinemaId.class));
+        verify(roomRepository, times(1)).save(any(CinemaRoom.class));
+    }
+
+    @Test
+    @DisplayName("Should not create CinemaRoom with existing CinemaRoom number")
+    void shouldNotCreateRoomWithExistingNumberInCinema() {
+        CinemaRoomInformation roomInformation = new CinemaRoomInformation(exampleCinema.getIdValue(), 100);
+        int nextRoomNumber = exampleCinema.getNextRoomNumber();
+        when(cinemaRepository.findById(any(CinemaId.class))).thenReturn(Optional.of(exampleCinema));
+        when(roomRepository.findByCinemaAndNumber(any(String.class), anyInt())).thenReturn(Optional.of(new CinemaRoom(nextRoomNumber, 100, exampleCinema)));
+
+        assertThrows(IllegalArgumentException.class, () -> roomService.addRoom(roomInformation));
+
+        verify(cinemaRepository, times(1)).findById(any(CinemaId.class));
+        verify(roomRepository, never()).save(any(CinemaRoom.class));
+    }
+
+    @Test
+    @DisplayName("Should not create CinemaRoom with invalid CinemaId")
+    void shouldNotCreateRoomWithInvalidCinemaId() {
+        CinemaRoomInformation roomInformation = new CinemaRoomInformation(Mockito.mock(UUID.class), 100);
+        when(cinemaRepository.findById(any(CinemaId.class))).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> roomService.addRoom(roomInformation));
+
+        verify(cinemaRepository, times(1)).findById(any(CinemaId.class));
+        verify(roomRepository, never()).save(any(CinemaRoom.class));
+    }
+
+    @Test
+    @DisplayName("Should update CinemaRoom capacity")
+    void shouldUpdateRoomCapacity() {
+        CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
+        when(roomRepository.findById(any())).thenReturn(Optional.of(room));
+        int newCapacity = 200;
+        CinemaRoom updatedRoom = new CinemaRoom(1, newCapacity, exampleCinema);
+        when(roomRepository.save(any(CinemaRoom.class))).thenReturn(updatedRoom);
+        CinemaRoomDTO cinemaRoomDTO = roomService.updateCapacity(updatedRoom.getId(), newCapacity);
 
         assertNotNull(cinemaRoomDTO);
+        assertEquals(newCapacity, cinemaRoomDTO.capacity());
+
+        verify(roomRepository, times(1)).findById(any());
+        verify(roomRepository, times(1)).save(any(CinemaRoom.class));
+    }
+
+    @Test
+    @DisplayName("Should not update CinemaRoom capacity with negative value")
+    void shouldNotUpdateRoomCapacityWithNegativeValue() {
+        CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
+        when(roomRepository.findById(any())).thenReturn(Optional.of(room));
+        int newCapacity = -1;
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(room.getId(), newCapacity));
+
+        assertEquals("Cinema room capacity [-1] must be greater than 0", exception.getMessage());
+
+        verify(roomRepository, times(1)).findById(any(CinemaRoomId.class));
+        verify(roomRepository, never()).save(any(CinemaRoom.class));
+    }
+
+    @Test
+    @DisplayName("Should not update CinemaRoom capacity with zero value")
+    void shouldNotUpdateRoomCapacityWithZeroValue() {
+        CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
+        when(roomRepository.findById(any())).thenReturn(Optional.of(room));
+        int newCapacity = 0;
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(room.getId(), newCapacity));
+
+        assertEquals("Cinema room capacity [0] must be greater than 0", exception.getMessage());
+
+        verify(roomRepository, times(1)).findById(any(CinemaRoomId.class));
+        verify(roomRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Should delete CinemaRoom by CinemaRoomId")
+    void shouldDeleteRoomByCinemaRoomId() {
+        CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
+        roomService.deleteRoom(room.getId());
+
+        verify(roomRepository, times(1)).deleteById(any());
     }
 
 }

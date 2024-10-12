@@ -35,4 +35,9 @@ public class DatabaseCinemaRoomRepository implements CinemaRoomRepository {
         return Optional.empty();
     }
 
+    @Override
+    public void deleteById(CinemaRoomId cinemaRoomId) {
+        jpaRepository.deleteById(cinemaRoomId);
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.movieapp.cinemas.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
@@ -29,7 +30,7 @@ public class CinemaRoom {
     }
 
     public void updateCapacity(int capacity) {
-        Assert.isTrue(capacity > 0, "Cinema room capacity must be greater than 0");
+        Assert.isTrue(capacity > 0, String.format("Cinema room capacity [%d] must be greater than 0", capacity));
         this.capacity = capacity;
     }
 

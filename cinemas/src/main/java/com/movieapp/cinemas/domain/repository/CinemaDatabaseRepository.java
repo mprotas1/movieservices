@@ -3,14 +3,16 @@ package com.movieapp.cinemas.domain.repository;
 import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
+@Repository(value = "cinemaDatabaseRepository")
 @RequiredArgsConstructor
+@Primary
 class CinemaDatabaseRepository implements CinemaRepository {
     private final CinemaJpaRepository cinemaJpaRepository;
 
