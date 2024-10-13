@@ -16,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,6 +102,18 @@ class CinemaControllerTest extends Containers {
 
         assertEquals(HttpStatus.NO_CONTENT, deleteResponse.getStatusCode());
         assertEquals(0, cinemaRepository.findAll().size());
+    }
+
+    @Test
+    @DisplayName("When creating cinema with invalid Cinema's name - return 400 BAD REQUEST and ProblemDetail")
+    void shouldReturnBadRequestWhenCreatingCinemaWithInvalidName() {
+        CinemaInformation cinemaInformation = new CinemaInformation("", new AddressInformation("Blank Street", "Blank City", "00-000"));
+
+        ResponseEntity<ProblemDetail> postCinemaResponseEntity = restTemplate.postForEntity("/", cinemaInformation, ProblemDetail.class);
+        ProblemDetail problemDetail = postCinemaResponseEntity.getBody();
+
+        assertEquals(HttpStatus.BAD_REQUEST, postCinemaResponseEntity.getStatusCode());
+        assertNotNull(problemDetail);
     }
 
 }
