@@ -2,22 +2,39 @@ package com.movieapp.cinemas.domain.entity;
 
 import jakarta.persistence.Embeddable;
 
+import java.util.UUID;
+
 @Embeddable
 public class CinemaRoomId {
-    private Long id;
+    private UUID uuid;
 
-    public CinemaRoomId() {}
+    public CinemaRoomId() {
+        this.uuid = UUID.randomUUID();
+    }
 
-    public CinemaRoomId(Long cinemaRoomId) {
+    public CinemaRoomId(UUID cinemaRoomId) {
         setValue(cinemaRoomId);
     }
 
-    public Long getValue() {
-        return id;
+    public UUID getValue() {
+        return uuid;
     }
 
-    public void setValue(Long id) {
-        this.id = id;
+    public void setValue(UUID uuid) {
+        this.uuid = uuid;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CinemaRoomId)) return false;
+        CinemaRoomId that = (CinemaRoomId) o;
+        return uuid.equals(that.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return uuid.hashCode();
     }
 
 }

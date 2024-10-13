@@ -10,10 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-@Repository(value = "cinemaDatabaseRepository")
+@Repository
 @RequiredArgsConstructor
 @Primary
-class CinemaDatabaseRepository implements CinemaRepository {
+class DatabaseCinemaRepository implements CinemaRepository {
     private final CinemaJpaRepository cinemaJpaRepository;
 
     @Override
