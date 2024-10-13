@@ -7,17 +7,17 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 
 @Repository
-public class CinemaInMemoryRepository implements CinemaRepository {
+public class InMemoryCinemaRepository implements CinemaRepository {
     private final Map<CinemaId, Cinema> cinemas;
 
-    public CinemaInMemoryRepository() {
+    public InMemoryCinemaRepository() {
         this.cinemas = new HashMap<>();
     }
 
     @Override
     public Optional<Cinema> findById(CinemaId id) {
         return cinemas.entrySet().stream()
-                .filter(entry -> entry.getKey().equals(id))
+                .filter(entry -> entry.getKey().getUuid().equals(id.getUuid()))
                 .map(Map.Entry::getValue)
                 .findFirst();
     }
@@ -51,12 +51,16 @@ public class CinemaInMemoryRepository implements CinemaRepository {
 
     @Override
     public Cinema save(Cinema cinema) {
-        return cinemas.put(cinema.getId(), cinema);
+        cinemas.put(cinema.getId(), cinema);
+        return cinema;
     }
 
     @Override
     public void deleteById(CinemaId id) {
-        cinemas.remove(id);
+        cinemas.entrySet().stream()
+                .filter(entry -> entry.getKey().getUuid().equals(id.getUuid()))
+                .findFirst()
+                .ifPresent(entry -> cinemas.remove(entry.getKey()));
     }
 
     @Override
