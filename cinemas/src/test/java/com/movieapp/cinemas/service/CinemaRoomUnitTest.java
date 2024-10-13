@@ -57,7 +57,7 @@ class CinemaRoomUnitTest {
         CinemaRoomInformation roomInformation = new CinemaRoomInformation(exampleCinema.getIdValue(), 100);
         int nextRoomNumber = exampleCinema.getNextRoomNumber();
         when(cinemaRepository.findById(any(CinemaId.class))).thenReturn(Optional.of(exampleCinema));
-        when(roomRepository.findByCinemaAndNumber(any(String.class), anyInt())).thenReturn(Optional.of(new CinemaRoom(nextRoomNumber, 100, exampleCinema)));
+        when(roomRepository.findByCinemaAndNumber(any(CinemaId.class), anyInt())).thenReturn(Optional.of(new CinemaRoom(nextRoomNumber, 100, exampleCinema)));
 
         assertThrows(IllegalArgumentException.class, () -> roomService.addRoom(roomInformation));
 
