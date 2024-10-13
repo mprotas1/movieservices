@@ -6,7 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
-@Entity @Table(name = "cinema_rooms")
+import java.util.List;
+
+@Entity
+@Table(name = "cinema_rooms")
 @Data
 @NoArgsConstructor
 public class CinemaRoom {
@@ -21,12 +24,20 @@ public class CinemaRoom {
     @JoinColumn(name = "cinema_id", nullable = false)
     private Cinema cinema;
 
+    @OneToMany(mappedBy = "room", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private List<Seat> seats;
+
     public CinemaRoom(int number, int capacity, Cinema cinema) {
         checkCinemaRoomConstraints(number, capacity, cinema);
         this.id = new CinemaRoomId();
         this.number = number;
         this.capacity = capacity;
         this.cinema = cinema;
+        createSeats();
+    }
+
+    private void createSeats() {
+
     }
 
     public void updateCapacity(int capacity) {
