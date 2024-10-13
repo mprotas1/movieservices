@@ -1,9 +1,6 @@
 package com.movieapp.cinemas.domain.entity;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity(name = "seats")
@@ -13,6 +10,9 @@ public class Seat {
     private SeatId id;
     @Embedded
     private SeatPosition position;
+    @Enumerated(EnumType.STRING)
+    private SeatType seatType;
     @ManyToOne
+    @JoinColumn(name = "cinema_room_id", nullable = false)
     private CinemaRoom room;
 }
