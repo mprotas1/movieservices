@@ -116,4 +116,19 @@ class CinemaControllerTest extends Containers {
         assertNotNull(problemDetail);
     }
 
+    @Test
+    @DisplayName("When creating cinema with existing Cinema's name - return 400 BAD REQUEST and ProblemDetail")
+    void shouldReturnBadRequestWhenCreatingCinemaWithExistingName() {
+        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000")));
+        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name", new AddressInformation("Blank Street", "Blank City", "00-000"));
+
+        ResponseEntity<ProblemDetail> postCinemaResponseEntity = restTemplate.postForEntity("/", cinemaInformation, ProblemDetail.class);
+        ProblemDetail problemDetail = postCinemaResponseEntity.getBody();
+
+        assertEquals(HttpStatus.CONFLICT, postCinemaResponseEntity.getStatusCode());
+        assertNotNull(problemDetail);
+        assertEquals(String.format("Cinema with name: %s already exists", cinema.getName()), problemDetail.getDetail());
+        assertEquals(409, problemDetail.getStatus());
+    }
+
 }
