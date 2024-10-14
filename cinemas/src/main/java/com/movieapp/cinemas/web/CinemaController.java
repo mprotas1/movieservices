@@ -18,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-public class CinemaController {
+class CinemaController {
     private final CinemaService cinemaService;
 
     @PostMapping
@@ -38,10 +38,12 @@ public class CinemaController {
     public ResponseEntity<List<CinemaDTO>> findAll(@PageableDefault(size = Integer.MAX_VALUE, page = 0) Pageable pageable) {
         return ResponseEntity.ok(cinemaService.findAll(pageable.getPageNumber(), pageable.getPageSize()));
     }
+
     @GetMapping("/search")
     public ResponseEntity<CinemaDTO> findByName(@RequestParam(name = "name") String name) {
         return ResponseEntity.ok(cinemaService.findByName(name));
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable String id) {
         CinemaId cinemaId = new CinemaId(UUID.fromString(id));
