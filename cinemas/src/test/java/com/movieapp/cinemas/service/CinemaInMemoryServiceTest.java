@@ -1,5 +1,7 @@
 package com.movieapp.cinemas.service;
 
+import com.movieapp.cinemas.domain.entity.Address;
+import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
 import com.movieapp.cinemas.domain.repository.InMemoryCinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
@@ -10,6 +12,8 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.UUID;
 
@@ -38,6 +42,14 @@ class CinemaInMemoryServiceTest {
 
         assertNotNull(cinema);
         assertEquals(information.name(), cinema.name());
+    }
+
+    @ParameterizedTest
+    @CsvSource({" , Street, PostalCode", "City, , 00-000", "City, Street, "})
+    void shouldRejectCinemaWithInvalidAddress(String city, String street, String postalCode) {
+        AddressInformation cinemaAddressInformation = new AddressInformation(city, street, postalCode);
+        CinemaInformation cinema = new CinemaInformation("CinemaName", cinemaAddressInformation);
+        assertThrows(IllegalArgumentException.class, () -> cinemaService.createCinema(cinema));
     }
 
     @Test
