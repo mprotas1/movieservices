@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpMethod;
@@ -114,6 +115,7 @@ class CinemaControllerTest extends Containers {
 
         assertEquals(HttpStatus.BAD_REQUEST, postCinemaResponseEntity.getStatusCode());
         assertNotNull(problemDetail);
+        assertEquals("Name must not be blank", problemDetail.getDetail());
     }
 
     @Test

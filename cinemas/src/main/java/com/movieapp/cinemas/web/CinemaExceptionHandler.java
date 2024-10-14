@@ -1,6 +1,7 @@
 package com.movieapp.cinemas.web;
 
 import jakarta.persistence.EntityExistsException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -13,8 +14,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 class CinemaExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ProblemDetail> handleConstraintViolationException(ConstraintViolationException ex) {
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+    public ResponseEntity<ProblemDetail> handleConstraintViolationException(ConstraintViolationException constraintException) {
+        String message = getConstraintViolationMessage(constraintException);
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, message);
         return ResponseEntity.badRequest().body(detail);
     }
 
@@ -22,6 +24,13 @@ class CinemaExceptionHandler {
     public ResponseEntity<ProblemDetail> handleEntityExistsException(EntityExistsException ex) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
+    }
+
+    private String getConstraintViolationMessage(ConstraintViolationException ex) {
+        return ex.getConstraintViolations().stream()
+                .map(ConstraintViolation::getMessage)
+                .reduce((s1, s2) -> s1 + ", " + s2)
+                .orElse("Unexpected constraint violation");
     }
 
 }
