@@ -65,6 +65,15 @@ class CinemaControllerTest extends Containers {
     }
 
     @Test
+    @DisplayName("When finding cinema by id that does not exist then return 404 NOT FOUND status code")
+    void shouldReturnNotFoundWhenCinemaDoesNotExist() {
+        ResponseEntity<ProblemDetail> getCinemaResponseEntity = restTemplate.getForEntity("/{id}", ProblemDetail.class, "00000000-0000-0000-0000-000000000000");
+
+        assertEquals(HttpStatus.NOT_FOUND, getCinemaResponseEntity.getStatusCode());
+        assertNotNull(getCinemaResponseEntity.getBody());
+    }
+
+    @Test
     @DisplayName("When finding all cinemas then return 200 OK status code and all DTOs")
     void shouldFindAllCinemas() {
         Cinema firstCinema = cinemaRepository.save(new Cinema("Cinema Name 1", new Address("Blank Street 1", "Blank City 1", "00-001")));
