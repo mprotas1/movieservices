@@ -1,6 +1,9 @@
 package com.movieapp.cinemas.service;
 
+import com.movieapp.cinemas.domain.entity.Address;
+import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
+import com.movieapp.cinemas.domain.entity.CountryCode;
 import com.movieapp.cinemas.domain.repository.InMemoryCinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.service.model.AddressInformation;
@@ -10,6 +13,8 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.UUID;
 
@@ -26,7 +31,7 @@ class CinemaInMemoryServiceTest {
         cinemaRepository = new InMemoryCinemaRepository();
         cinemaService = new TheatreService(cinemaRepository);
 
-        AddressInformation cinemaAddressInformation = new AddressInformation("City", "Street", "PostalCode");
+        AddressInformation cinemaAddressInformation = new AddressInformation("City", "Street", "00-000", CountryCode.PL);
         information = new CinemaInformation("CinemaName", cinemaAddressInformation);
 
         cinemaRepository.deleteAll();
@@ -40,9 +45,17 @@ class CinemaInMemoryServiceTest {
         assertEquals(information.name(), cinema.name());
     }
 
+    @ParameterizedTest
+    @CsvSource({" , Street, PostalCode", "City, , 00-000", "City, Street, "})
+    void shouldRejectCinemaWithInvalidAddress(String city, String street, String postalCode) {
+        AddressInformation cinemaAddressInformation = new AddressInformation(city, street, postalCode, CountryCode.PL);
+        CinemaInformation cinema = new CinemaInformation("CinemaName", cinemaAddressInformation);
+        assertThrows(IllegalArgumentException.class, () -> cinemaService.createCinema(cinema));
+    }
+
     @Test
     void shouldNotCreateCinemaWithInvalidData() {
-        CinemaInformation information = new CinemaInformation(null, new AddressInformation("City", "Street", "PostalCode"));
+        CinemaInformation information = new CinemaInformation(null, new AddressInformation("City", "Street", "00-000", CountryCode.PL));
         assertThrows(IllegalArgumentException.class, () -> cinemaService.createCinema(information));
     }
 

@@ -50,7 +50,7 @@ class TheatreService implements CinemaService {
         log.debug("Creating cinema: {}", cinema);
         validateCinemaExistsByName(cinema.name());
         AddressInformation address = cinema.address();
-        Cinema toSave = new Cinema(cinema.name(), new Address(address.street(), address.city(), address.postalCode()));
+        Cinema toSave = new Cinema(cinema.name(), AddressInformation.toEntity(cinema.address()));
         Cinema saved = cinemaRepository.save(toSave);
         log.debug("Saved cinema: {}", saved);
         return CinemaDTO.fromEntity(saved);

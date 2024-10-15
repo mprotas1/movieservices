@@ -2,6 +2,7 @@ package com.movieapp.cinemas.service;
 
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
+import com.movieapp.cinemas.domain.entity.CountryCode;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import com.movieapp.cinemas.service.model.CinemaDTO;
@@ -28,8 +29,8 @@ class CinemaUnitTest {
     @Mock
     private CinemaRepository cinemaRepository;
 
-    private final CinemaInformation exampleCinemaInfo = new CinemaInformation("CinemaName", new AddressInformation("City", "Street", "PostalCode"));
-    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "PostalCode"));
+    private final CinemaInformation exampleCinemaInfo = new CinemaInformation("CinemaName", new AddressInformation("City", "Street", "00-000", CountryCode.PL));
+    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL));
 
     @Test
     @DisplayName("Should create Cinema with valid data")
@@ -44,7 +45,7 @@ class CinemaUnitTest {
     @Test
     @DisplayName("Should not create Cinema with null name")
     void shouldNotCreateCinemaWithInvalidData() {
-        CinemaInformation cinemaInfo = new CinemaInformation(null, new AddressInformation("City", "Street", "PostalCode"));
+        CinemaInformation cinemaInfo = new CinemaInformation(null, new AddressInformation("City", "Street", "00-000", CountryCode.PL));
         assertThrows(IllegalArgumentException.class, () -> cinemaService.createCinema(cinemaInfo));
         verify(cinemaRepository, never()).save(any(Cinema.class));
     }

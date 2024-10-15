@@ -1,9 +1,6 @@
 package com.movieapp.cinemas.service;
 
-import com.movieapp.cinemas.domain.entity.Address;
-import com.movieapp.cinemas.domain.entity.Cinema;
-import com.movieapp.cinemas.domain.entity.CinemaRoom;
-import com.movieapp.cinemas.domain.entity.CinemaRoomId;
+import com.movieapp.cinemas.domain.entity.*;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.domain.repository.InMemoryCinemaRepository;
@@ -34,7 +31,7 @@ class CinemaRoomInMemoryServiceTest {
         cinemaService = new TheatreService(cinemaRepository);
         cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository);
 
-        parentCinema = cinemaRepository.save(new Cinema("CinemaName", new Address("City", "Street", "PostalCode")));
+        parentCinema = cinemaRepository.save(new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL)));
         cinemaRoomRepository.deleteAll();
     }
 
