@@ -1,0 +1,1 @@
+ALTER TABLE `seats` RENAME COLUMN `row` TO `row_number`;
