@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 public record AddressInformation(@NotBlank String street,
                                  @NotBlank String city,
                                  @NotBlank String postalCode,
-                                 @NotBlank CountryCode countryCode) {
+                                 CountryCode countryCode) {
 
     public static AddressInformation fromEntity(Address address) {
         return new AddressInformation(address.street(), address.city(), address.postalCode(), address.countryCode());
