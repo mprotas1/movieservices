@@ -3,6 +3,7 @@ package com.movieapp.cinemas.web;
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
+import com.movieapp.cinemas.domain.entity.CountryCode;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import com.movieapp.cinemas.service.model.CinemaDTO;
@@ -38,7 +39,7 @@ class CinemaControllerTest extends Containers {
     @Test
     @DisplayName("When creating cinema then return 201 CREATED status code and DTO")
     void shouldCreateCinema() {
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name", new AddressInformation("Blank Street", "Blank City", "00-000"));
+        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name", new AddressInformation("Blank Street", "Blank City", "00-000", CountryCode.PL));
 
         ResponseEntity<CinemaDTO> postCinemaResponseEntity = restTemplate.postForEntity("/", cinemaInformation, CinemaDTO.class);
         CinemaDTO cinemaResponse = postCinemaResponseEntity.getBody();
@@ -52,7 +53,7 @@ class CinemaControllerTest extends Containers {
     @Test
     @DisplayName("When finding cinema by id then return 200 OK status code and DTO")
     void shouldFindCinemaById() {
-        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000")));
+        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
         CinemaId cinemaId = cinema.getId();
 
         ResponseEntity<CinemaDTO> getCinemaResponseEntity = restTemplate.getForEntity("/{id}", CinemaDTO.class, cinemaId.getUuid().toString());
@@ -76,8 +77,8 @@ class CinemaControllerTest extends Containers {
     @Test
     @DisplayName("When finding all cinemas then return 200 OK status code and all DTOs")
     void shouldFindAllCinemas() {
-        Cinema firstCinema = cinemaRepository.save(new Cinema("Cinema Name 1", new Address("Blank Street 1", "Blank City 1", "00-001")));
-        Cinema secondCinema = cinemaRepository.save(new Cinema("Cinema Name 2", new Address("Blank Street 2", "Blank City 2", "00-002")));
+        Cinema firstCinema = cinemaRepository.save(new Cinema("Cinema Name 1", new Address("Blank Street 1", "Blank City 1", "00-001", CountryCode.PL)));
+        Cinema secondCinema = cinemaRepository.save(new Cinema("Cinema Name 2", new Address("Blank Street 2", "Blank City 2", "00-002", CountryCode.PL)));
 
         ResponseEntity<CinemaDTO[]> getCinemasResponseEntity = restTemplate.getForEntity("/", CinemaDTO[].class);
         CinemaDTO[] foundCinemasDTO = getCinemasResponseEntity.getBody();
@@ -90,7 +91,7 @@ class CinemaControllerTest extends Containers {
     @Test
     @DisplayName("When finding cinema by name then return 200 OK status code and DTO")
     void shouldFindCinemaByName() {
-        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000")));
+        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
 
         ResponseEntity<CinemaDTO> getCinemaResponseEntity = restTemplate.getForEntity("/search?name={name}", CinemaDTO.class, cinema.getName());
         CinemaDTO foundCinemaDTO = getCinemaResponseEntity.getBody();
@@ -103,7 +104,7 @@ class CinemaControllerTest extends Containers {
     @Test
     @DisplayName("When deleting cinema then return 204 NO CONTENT status code")
     void shouldDeleteCinemaById() {
-        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000")));
+        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
         CinemaId cinemaId = cinema.getId();
 
         assertTrue(cinemaRepository.findById(cinemaId).isPresent());
@@ -117,7 +118,7 @@ class CinemaControllerTest extends Containers {
     @Test
     @DisplayName("When creating cinema with invalid Cinema's name - return 400 BAD REQUEST and ProblemDetail")
     void shouldReturnBadRequestWhenCreatingCinemaWithInvalidName() {
-        CinemaInformation cinemaInformation = new CinemaInformation("", new AddressInformation("Blank Street", "Blank City", "00-000"));
+        CinemaInformation cinemaInformation = new CinemaInformation("", new AddressInformation("Blank Street", "Blank City", "00-000", CountryCode.PL));
 
         ResponseEntity<ProblemDetail> postCinemaResponseEntity = restTemplate.postForEntity("/", cinemaInformation, ProblemDetail.class);
         ProblemDetail problemDetail = postCinemaResponseEntity.getBody();
@@ -130,8 +131,8 @@ class CinemaControllerTest extends Containers {
     @Test
     @DisplayName("When creating cinema with existing Cinema's name - return 400 BAD REQUEST and ProblemDetail")
     void shouldReturnBadRequestWhenCreatingCinemaWithExistingName() {
-        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000")));
-        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name", new AddressInformation("Blank Street", "Blank City", "00-000"));
+        Cinema cinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
+        CinemaInformation cinemaInformation = new CinemaInformation("Cinema Name", new AddressInformation("Blank Street", "Blank City", "00-000", CountryCode.PL));
 
         ResponseEntity<ProblemDetail> postCinemaResponseEntity = restTemplate.postForEntity("/", cinemaInformation, ProblemDetail.class);
         ProblemDetail problemDetail = postCinemaResponseEntity.getBody();

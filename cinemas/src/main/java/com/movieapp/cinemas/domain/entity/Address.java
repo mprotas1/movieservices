@@ -1,12 +1,16 @@
 package com.movieapp.cinemas.domain.entity;
 
+import com.movieapp.cinemas.domain.policy.PostalCodePolicy;
+import com.movieapp.cinemas.domain.policy.PostalCodePolicyFactory;
 import jakarta.persistence.Embeddable;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Transient;
 import org.springframework.util.Assert;
 
 @Embeddable
-public record Address(String street, String city, String postalCode) {
+public record Address(String street,
+                      String city,
+                      String postalCode,
+                      @Transient CountryCode countryCode) {
 
     public Address {
         Assert.notNull(street, "Street must not be null");
@@ -17,6 +21,15 @@ public record Address(String street, String city, String postalCode) {
 
         Assert.notNull(postalCode, "Postal code must not be null");
         Assert.hasText(postalCode, "Postal code must not be empty");
+
+        Assert.notNull(countryCode, "Country code must not be null");
+
+        Assert.isTrue(hasValidPostalCode(), "Postal code must be valid");
+    }
+
+    private boolean hasValidPostalCode() {
+        PostalCodePolicy postalCodePolicy = PostalCodePolicyFactory.getPolicy(this.countryCode());
+        return postalCodePolicy.isValid(this.postalCode());
     }
 
     @Override
