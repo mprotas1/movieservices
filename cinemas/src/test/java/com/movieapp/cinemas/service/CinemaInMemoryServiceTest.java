@@ -31,7 +31,7 @@ class CinemaInMemoryServiceTest {
         cinemaRepository = new InMemoryCinemaRepository();
         cinemaService = new TheatreService(cinemaRepository);
 
-        AddressInformation cinemaAddressInformation = new AddressInformation("City", "Street", "PostalCode", CountryCode.PL);
+        AddressInformation cinemaAddressInformation = new AddressInformation("City", "Street", "00-000", CountryCode.PL);
         information = new CinemaInformation("CinemaName", cinemaAddressInformation);
 
         cinemaRepository.deleteAll();
@@ -55,7 +55,7 @@ class CinemaInMemoryServiceTest {
 
     @Test
     void shouldNotCreateCinemaWithInvalidData() {
-        CinemaInformation information = new CinemaInformation(null, new AddressInformation("City", "Street", "PostalCode", CountryCode.PL));
+        CinemaInformation information = new CinemaInformation(null, new AddressInformation("City", "Street", "00-000", CountryCode.PL));
         assertThrows(IllegalArgumentException.class, () -> cinemaService.createCinema(information));
     }
 

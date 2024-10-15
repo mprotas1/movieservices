@@ -1,0 +1,1 @@
+ALTER TABLE `cinemas` ADD COLUMN `country_code` VARCHAR(3) NOT NULL DEFAULT 'PL';

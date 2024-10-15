@@ -30,7 +30,7 @@ class CinemaRoomUnitTest {
     @Mock
     private CinemaRepository cinemaRepository;
 
-    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "PostalCode", CountryCode.PL));
+    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL));
 
     @Test
     @DisplayName("Should create CinemaRoom with valid data")

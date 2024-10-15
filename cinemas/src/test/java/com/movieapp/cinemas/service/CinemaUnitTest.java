@@ -29,8 +29,8 @@ class CinemaUnitTest {
     @Mock
     private CinemaRepository cinemaRepository;
 
-    private final CinemaInformation exampleCinemaInfo = new CinemaInformation("CinemaName", new AddressInformation("City", "Street", "PostalCode", CountryCode.PL));
-    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "PostalCode", CountryCode.PL));
+    private final CinemaInformation exampleCinemaInfo = new CinemaInformation("CinemaName", new AddressInformation("City", "Street", "00-000", CountryCode.PL));
+    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL));
 
     @Test
     @DisplayName("Should create Cinema with valid data")
@@ -45,7 +45,7 @@ class CinemaUnitTest {
     @Test
     @DisplayName("Should not create Cinema with null name")
     void shouldNotCreateCinemaWithInvalidData() {
-        CinemaInformation cinemaInfo = new CinemaInformation(null, new AddressInformation("City", "Street", "PostalCode", CountryCode.PL));
+        CinemaInformation cinemaInfo = new CinemaInformation(null, new AddressInformation("City", "Street", "00-000", CountryCode.PL));
         assertThrows(IllegalArgumentException.class, () -> cinemaService.createCinema(cinemaInfo));
         verify(cinemaRepository, never()).save(any(Cinema.class));
     }

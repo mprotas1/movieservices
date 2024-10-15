@@ -31,7 +31,7 @@ class CinemaRoomInMemoryServiceTest {
         cinemaService = new TheatreService(cinemaRepository);
         cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository);
 
-        parentCinema = cinemaRepository.save(new Cinema("CinemaName", new Address("City", "Street", "PostalCode", CountryCode.PL)));
+        parentCinema = cinemaRepository.save(new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL)));
         cinemaRoomRepository.deleteAll();
     }
 
