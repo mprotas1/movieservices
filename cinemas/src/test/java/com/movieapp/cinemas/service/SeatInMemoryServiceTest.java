@@ -7,6 +7,7 @@ import com.movieapp.cinemas.domain.repository.InMemoryCinemaRepository;
 import com.movieapp.cinemas.domain.repository.InMemoryCinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
 import com.movieapp.cinemas.service.model.CinemaRoomInformation;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,11 @@ class SeatInMemoryServiceTest {
         cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository);
 
         baseCinema = cinemaRepository.save(baseCinema);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        cinemaRepository.deleteAll();
     }
 
     @Test
