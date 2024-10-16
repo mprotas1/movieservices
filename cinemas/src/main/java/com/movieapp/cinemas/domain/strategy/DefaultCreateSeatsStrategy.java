@@ -23,7 +23,7 @@ public class DefaultCreateSeatsStrategy implements CreateSeatsStrategy {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < SEAT_PER_ROW; j++) {
-                if(seats.size() >= room.getCapacity()) {
+                if(room.exceedsCapacity(seats.size())) {
                     break;
                 }
 

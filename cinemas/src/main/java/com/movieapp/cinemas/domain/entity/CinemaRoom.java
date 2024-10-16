@@ -52,8 +52,8 @@ public class CinemaRoom {
         Assert.notNull(cinema, "Cinema must not be null");
     }
 
-    public boolean exceedsCapacity(int a) {
-        return a > capacity;
+    public boolean exceedsCapacity(int numberOfSeats) {
+        return numberOfSeats >= capacity;
     }
 
     private void createSeats() {
