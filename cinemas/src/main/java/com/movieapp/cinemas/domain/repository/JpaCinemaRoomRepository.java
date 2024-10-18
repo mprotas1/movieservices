@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface JpaCinemaRoomRepository extends JpaRepository<CinemaRoom, CinemaRoomId> {
-    @Query("SELECT cinema_room FROM CinemaRoom cinema_room WHERE cinema_room.cinema.id = :cinemaId")
+    @Query("SELECT cinema_room FROM CinemaRoom cinema_room WHERE cinema_room.cinemaId.uuid = :cinemaId")
     List<CinemaRoom> findByCinemaId(String cinemaId);
 }

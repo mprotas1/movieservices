@@ -31,7 +31,7 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     public CinemaRoomDTO findById(CinemaRoomId id) {
         return cinemaRoomRepository.findById(id)
-                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinema().getIdValue(), room.getNumber(), room.getCapacity()))
+                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinemaId().getUuid(), room.getNumber(), room.getCapacity()))
                 .orElseThrow(() -> new EntityNotFoundException("Room with id " + id + " not found"));
     }
 
@@ -47,7 +47,7 @@ class ScreeningRoomService implements CinemaRoomService {
         CinemaRoom room = new CinemaRoom(roomNumber, roomInformation.capacity(), contextCinema);
         CinemaRoom savedRoom = cinemaRoomRepository.save(room);
         contextCinema.addRoom(savedRoom);
-        UUID cinemaId = savedRoom.getCinema().getIdValue();
+        UUID cinemaId = savedRoom.getCinemaId().getUuid();
         log.debug("Room with number {} added to cinema with id {}", roomNumber, cinemaId);
         return new CinemaRoomDTO(savedRoom.getId().getValue(), cinemaId, savedRoom.getNumber(), savedRoom.getCapacity());
     }
@@ -59,7 +59,7 @@ class ScreeningRoomService implements CinemaRoomService {
         log.debug("Updating capacity for room with id {} from {} to {}", roomId, room.getCapacity(), newCapacity);
         room.updateCapacity(newCapacity);
         CinemaRoom updatedRoom = cinemaRoomRepository.save(room);
-        UUID cinemaId = updatedRoom.getCinema().getIdValue();
+        UUID cinemaId = updatedRoom.getCinemaId().getUuid();
         log.debug("Capacity for room with id {} updated to {}", roomId, newCapacity);
         return new CinemaRoomDTO(updatedRoom.getId().getValue(), cinemaId, updatedRoom.getNumber(), updatedRoom.getCapacity());
     }
@@ -67,7 +67,7 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     public List<CinemaRoomDTO> findByCinemaId(CinemaId cinemaId) {
         return cinemaRoomRepository.findByCinemaId(cinemaId).stream()
-                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinema().getIdValue(), room.getNumber(), room.getCapacity()))
+                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinemaId().getUuid(), room.getNumber(), room.getCapacity()))
                 .toList();
     }
 
