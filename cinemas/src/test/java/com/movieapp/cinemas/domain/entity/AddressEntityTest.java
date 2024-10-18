@@ -1,20 +1,16 @@
-package com.movieapp.cinemas.domain;
+package com.movieapp.cinemas.domain.entity;
 
-import com.movieapp.cinemas.domain.entity.Address;
-import com.movieapp.cinemas.domain.entity.CountryCode;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.test.context.TestPropertySource;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class AddressUnitTest {
+class AddressEntityTest {
 
     @ParameterizedTest
     @DisplayName("Should create Address with valid data")

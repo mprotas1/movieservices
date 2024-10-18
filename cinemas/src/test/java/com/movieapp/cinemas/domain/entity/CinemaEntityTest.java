@@ -3,10 +3,9 @@ package com.movieapp.cinemas.domain.entity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-class CinemaTest {
+class CinemaEntityTest {
 
     @Test
     @DisplayName("Should get sequential number of cinema room")
@@ -85,6 +84,13 @@ class CinemaTest {
         assertEquals(4, fourthRoomNumber);
         assertEquals(2, fifthRoomNumber);
         assertEquals(2, fifthRoom.getNumber());
+    }
+
+    @Test
+    @DisplayName("Should not create cinema with invalid name")
+    void shouldNotCreateCinemaWithInvalidName() {
+        assertThrows(IllegalArgumentException.class, () -> new Cinema(null, new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
+        assertThrows(IllegalArgumentException.class, () -> new Cinema("", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
     }
 
 }

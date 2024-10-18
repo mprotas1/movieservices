@@ -27,6 +27,7 @@ public class Cinema {
 
     public Cinema(String name, Address address) {
         Assert.notNull(name, "Cinema name must not be null");
+        Assert.hasText(name, "Cinema name must not be empty");
         Assert.notNull(address, "Cinema address must not be null");
         this.id = new CinemaId();
         this.name = name;
