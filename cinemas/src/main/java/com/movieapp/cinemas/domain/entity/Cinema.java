@@ -19,7 +19,7 @@ public class Cinema {
 
     @Embedded
     private Address address;
-    @OneToMany(mappedBy = "cinema",
+    @OneToMany(mappedBy = "cinemaId",
                cascade = CascadeType.ALL,
                fetch = FetchType.LAZY,
                orphanRemoval = true)
@@ -38,49 +38,32 @@ public class Cinema {
         return id.getUuid();
     }
 
-    public boolean hasSameAddress(Cinema other) {
-        return address.equals(other.address);
-    }
-
     public void addRoom(CinemaRoom room) {
         Assert.notNull(room, "Cinema room must not be null");
         Assert.isTrue(!rooms.contains(room), "Cinema room already exists in the cinema: " + this.getName());
         rooms.add(room);
     }
 
-    public boolean hasRooms() {
-        return !rooms.isEmpty();
-    }
-
-    public int getTotalSeats() {
-        throw new UnsupportedOperationException("Not implemented yet :)");
-    }
-
-    public void rename(String name) {
-        Assert.notNull(name, "Cinema name must not be null");
-        Assert.isTrue(!this.getName().equals(name), "Cinema name must be different");
-        this.setName(name);
-    }
-
     public void removeRoom(CinemaRoom room) {
-        Assert.isTrue(rooms.contains(room), "Cinema room does not exist in the cinema: " + this.getName());
-        rooms.remove(room);
+        this.rooms.remove(room);
     }
 
     public int getNextRoomNumber() {
-        int roomNumber = 1;
-        for (CinemaRoom room : rooms) {
-            if (hasSameNumber(room, roomNumber)) {
-                return roomNumber;
+        List<Integer> roomNumbers = rooms.stream()
+                .map(CinemaRoom::getNumber)
+                .sorted()
+                .toList();
+
+        int nextNumber = 1;
+        for (int roomNumber : roomNumbers) {
+            if (roomNumber == nextNumber) {
+                nextNumber++;
+            } else {
+                break;
             }
-            roomNumber++;
         }
 
-        return roomNumber;
-    }
-
-    private static boolean hasSameNumber(CinemaRoom room, int roomNumber) {
-        return room.getNumber() != roomNumber;
+        return nextNumber;
     }
 
 }
