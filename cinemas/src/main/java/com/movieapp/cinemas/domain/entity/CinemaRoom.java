@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,21 +21,23 @@ public class CinemaRoom {
 
     private int capacity;
 
-    @ManyToOne
     @JoinColumn(name = "cinema_id", nullable = false)
-    private Cinema cinema;
+    @AttributeOverrides({
+            @AttributeOverride(name = "uuid", column = @Column(name = "cinema_id", nullable = false))
+    })
+    private CinemaId cinemaId;
 
-    @OneToMany(mappedBy = "room", orphanRemoval = true, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "room", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Seat> seats;
 
     private transient CreateSeatsStrategy seatsStrategy;
 
-    public CinemaRoom(int number, int capacity, Cinema cinema) {
-        checkCinemaRoomConstraints(number, capacity, cinema);
+    public CinemaRoom(int number, int capacity, Cinema cinemaId) {
+        checkCinemaRoomConstraints(number, capacity, cinemaId);
         this.id = new CinemaRoomId();
         this.number = number;
         this.capacity = capacity;
-        this.cinema = cinema;
+        this.cinemaId = cinemaId.getId();
         this.seatsStrategy = new DefaultCreateSeatsStrategy();
         createSeats();
     }

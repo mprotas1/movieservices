@@ -23,7 +23,7 @@ public class InMemoryCinemaRoomRepository implements CinemaRoomRepository {
     @Override
     public List<CinemaRoom> findByCinemaId(CinemaId cinemaId) {
         return rooms.values().stream()
-                .filter(cinemaRoom -> cinemaRoom.getCinema().getId().equals(cinemaId))
+                .filter(cinemaRoom -> cinemaRoom.getCinemaId().equals(cinemaId))
                 .toList();
     }
 
@@ -37,7 +37,7 @@ public class InMemoryCinemaRoomRepository implements CinemaRoomRepository {
     @Override
     public Optional<CinemaRoom> findByCinemaAndNumber(CinemaId cinemaId, int number) {
         return rooms.values().stream()
-                .filter(room -> room.getCinema().getId().equals(cinemaId) && room.getNumber() == number)
+                .filter(room -> room.getCinemaId().equals(cinemaId) && room.getNumber() == number)
                 .findFirst();
     }
 
