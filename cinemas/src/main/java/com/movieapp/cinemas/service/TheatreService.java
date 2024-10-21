@@ -1,8 +1,9 @@
 package com.movieapp.cinemas.service;
 
-import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
+import com.movieapp.cinemas.domain.entity.Coordinates;
+import com.movieapp.cinemas.infrastructure.location.CinemaLocationService;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import com.movieapp.cinemas.service.model.CinemaDTO;
 import com.movieapp.cinemas.service.model.CinemaInformation;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 @Validated
 class TheatreService implements CinemaService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+    private final CinemaLocationService locationService;
     private final CinemaRepository cinemaRepository;
 
     @Override
@@ -50,7 +52,8 @@ class TheatreService implements CinemaService {
         log.debug("Creating cinema: {}", cinema);
         validateCinemaExistsByName(cinema.name());
         AddressInformation address = cinema.address();
-        Cinema toSave = new Cinema(cinema.name(), AddressInformation.toEntity(cinema.address()));
+        Coordinates coordinates = locationService.getCoordinates(address.city(), address.street(), address.postalCode());
+        Cinema toSave = new Cinema(cinema.name(), AddressInformation.toEntity(cinema.address()), coordinates);
         Cinema saved = cinemaRepository.save(toSave);
         log.debug("Saved cinema: {}", saved);
         return CinemaDTO.fromEntity(saved);
