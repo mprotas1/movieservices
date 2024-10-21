@@ -22,4 +22,5 @@ public class CinemaPropertiesAccessor {
             throw new RuntimeException("Error reading application.properties file", e);
         }
     }
+
 }

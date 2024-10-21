@@ -21,21 +21,23 @@ public class DefaultCreateSeatsStrategy implements CreateSeatsStrategy {
         List<Seat> seats = new ArrayList<>();
         int rows = getNumberOfRows(room.getCapacity());
 
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < SEAT_PER_ROW; j++) {
-                if(room.exceedsCapacity(seats.size())) {
-                    break;
-                }
-
-                int row = i + 1;
-                int seatNumber = j + 1;
-                SeatPosition position = new SeatPosition(row, seatNumber);
-                Seat seat = new Seat(position, SeatType.STANDARD, room);
-                seats.add(seat);
-            }
+        for (int row = 1; row < rows; row++) {
+            createSeatsForRow(room, seats, row);
         }
 
         return seats;
+    }
+
+    private void createSeatsForRow(CinemaRoom room, List<Seat> seats, int row) {
+        for (int seatNumber = 1; seatNumber <= SEAT_PER_ROW; seatNumber++) {
+            if(room.exceedsCapacity(seats.size())) {
+                break;
+            }
+
+            SeatPosition position = new SeatPosition(row, seatNumber);
+            Seat seat = new Seat(position, SeatType.STANDARD, room);
+            seats.add(seat);
+        }
     }
 
     private int getNumberOfRows(int capacity) {

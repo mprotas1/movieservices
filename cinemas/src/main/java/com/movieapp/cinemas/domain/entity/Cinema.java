@@ -16,6 +16,8 @@ public class Cinema {
     @EmbeddedId
     private CinemaId id;
     private String name;
+    @Embedded
+    private Coordinates coordinates;
 
     @Embedded
     private Address address;
@@ -25,12 +27,14 @@ public class Cinema {
                orphanRemoval = true)
     private List<CinemaRoom> rooms;
 
-    public Cinema(String name, Address address) {
+    public Cinema(String name, Address address, Coordinates coordinates) {
         Assert.notNull(name, "Cinema name must not be null");
+        Assert.hasText(name, "Cinema name must not be empty");
         Assert.notNull(address, "Cinema address must not be null");
         this.id = new CinemaId();
         this.name = name;
         this.address = address;
+        this.coordinates = coordinates;
         this.rooms = new ArrayList<>();
     }
 
