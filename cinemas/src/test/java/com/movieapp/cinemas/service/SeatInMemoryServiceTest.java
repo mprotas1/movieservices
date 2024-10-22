@@ -18,7 +18,7 @@ class SeatInMemoryServiceTest {
     private CinemaRepository cinemaRepository;
     private CinemaRoomRepository cinemaRoomRepository;
 
-    private Cinema baseCinema = new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL));
+    private Cinema baseCinema = new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0));
 
     @BeforeEach
     void setUp() {

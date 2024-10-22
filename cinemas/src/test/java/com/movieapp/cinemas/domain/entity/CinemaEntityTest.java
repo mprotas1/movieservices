@@ -11,7 +11,7 @@ class CinemaEntityTest {
     @DisplayName("Should get sequential number of cinema room")
     void shouldGetSequentialNumber() {
         int capacity = 100;
-        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL));
+        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0));
 
         int firstRoomNumber = cinema.getNextRoomNumber();
         cinema.addRoom(new CinemaRoom(firstRoomNumber, capacity, cinema));
@@ -32,7 +32,7 @@ class CinemaEntityTest {
     @DisplayName("Should remove a room")
     void shouldRemoveRoom() {
         int capacity = 100;
-        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL));
+        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0));
         CinemaRoom room = new CinemaRoom(1, capacity, cinema);
         cinema.addRoom(room);
         assertTrue(cinema.getRooms().contains(room));
@@ -44,7 +44,7 @@ class CinemaEntityTest {
     @DisplayName("Should not remove a room that does not exist")
     void shouldNotRemoveRoomThatDoesNotExist() {
         int capacity = 100;
-        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL));
+        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0));
         CinemaRoom room = new CinemaRoom(1, capacity, cinema);
         CinemaRoom room2 = new CinemaRoom(2, capacity, cinema);
         cinema.addRoom(room);
@@ -57,7 +57,7 @@ class CinemaEntityTest {
     @DisplayName("Should fill sequence gap when room is removed")
     void shouldFillSequenceGapWhenRoomIsRemoved() {
         int capacity = 100;
-        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL));
+        Cinema cinema = new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0));
 
         int firstRoomNumber = cinema.getNextRoomNumber();
         cinema.addRoom(new CinemaRoom(firstRoomNumber, capacity, cinema));
@@ -89,8 +89,8 @@ class CinemaEntityTest {
     @Test
     @DisplayName("Should not create cinema with invalid name")
     void shouldNotCreateCinemaWithInvalidName() {
-        assertThrows(IllegalArgumentException.class, () -> new Cinema(null, new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
-        assertThrows(IllegalArgumentException.class, () -> new Cinema("", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
+        assertThrows(IllegalArgumentException.class, () -> new Cinema(null, new Address("Blank Street", "Blank City", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0)));
+        assertThrows(IllegalArgumentException.class, () -> new Cinema("", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0)));
     }
 
 }

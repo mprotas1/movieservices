@@ -43,7 +43,7 @@ class CinemaRoomControllerTest extends Containers {
         cinemaRepository.deleteAll();
         cinemaRoomRepository.deleteAll();
 
-        contextCinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL)));
+        contextCinema = cinemaRepository.save(new Cinema("Cinema Name", new Address("Blank Street", "Blank City", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0)));
     }
 
     @Test

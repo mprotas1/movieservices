@@ -17,9 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CinemaRoomInMemoryServiceTest {
     private CinemaRoomService cinemaRoomService;
-    private CinemaService cinemaService;
-    CinemaRoomRepository cinemaRoomRepository;
-    CinemaRepository cinemaRepository;
+    private CinemaRoomRepository cinemaRoomRepository;
+    private CinemaRepository cinemaRepository;
 
     private Cinema parentCinema;
 
@@ -28,10 +27,9 @@ class CinemaRoomInMemoryServiceTest {
         cinemaRoomRepository = new InMemoryCinemaRoomRepository();
         cinemaRepository = new InMemoryCinemaRepository();
 
-        cinemaService = new TheatreService(cinemaRepository);
         cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository);
 
-        parentCinema = cinemaRepository.save(new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL)));
+        parentCinema = cinemaRepository.save(new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0)));
         cinemaRoomRepository.deleteAll();
     }
 
