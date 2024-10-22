@@ -1,11 +1,10 @@
 package com.movieapp.cinemas.service;
 
-import com.movieapp.cinemas.domain.entity.Address;
-import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
 import com.movieapp.cinemas.domain.entity.CountryCode;
-import com.movieapp.cinemas.domain.repository.InMemoryCinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
+import com.movieapp.cinemas.domain.repository.InMemoryCinemaRepository;
+import com.movieapp.cinemas.infrastructure.location.CinemaLocationService;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import com.movieapp.cinemas.service.model.CinemaDTO;
 import com.movieapp.cinemas.service.model.CinemaInformation;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.UUID;
 
@@ -23,13 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CinemaInMemoryServiceTest {
     private CinemaService cinemaService;
     private CinemaRepository cinemaRepository;
+    private @Qualifier("inMemoryCinemaLocationService") CinemaLocationService locationService;
 
     private CinemaInformation information;
 
     @BeforeEach
     void setUp() {
         cinemaRepository = new InMemoryCinemaRepository();
-        cinemaService = new TheatreService(cinemaRepository);
+        cinemaService = new TheatreService(locationService, cinemaRepository);
 
         AddressInformation cinemaAddressInformation = new AddressInformation("City", "Street", "00-000", CountryCode.PL);
         information = new CinemaInformation("CinemaName", cinemaAddressInformation);

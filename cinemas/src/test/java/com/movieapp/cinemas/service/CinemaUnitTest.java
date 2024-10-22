@@ -2,8 +2,10 @@ package com.movieapp.cinemas.service;
 
 import com.movieapp.cinemas.domain.entity.Address;
 import com.movieapp.cinemas.domain.entity.Cinema;
+import com.movieapp.cinemas.domain.entity.Coordinates;
 import com.movieapp.cinemas.domain.entity.CountryCode;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
+import com.movieapp.cinemas.infrastructure.location.CinemaLocationService;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import com.movieapp.cinemas.service.model.CinemaDTO;
 import com.movieapp.cinemas.service.model.CinemaInformation;
@@ -28,14 +30,17 @@ class CinemaUnitTest {
     private TheatreService cinemaService;
     @Mock
     private CinemaRepository cinemaRepository;
+    @Mock
+    private CinemaLocationService locationService;
 
     private final CinemaInformation exampleCinemaInfo = new CinemaInformation("CinemaName", new AddressInformation("City", "Street", "00-000", CountryCode.PL));
-    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL));
+    private final Cinema exampleCinema = new Cinema("CinemaName", new Address("City", "Street", "00-000", CountryCode.PL), new Coordinates(0.0, 0.0));
 
     @Test
     @DisplayName("Should create Cinema with valid data")
     void shouldCreateCinemaWithValidData() {
         when(cinemaRepository.save(any(Cinema.class))).thenReturn(exampleCinema);
+        when(locationService.getCoordinates(anyString(), anyString(), anyString())).thenReturn(new Coordinates(0.0, 0.0));
         CinemaDTO result = cinemaService.createCinema(exampleCinemaInfo);
         assertNotNull(result);
         assertEquals(exampleCinemaInfo.name(), result.name());
