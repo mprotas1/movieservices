@@ -16,6 +16,19 @@ spring:
     url: jdbc:mysql://localhost:3306/cinemasdb
     user: root
     password: secret
+  cloud:
+    vault:
+      uri: ${VAULT_ADDR:http://127.0.0.1:8200}
+      token: ${VAULT_TOKEN:root-token}
+      kv:
+        enabled: true
+        backend: secret
+        application-name: cinemas-service
+      authentication: token
+
+googlemaps:
+  api-key: ${vault:googlemaps/apiKey}
+
 server:
   port: 8005
   servlet:

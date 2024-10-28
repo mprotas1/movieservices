@@ -3,17 +3,18 @@ package com.movieapp.cinemas.service;
 import com.movieapp.cinemas.domain.entity.Cinema;
 import com.movieapp.cinemas.domain.entity.CinemaId;
 import com.movieapp.cinemas.domain.entity.Coordinates;
+import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.infrastructure.location.CinemaLocationService;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import com.movieapp.cinemas.service.model.CinemaDTO;
 import com.movieapp.cinemas.service.model.CinemaInformation;
-import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Validated
 class TheatreService implements CinemaService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+    @Qualifier("googleCinemaLocationService")
     private final CinemaLocationService locationService;
     private final CinemaRepository cinemaRepository;
 

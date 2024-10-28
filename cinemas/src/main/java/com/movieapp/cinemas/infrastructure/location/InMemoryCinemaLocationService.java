@@ -1,9 +1,11 @@
 package com.movieapp.cinemas.infrastructure.location;
 
 import com.movieapp.cinemas.domain.entity.Coordinates;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
+@Profile("test")
 public class InMemoryCinemaLocationService implements CinemaLocationService {
 
     @Override
