@@ -21,7 +21,7 @@ public class DefaultCreateSeatsStrategy implements CreateSeatsStrategy {
         List<Seat> seats = new ArrayList<>();
         int rows = getNumberOfRows(room.getCapacity());
 
-        for (int row = 1; row < rows; row++) {
+        for (int row = 1; row <= rows; row++) {
             createSeatsForRow(room, seats, row);
         }
 

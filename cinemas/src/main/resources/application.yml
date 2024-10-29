@@ -25,6 +25,8 @@ spring:
         backend: secret
         application-name: cinemas-service
       authentication: token
+  profiles:
+    active: dev
 
 googlemaps:
   api-key: ${vault:googlemaps/apiKey}

@@ -15,4 +15,5 @@ public interface CinemaRoomRepository {
     Optional<CinemaRoom> findByCinemaAndNumber(CinemaId cinemaId, int number);
     void deleteById(CinemaRoomId cinemaRoomId);
     void deleteAll();
+    void deleteByRoomNumber(CinemaId cinemaId, int roomNumber);
 }

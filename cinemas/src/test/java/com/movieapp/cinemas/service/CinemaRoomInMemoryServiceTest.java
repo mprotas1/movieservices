@@ -93,4 +93,19 @@ class CinemaRoomInMemoryServiceTest {
         assertEquals(2, cinemaRoomService.findByCinemaId(parentCinema.getId()).size());
     }
 
+    @Test
+    void shouldNotFindRoomById() {
+        assertThrows(EntityNotFoundException.class, () -> cinemaRoomService.findById(new CinemaRoomId()));
+    }
+
+    @Test
+    void shouldDeleteRoomByNumber() {
+        int roomCapacity = 100;
+        CinemaRoomInformation roomInformation = new CinemaRoomInformation(parentCinema.getIdValue(), roomCapacity);
+        CinemaRoomDTO room = cinemaRoomService.addRoom(roomInformation);
+
+        cinemaRoomService.deleteByNumber(parentCinema.getId(), room.number());
+        assertThrows(EntityNotFoundException.class, () -> cinemaRoomService.findById(new CinemaRoomId(room.roomId())));
+    }
+
 }
