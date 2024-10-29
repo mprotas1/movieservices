@@ -28,6 +28,8 @@ The Cinema Microservices Application is a model for an enterprise application th
 * PostgreSQL
 * MongoDB
 * Redis
+* HashiCorp Vault
+* Google Maps API
 
 ## Requirments
 The application (every service) needs for correct boot at least Java with version 21 and a running Docker Deamon for running all dependent containers.
