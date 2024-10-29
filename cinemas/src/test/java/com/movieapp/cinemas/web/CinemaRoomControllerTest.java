@@ -5,9 +5,8 @@ import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.CinemaRoomService;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
+import com.movieapp.cinemas.service.model.CinemaRoomInformation;
 import com.movieapp.cinemas.testcontainers.Containers;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +18,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CinemaRoomControllerTest extends Containers {
@@ -69,5 +66,18 @@ class CinemaRoomControllerTest extends Containers {
         assertEquals(capacity, room.getSeats().size());
     }
 
+    @Test
+    @DisplayName("When deleting cinema room then return 204 NO CONTENT status code")
+    void shouldDeleteByRoomNumberAndReturn204StatusCode() {
+        UUID cinemaId = contextCinema.getIdValue();
+        int capacity = 100;
+        CinemaRoomDTO cinemaRoomDTO = cinemaRoomService.addRoom(new CinemaRoomInformation(contextCinema.getId().getUuid(), capacity));
+
+        restTemplate.delete(ROOMS_PATH + "/{roomNumber}",
+                cinemaId.toString(),
+                cinemaRoomDTO.roomId());
+
+        assertFalse(cinemaRoomRepository.findByCinemaAndNumber(contextCinema.getId(), cinemaRoomDTO.number()).isPresent());
+    }
 
 }

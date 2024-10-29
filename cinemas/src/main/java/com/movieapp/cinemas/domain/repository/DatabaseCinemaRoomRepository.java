@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 @Primary
-public class DatabaseCinemaRoomRepository implements CinemaRoomRepository {
+class DatabaseCinemaRoomRepository implements CinemaRoomRepository {
     private final JpaCinemaRoomRepository repository;
 
     @Override
@@ -49,6 +49,11 @@ public class DatabaseCinemaRoomRepository implements CinemaRoomRepository {
     @Override
     public void deleteAll() {
         repository.deleteAll();
+    }
+
+    @Override
+    public void deleteByRoomNumber(CinemaId cinemaId, int roomNumber) {
+        repository.deleteByRoomNumber(cinemaId, roomNumber);
     }
 
 }
