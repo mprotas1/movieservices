@@ -22,5 +22,4 @@ class VaultConfiguration {
                 new TokenAuthentication("root-token"));
     }
 
-
 }

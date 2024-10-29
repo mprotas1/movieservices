@@ -5,8 +5,8 @@ import com.movieapp.cinemas.domain.entity.Coordinates;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.vault.core.VaultTemplate;
@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Primary
 @RequiredArgsConstructor
+@Profile("!test")
 class GoogleCinemaLocationService implements CinemaLocationService {
     private final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 

@@ -5,6 +5,7 @@ import com.movieapp.cinemas.domain.entity.CountryCode;
 import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.InMemoryCinemaRepository;
 import com.movieapp.cinemas.infrastructure.location.CinemaLocationService;
+import com.movieapp.cinemas.infrastructure.location.InMemoryCinemaLocationService;
 import com.movieapp.cinemas.service.model.AddressInformation;
 import com.movieapp.cinemas.service.model.CinemaDTO;
 import com.movieapp.cinemas.service.model.CinemaInformation;
@@ -23,13 +24,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class CinemaInMemoryServiceTest {
     private CinemaService cinemaService;
     private CinemaRepository cinemaRepository;
-    private @Qualifier("inMemoryCinemaLocationService") CinemaLocationService locationService;
+    private CinemaLocationService locationService;
 
     private CinemaInformation information;
 
     @BeforeEach
     void setUp() {
         cinemaRepository = new InMemoryCinemaRepository();
+        locationService = new InMemoryCinemaLocationService();
         cinemaService = new TheatreService(locationService, cinemaRepository);
 
         AddressInformation cinemaAddressInformation = new AddressInformation("City", "Street", "00-000", CountryCode.PL);
