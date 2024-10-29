@@ -51,4 +51,13 @@ public class InMemoryCinemaRoomRepository implements CinemaRoomRepository {
         rooms.clear();
     }
 
+    @Override
+    public void deleteByRoomNumber(CinemaId cinemaId, int roomNumber) {
+        Optional<CinemaRoom> room = rooms.values().stream()
+                .filter(r -> r.getCinemaId().equals(cinemaId) && r.getNumber() == roomNumber)
+                .findFirst();
+
+        room.ifPresent(cinemaRoom -> rooms.remove(cinemaRoom.getId()));
+    }
+
 }
