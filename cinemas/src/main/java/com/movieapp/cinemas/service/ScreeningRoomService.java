@@ -8,6 +8,7 @@ import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
 import com.movieapp.cinemas.service.model.CinemaRoomInformation;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -53,15 +54,21 @@ class ScreeningRoomService implements CinemaRoomService {
     }
 
     @Override
-    public CinemaRoomDTO updateCapacity(CinemaRoomId roomId, int newCapacity) {
-        CinemaRoom room = cinemaRoomRepository.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException("Room with id " + roomId + " not found"));
-        log.debug("Updating capacity for room with id {} from {} to {}", roomId, room.getCapacity(), newCapacity);
+    public CinemaRoomDTO updateCapacity(CinemaId cinemaId, int roomNumber, int newCapacity) {
+        CinemaRoom room = cinemaRoomRepository.findByCinemaAndNumber(cinemaId, roomNumber)
+                .orElseThrow(() -> new EntityNotFoundException("Room with number: " + roomNumber + " not found"));
+        log.debug("Updating capacity for room with id {} from {} to {}", room.getId().getValue(), room.getCapacity(), newCapacity);
         room.updateCapacity(newCapacity);
         CinemaRoom updatedRoom = cinemaRoomRepository.save(room);
-        UUID cinemaId = updatedRoom.getCinemaId().getUuid();
-        log.debug("Capacity for room with id {} updated to {}", roomId, newCapacity);
-        return new CinemaRoomDTO(updatedRoom.getId().getValue(), cinemaId, updatedRoom.getNumber(), updatedRoom.getCapacity());
+        log.debug("Capacity for room with id {} updated to {}", room.getId().getValue(), newCapacity);
+        return new CinemaRoomDTO(updatedRoom.getId().getValue(), cinemaId.getUuid(), updatedRoom.getNumber(), updatedRoom.getCapacity());
+    }
+
+    @Override
+    public CinemaRoomDTO findByCinemaAndNumber(CinemaId cinemaId, int roomNumber) {
+        return cinemaRoomRepository.findByCinemaAndNumber(cinemaId, roomNumber)
+                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinemaId().getUuid(), room.getNumber(), room.getCapacity()))
+                .orElseThrow(() -> new EntityNotFoundException("Room with number: " + roomNumber + " not found"));
     }
 
     @Override
@@ -86,7 +93,7 @@ class ScreeningRoomService implements CinemaRoomService {
     private void validateExistsByNumber(Cinema contextCinema, int roomNumber) {
         cinemaRoomRepository.findByCinemaAndNumber(contextCinema.getId(), roomNumber)
                 .ifPresent(room -> {
-                    throw new IllegalArgumentException("Room with number " + roomNumber + " already exists in cinema with id " + contextCinema.getIdValue());
+                    throw new EntityExistsException("Room with number " + roomNumber + " already exists in cinema with id " + contextCinema.getIdValue());
                 });
     }
 

@@ -14,29 +14,30 @@ import java.util.stream.Collectors;
 public class DefaultUpdateSeatsStrategy implements UpdateSeatsStrategy {
     private final int SEATS_PER_ROW;
 
-    public DefaultUpdateSeatsStrategy() {
+    private final CinemaRoom room;
+    private final List<Seat> seats;
+
+    public DefaultUpdateSeatsStrategy(CinemaRoom room) {
         this.SEATS_PER_ROW = getSeatPerRowFromProperties();
+        this.room = room;
+        this.seats = room.getSeats();
     }
 
     @Override
-    public List<Seat> updateSeats(CinemaRoom room, int newCapacity) {
+    public void updateSeats(int newCapacity) {
         int actualCapacity = room.getCapacity();
-
-        if(newCapacity == actualCapacity) {
-            return room.getSeats();
-        }
 
         int roomRows = getNumberOfRows(newCapacity);
         if(newCapacity > actualCapacity) {
-            return addSeats(newCapacity, roomRows, room);
+            addSeats(newCapacity, roomRows, room);
+            return;
         }
 
-        return removeSeats(newCapacity, room);
+        removeSeats(newCapacity, room);
     }
 
-    private List<Seat> addSeats(int targetCapacity, int rows, CinemaRoom room) {
-        List<Seat> result = new ArrayList<>(room.getSeats());
-        int missingSeats = Math.max(0, targetCapacity - room.getCapacity());
+    private void addSeats(int targetCapacity, int rows, CinemaRoom room) {
+        int missingSeats = Math.max(0, targetCapacity - seats.size());
         int highestRow = getHighestExistingRow(room);
 
         int nextRow = Math.min(highestRow + 1, rows);
@@ -49,25 +50,20 @@ public class DefaultUpdateSeatsStrategy implements UpdateSeatsStrategy {
 
                 SeatPosition position = new SeatPosition(nextRow, i);
                 Seat newSeat = new Seat(position, SeatType.STANDARD, room);
-                result.add(newSeat);
+                seats.add(newSeat);
                 missingSeats--;
             }
             nextRow++;
         }
-
-        return result;
     }
 
-    private List<Seat> removeSeats(int targetCapacity, CinemaRoom room) {
+    private void removeSeats(int targetCapacity, CinemaRoom room) {
         int seatsToRemove = room.getCapacity() - targetCapacity <= 0 ? targetCapacity : room.getCapacity() - targetCapacity;
-        List<Seat> result = new ArrayList<>(room.getSeats());
-        result = sortedSeats(result);
+        List<Seat> sortedSeats = sortedSeats(seats);
 
         for(int i = 0; i < seatsToRemove; i++) {
-            result.removeLast();
+            seats.remove(sortedSeats.get(i));
         }
-
-        return result;
     }
 
     private static Integer getHighestExistingRow(CinemaRoom room) {

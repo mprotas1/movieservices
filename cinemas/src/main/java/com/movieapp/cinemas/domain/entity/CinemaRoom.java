@@ -46,9 +46,10 @@ public class CinemaRoom {
 
     public void updateCapacity(int capacity) {
         Assert.isTrue(capacity > 0, String.format("Cinema room capacity [%d] must be greater than 0", capacity));
-        UpdateSeatsStrategy strategy = new DefaultUpdateSeatsStrategy();
-        this.seats = strategy.updateSeats(this, capacity);
-        this.capacity = capacity;
+        Assert.isTrue(this.capacity != capacity, String.format("Cinema room capacity [%d] is the same as the new capacity", capacity));
+        UpdateSeatsStrategy strategy = new DefaultUpdateSeatsStrategy(this);
+        strategy.updateSeats(capacity);
+        this.capacity = this.getSeats().size();
     }
 
     private void checkCinemaRoomConstraints(int number, int capacity, Cinema cinema) {

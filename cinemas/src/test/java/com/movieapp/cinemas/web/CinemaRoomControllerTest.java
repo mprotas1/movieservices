@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -78,6 +79,35 @@ class CinemaRoomControllerTest extends Containers {
                 cinemaRoomDTO.roomId());
 
         assertFalse(cinemaRoomRepository.findByCinemaAndNumber(contextCinema.getId(), cinemaRoomDTO.number()).isPresent());
+    }
+
+    @Test
+    @DisplayName("When updating cinema room capacity then return 200 OK status code and updated DTO. Capacity and seats list should be updated")
+    void shouldUpdateRoomCapacity() {
+        UUID cinemaId = contextCinema.getIdValue();
+        int capacity = 100;
+        CinemaRoomDTO cinemaRoomDTO = cinemaRoomService.addRoom(new CinemaRoomInformation(contextCinema.getId().getUuid(), capacity));
+
+        int newCapacity = 200;
+        ResponseEntity<CinemaRoomDTO> cinemaRoomDTOResponseEntity = restTemplate.exchange(
+                ROOMS_PATH + "/{roomNumber}?newCapacity={newCapacity}",
+                HttpMethod.PUT,
+                null,
+                CinemaRoomDTO.class,
+                cinemaId.toString(),
+                cinemaRoomDTO.number(),
+                newCapacity);
+
+        CinemaRoomDTO updatedCinemaRoomDTO = cinemaRoomDTOResponseEntity.getBody();
+
+        assertNotNull(updatedCinemaRoomDTO);
+        assertEquals(HttpStatus.OK, cinemaRoomDTOResponseEntity.getStatusCode());
+        assertEquals(newCapacity, updatedCinemaRoomDTO.capacity());
+
+        CinemaRoom room = cinemaRoomRepository.findById(new CinemaRoomId(updatedCinemaRoomDTO.roomId())).get();
+        assertNotNull(room);
+        assertEquals(newCapacity, room.getCapacity());
+        assertEquals(newCapacity, room.getSeats().size());
     }
 
 }

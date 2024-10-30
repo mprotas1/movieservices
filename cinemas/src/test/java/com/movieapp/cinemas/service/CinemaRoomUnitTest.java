@@ -5,6 +5,7 @@ import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
 import com.movieapp.cinemas.service.model.CinemaRoomInformation;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ class CinemaRoomUnitTest {
         when(cinemaRepository.findById(any(CinemaId.class))).thenReturn(Optional.of(exampleCinema));
         when(roomRepository.findByCinemaAndNumber(any(CinemaId.class), anyInt())).thenReturn(Optional.of(new CinemaRoom(nextRoomNumber, 100, exampleCinema)));
 
-        assertThrows(IllegalArgumentException.class, () -> roomService.addRoom(roomInformation));
+        assertThrows(EntityExistsException.class, () -> roomService.addRoom(roomInformation));
 
         verify(cinemaRepository, times(1)).findById(any(CinemaId.class));
         verify(roomRepository, never()).save(any(CinemaRoom.class));
@@ -81,16 +82,16 @@ class CinemaRoomUnitTest {
     @DisplayName("Should update CinemaRoom capacity")
     void shouldUpdateRoomCapacity() {
         CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
-        when(roomRepository.findById(any())).thenReturn(Optional.of(room));
+        when(roomRepository.findByCinemaAndNumber(any(), anyInt())).thenReturn(Optional.of(room));
         int newCapacity = 200;
         CinemaRoom updatedRoom = new CinemaRoom(1, newCapacity, exampleCinema);
         when(roomRepository.save(any(CinemaRoom.class))).thenReturn(updatedRoom);
-        CinemaRoomDTO cinemaRoomDTO = roomService.updateCapacity(updatedRoom.getId(), newCapacity);
+        CinemaRoomDTO cinemaRoomDTO = roomService.updateCapacity(exampleCinema.getId(), room.getNumber(), newCapacity);
 
         assertNotNull(cinemaRoomDTO);
         assertEquals(newCapacity, cinemaRoomDTO.capacity());
 
-        verify(roomRepository, times(1)).findById(any());
+        verify(roomRepository, times(1)).findByCinemaAndNumber(any(), anyInt());
         verify(roomRepository, times(1)).save(any(CinemaRoom.class));
     }
 
@@ -98,13 +99,13 @@ class CinemaRoomUnitTest {
     @DisplayName("Should not update CinemaRoom capacity with negative value")
     void shouldNotUpdateRoomCapacityWithNegativeValue() {
         CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
-        when(roomRepository.findById(any())).thenReturn(Optional.of(room));
+        when(roomRepository.findByCinemaAndNumber(any(), anyInt())).thenReturn(Optional.of(room));
         int newCapacity = -1;
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(room.getId(), newCapacity));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(exampleCinema.getId(), room.getNumber(), newCapacity));
 
         assertEquals("Cinema room capacity [-1] must be greater than 0", exception.getMessage());
 
-        verify(roomRepository, times(1)).findById(any(CinemaRoomId.class));
+        verify(roomRepository, times(1)).findByCinemaAndNumber(any(), anyInt());
         verify(roomRepository, never()).save(any(CinemaRoom.class));
     }
 
@@ -112,13 +113,13 @@ class CinemaRoomUnitTest {
     @DisplayName("Should not update CinemaRoom capacity with zero value")
     void shouldNotUpdateRoomCapacityWithZeroValue() {
         CinemaRoom room = new CinemaRoom(1, 100, exampleCinema);
-        when(roomRepository.findById(any())).thenReturn(Optional.of(room));
+        when(roomRepository.findByCinemaAndNumber(any(), anyInt())).thenReturn(Optional.of(room));
         int newCapacity = 0;
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(room.getId(), newCapacity));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> roomService.updateCapacity(exampleCinema.getId(), 1, newCapacity));
 
         assertEquals("Cinema room capacity [0] must be greater than 0", exception.getMessage());
 
-        verify(roomRepository, times(1)).findById(any(CinemaRoomId.class));
+        verify(roomRepository, times(1)).findByCinemaAndNumber(any(), anyInt());
         verify(roomRepository, never()).save(any());
     }
 

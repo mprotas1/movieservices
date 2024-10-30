@@ -56,7 +56,7 @@ class CinemaRoomInMemoryServiceTest {
         Optional<CinemaRoom> byId = cinemaRoomRepository.findById(new CinemaRoomId(room.roomId()));
 
         int newCapacity = 200;
-        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(byId.get().getId(), newCapacity);
+        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), newCapacity);
         assertEquals(newCapacity, updatedRoom.capacity());
     }
 
@@ -120,7 +120,7 @@ class CinemaRoomInMemoryServiceTest {
 
         Optional<CinemaRoom> byId = cinemaRoomRepository.findById(new CinemaRoomId(room.roomId()));
 
-        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(byId.get().getId(), newCapacity);
+        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), newCapacity);
         assertEquals(newCapacity, updatedRoom.capacity());
         assertEquals(newCapacity, byId.get().getSeats().size());
     }
@@ -135,7 +135,7 @@ class CinemaRoomInMemoryServiceTest {
         Optional<CinemaRoom> byId = cinemaRoomRepository.findById(new CinemaRoomId(room.roomId()));
 
         CinemaRoom cinemaRoom = byId.get();
-        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(cinemaRoom.getId(), newCapacity);
+        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), newCapacity);
         assertEquals(newCapacity, updatedRoom.capacity());
         assertEquals(newCapacity, cinemaRoom.getSeats().size());
     }

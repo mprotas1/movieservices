@@ -12,7 +12,8 @@ import java.util.UUID;
 public interface CinemaRoomService {
     CinemaRoomDTO findById(CinemaRoomId id);
     CinemaRoomDTO addRoom(CinemaRoomInformation roomInformation);
-    CinemaRoomDTO updateCapacity(CinemaRoomId roomId, int newCapacity);
+    CinemaRoomDTO updateCapacity(CinemaId cinemaId, int roomNumber, int newCapacity);
+    CinemaRoomDTO findByCinemaAndNumber(CinemaId cinemaId, int roomNumber);
     List<CinemaRoomDTO> findByCinemaId(CinemaId cinemaId);
     void deleteRoom(CinemaRoomId roomId);
     void deleteByNumber(CinemaId cinemaId, int roomNumber);
