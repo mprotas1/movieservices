@@ -38,7 +38,7 @@ class DatabaseCinemaRoomRepository implements CinemaRoomRepository {
 
     @Override
     public Optional<CinemaRoom> findByCinemaAndNumber(CinemaId cinemaId, int number) {
-        return Optional.empty();
+        return repository.findByCinemaIdAndNumber(cinemaId, number);
     }
 
     @Override

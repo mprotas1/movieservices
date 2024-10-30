@@ -2,11 +2,13 @@ package com.movieapp.cinemas.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 import lombok.NoArgsConstructor;
 
 @Entity(name = "seats")
 @Data
 @NoArgsConstructor
+@ToString
 public class Seat {
     @EmbeddedId
     private SeatId id;
