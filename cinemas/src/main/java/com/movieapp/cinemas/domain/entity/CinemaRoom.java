@@ -2,6 +2,8 @@ package com.movieapp.cinemas.domain.entity;
 
 import com.movieapp.cinemas.domain.strategy.CreateSeatsStrategy;
 import com.movieapp.cinemas.domain.strategy.DefaultCreateSeatsStrategy;
+import com.movieapp.cinemas.domain.strategy.DefaultUpdateSeatsStrategy;
+import com.movieapp.cinemas.domain.strategy.UpdateSeatsStrategy;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,6 +46,8 @@ public class CinemaRoom {
 
     public void updateCapacity(int capacity) {
         Assert.isTrue(capacity > 0, String.format("Cinema room capacity [%d] must be greater than 0", capacity));
+        UpdateSeatsStrategy strategy = new DefaultUpdateSeatsStrategy();
+        this.seats = strategy.updateSeats(this, capacity);
         this.capacity = capacity;
     }
 
