@@ -16,4 +16,5 @@ public interface CinemaRoomRepository {
     void deleteById(CinemaRoomId cinemaRoomId);
     void deleteAll();
     void deleteByRoomNumber(CinemaId cinemaId, int roomNumber);
+    void delete(CinemaRoom cinemaRoom);
 }
