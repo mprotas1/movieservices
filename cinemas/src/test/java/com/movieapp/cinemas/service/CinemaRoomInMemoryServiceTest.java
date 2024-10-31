@@ -112,17 +112,26 @@ class CinemaRoomInMemoryServiceTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {155, 200, 300, 101, 100})
+    @ValueSource(ints = {155, 200, 300, 101})
     void shouldUpdateRoomCapacityWithHigherValue(int newCapacity) {
         int roomCapacity = 100;
         CinemaRoomInformation roomInformation = new CinemaRoomInformation(parentCinema.getIdValue(), roomCapacity);
         CinemaRoomDTO room = cinemaRoomService.addRoom(roomInformation);
 
+        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), newCapacity);
         Optional<CinemaRoom> byId = cinemaRoomRepository.findById(new CinemaRoomId(room.roomId()));
 
-        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), newCapacity);
         assertEquals(newCapacity, updatedRoom.capacity());
         assertEquals(newCapacity, byId.get().getSeats().size());
+    }
+
+    @Test
+    void shouldNotUpdateRoomCapacityWithIdenticalValue() {
+        int roomCapacity = 100;
+        CinemaRoomInformation roomInformation = new CinemaRoomInformation(parentCinema.getIdValue(), roomCapacity);
+        CinemaRoomDTO room = cinemaRoomService.addRoom(roomInformation);
+
+        assertThrows(IllegalArgumentException.class, () -> cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), roomCapacity));
     }
 
     @ParameterizedTest
@@ -132,10 +141,10 @@ class CinemaRoomInMemoryServiceTest {
         CinemaRoomInformation roomInformation = new CinemaRoomInformation(parentCinema.getIdValue(), roomCapacity);
         CinemaRoomDTO room = cinemaRoomService.addRoom(roomInformation);
 
+        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), newCapacity);
         Optional<CinemaRoom> byId = cinemaRoomRepository.findById(new CinemaRoomId(room.roomId()));
 
         CinemaRoom cinemaRoom = byId.get();
-        CinemaRoomDTO updatedRoom = cinemaRoomService.updateCapacity(parentCinema.getId(), room.number(), newCapacity);
         assertEquals(newCapacity, updatedRoom.capacity());
         assertEquals(newCapacity, cinemaRoom.getSeats().size());
     }
