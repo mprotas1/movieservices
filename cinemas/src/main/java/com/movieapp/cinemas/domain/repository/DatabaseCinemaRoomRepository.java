@@ -56,4 +56,9 @@ class DatabaseCinemaRoomRepository implements CinemaRoomRepository {
         repository.deleteByRoomNumber(cinemaId, roomNumber);
     }
 
+    @Override
+    public void delete(CinemaRoom cinemaRoom) {
+        repository.delete(cinemaRoom);
+    }
+
 }

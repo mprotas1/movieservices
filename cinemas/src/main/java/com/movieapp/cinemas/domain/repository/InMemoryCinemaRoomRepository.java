@@ -60,4 +60,9 @@ public class InMemoryCinemaRoomRepository implements CinemaRoomRepository {
         room.ifPresent(cinemaRoom -> rooms.remove(cinemaRoom.getId()));
     }
 
+    @Override
+    public void delete(CinemaRoom cinemaRoom) {
+        rooms.remove(cinemaRoom.getId());
+    }
+
 }
