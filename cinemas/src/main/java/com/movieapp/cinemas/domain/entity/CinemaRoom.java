@@ -32,15 +32,12 @@ public class CinemaRoom {
     @OneToMany(mappedBy = "room", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Seat> seats;
 
-    private transient CreateSeatsStrategy seatsStrategy;
-
     public CinemaRoom(int number, int capacity, Cinema cinemaId) {
         checkCinemaRoomConstraints(number, capacity, cinemaId);
         this.id = new CinemaRoomId();
         this.number = number;
         this.capacity = capacity;
         this.cinemaId = cinemaId.getId();
-        this.seatsStrategy = new DefaultCreateSeatsStrategy();
         createSeats();
     }
 
@@ -63,7 +60,8 @@ public class CinemaRoom {
     }
 
     private void createSeats() {
-        this.seats = seatsStrategy.createSeats(this);
+        CreateSeatsStrategy strategy = new DefaultCreateSeatsStrategy();
+        this.seats = strategy.createSeats(this);
     }
 
 }

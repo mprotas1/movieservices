@@ -87,7 +87,9 @@ class ScreeningRoomService implements CinemaRoomService {
     @Override
     public void deleteByNumber(CinemaId cinemaId, int roomNumber) {
         log.debug("Attempting to delete room with number: {} from cinema with id: {}", roomNumber, cinemaId);
-        cinemaRoomRepository.deleteByRoomNumber(cinemaId, roomNumber);
+        CinemaRoom room = cinemaRoomRepository.findByCinemaAndNumber(cinemaId, roomNumber)
+                .orElseThrow(() -> new EntityNotFoundException("Room with number: " + roomNumber + " not found"));
+        cinemaRoomRepository.delete(room);
     }
 
     private void validateExistsByNumber(Cinema contextCinema, int roomNumber) {

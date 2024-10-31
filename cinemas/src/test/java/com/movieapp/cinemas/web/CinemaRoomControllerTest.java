@@ -76,7 +76,7 @@ class CinemaRoomControllerTest extends Containers {
 
         restTemplate.delete(ROOMS_PATH + "/{roomNumber}",
                 cinemaId.toString(),
-                cinemaRoomDTO.roomId());
+                cinemaRoomDTO.number());
 
         assertFalse(cinemaRoomRepository.findByCinemaAndNumber(contextCinema.getId(), cinemaRoomDTO.number()).isPresent());
     }
