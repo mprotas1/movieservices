@@ -21,6 +21,7 @@ class GoogleCinemaLocationService implements CinemaLocationService {
     private final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
+
     private final VaultService vaultService;
     private final RestTemplate restTemplate = new RestTemplate();
     private final CoordinatesMapper coordinatesMapper;
