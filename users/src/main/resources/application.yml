@@ -1,6 +1,11 @@
 spring:
   application:
     name: customer-service
+  cloud:
+    vault:
+      enabled: false
+      kv:
+        enabled: false
   datasource:
     url: jdbc:postgresql://localhost:5432/usersdb
     driverClassName: org.postgresql.Driver
@@ -8,7 +13,7 @@ spring:
     password: secret
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -19,7 +24,13 @@ spring:
     url: jdbc:postgresql://localhost:5432/usersdb
     user: user
     password: secret
+
 server:
   port: 8080
   servlet:
     context-path: /users
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
