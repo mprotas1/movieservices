@@ -31,9 +31,6 @@ spring:
   profiles:
     active: dev
 
-googlemaps:
-  api-key: ${vault:googlemaps/apiKey}
-
 server:
   port: 8005
   servlet:
