@@ -4,4 +4,5 @@ public class Screening {
     private ScreeningId screeningId;
     private MovieId movieId;
     private ScreeningRoomId screeningRoomId;
+    private ScreeningTime time;
 }
