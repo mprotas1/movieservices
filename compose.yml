@@ -1,8 +1,9 @@
 services:
-  postgres:
-    container_name: postgres
+  customersdb:
+    container_name: customersdb
     image: postgres:latest
     environment:
+      - POSTGRES_ROOT_PASSWORD=secret
       - POSTGRES_PASSWORD=secret
       - POSTGRES_USER=user
       - POSTGRES_DB=usersdb
@@ -12,6 +13,22 @@ services:
       - "5432:5432"
     networks:
       - postgres
+    restart: unless-stopped
+
+  screeningsdb:
+    container_name: screeningsdb
+    image: postgres:latest
+    environment:
+      - POSTGRES_ROOT_PASSWORD=secret
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=user
+      - POSTGRES_DB=screeningsdb
+    volumes:
+        - postgres:/data/postgres
+    ports:
+        - "5443:5432"
+    networks:
+        - postgres
     restart: unless-stopped
 
   pgadmin:
@@ -28,6 +45,9 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+    depends_on:
+      - customersdb
+      - screeningsdb
 
   mysql:
     container_name: mysql
