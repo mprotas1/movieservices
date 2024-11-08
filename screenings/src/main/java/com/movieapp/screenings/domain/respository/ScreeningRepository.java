@@ -3,6 +3,7 @@ package com.movieapp.screenings.domain.respository;
 import com.movieapp.screenings.domain.model.MovieId;
 import com.movieapp.screenings.domain.model.Screening;
 import com.movieapp.screenings.domain.model.ScreeningId;
+import com.movieapp.screenings.domain.model.ScreeningRoomId;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public interface ScreeningRepository {
     Optional<Screening> findById(ScreeningId screeningId);
     List<Screening> findAll();
     List<Screening> findAllByMovieId(MovieId movieId);
-    List<Screening> findAllByScreeningId(ScreeningId screeningId);
+    List<Screening> findAllByScreeningRoomId(ScreeningRoomId screeningRoomId);
     boolean existsById(ScreeningId screeningId);
 
     void deleteById(ScreeningId screeningId);

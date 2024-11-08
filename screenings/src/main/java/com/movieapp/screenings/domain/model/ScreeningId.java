@@ -2,4 +2,10 @@ package com.movieapp.screenings.domain.model;
 
 import java.util.UUID;
 
-public record ScreeningId(UUID id) {}
+import static org.springframework.util.Assert.notNull;
+
+public record ScreeningId(UUID id) {
+    public ScreeningId {
+        notNull(id, "ScreeningId must not be null");
+    }
+}

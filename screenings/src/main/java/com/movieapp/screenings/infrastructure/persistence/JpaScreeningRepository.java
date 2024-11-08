@@ -1,15 +1,14 @@
 package com.movieapp.screenings.infrastructure.persistence;
 
-import com.movieapp.screenings.domain.model.MovieId;
-import com.movieapp.screenings.domain.model.Screening;
-import com.movieapp.screenings.domain.model.ScreeningId;
+import com.movieapp.screenings.infrastructure.entity.ScreeningEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-interface JpaScreeningRepository extends JpaRepository<Screening, ScreeningId> {
-    List<Screening> findAllByMovieId(MovieId movieId);
-    List<Screening> findAllByScreeningId(ScreeningId screeningId);
+public interface JpaScreeningRepository extends JpaRepository<ScreeningEntity, UUID> {
+    List<ScreeningEntity> findAllByMovieId(UUID movieId);
+    List<ScreeningEntity> findAllByScreeningRoomId(UUID screeningRoomId);
 }
