@@ -1,5 +1,6 @@
 package com.movieapp.screenings.domain.model;
 
+import com.movieapp.screenings.domain.ScreeningBuilder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,4 +20,9 @@ public class Screening {
         this.screeningRoomId = screeningRoomId;
         this.time = time;
     }
+
+    public static ScreeningBuilder builder() {
+        return new ScreeningBuilder();
+    }
+
 }
