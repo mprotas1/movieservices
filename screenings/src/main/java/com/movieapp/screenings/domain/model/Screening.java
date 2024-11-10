@@ -1,6 +1,7 @@
 package com.movieapp.screenings.domain.model;
 
 import com.movieapp.screenings.domain.builder.ScreeningBuilder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class Screening {
     private ScreeningId screeningId;
     private MovieId movieId;

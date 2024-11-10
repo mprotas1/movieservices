@@ -1,5 +1,6 @@
 package com.movieapp.screenings.infrastructure.persistence;
 
+import com.movieapp.screenings.application.mapper.ScreeningMapper;
 import com.movieapp.screenings.domain.model.MovieId;
 import com.movieapp.screenings.domain.model.Screening;
 import com.movieapp.screenings.domain.model.ScreeningId;
@@ -21,33 +22,34 @@ class SQLScreeningRepository implements ScreeningRepository {
 
     @Override
     public Screening save(Screening screening) {
-        return repository.save(ScreeningEntity.fromDomain(screening)).toDomain();
+        ScreeningEntity entity = repository.save(ScreeningMapper.domainModelToEntity(screening));
+        return ScreeningMapper.entityToDomainModel(entity);
     }
 
     @Override
     public Optional<Screening> findById(ScreeningId screeningId) {
         return repository.findById(screeningId.id())
-                .map(ScreeningEntity::toDomain);
+                .map(ScreeningMapper::entityToDomainModel);
     }
 
     @Override
     public List<Screening> findAll() {
         return repository.findAll().stream()
-                .map(ScreeningEntity::toDomain)
+                .map(ScreeningMapper::entityToDomainModel)
                 .toList();
     }
 
     @Override
     public List<Screening> findAllByMovieId(MovieId movieId) {
         return repository.findAllByMovieId(movieId.id()).stream()
-                .map(ScreeningEntity::toDomain)
+                .map(ScreeningMapper::entityToDomainModel)
                 .toList();
     }
 
     @Override
     public List<Screening> findAllByScreeningRoomId(ScreeningRoomId screeningRoomId) {
         return repository.findAllByScreeningRoomId(screeningRoomId.id()).stream()
-                .map(ScreeningEntity::toDomain)
+                .map(ScreeningMapper::entityToDomainModel)
                 .toList();
     }
 
