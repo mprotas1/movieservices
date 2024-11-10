@@ -10,6 +10,11 @@ public class ScreeningTime {
     private final Instant startTime;
     private final Instant endTime;
 
+    public ScreeningTime(Instant startTime, Instant endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     private ScreeningTime(Instant startTime, int durationInMinutes) {
         isTrue(durationInMinutes > 0, "Duration must be non-negative");
         isTrue(startTimeIsInFuture(startTime), "Start time must be in the future");
