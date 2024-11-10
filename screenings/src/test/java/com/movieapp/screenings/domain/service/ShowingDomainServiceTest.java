@@ -12,9 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -63,8 +61,7 @@ class ShowingDomainServiceTest {
         Screening targetScreening = Screening.builder()
                 .withMovieId(UUID.randomUUID())
                 .withScreeningRoomId(UUID.randomUUID())
-                .withStartTime(Instant.now().plus(1, ChronoUnit.DAYS))
-                .withDuration(85)
+                .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
                 .build();
 
         Screening existingNonOverlappingScreening = new Screening(

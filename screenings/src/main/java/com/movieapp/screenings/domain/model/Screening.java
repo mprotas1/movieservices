@@ -1,6 +1,6 @@
 package com.movieapp.screenings.domain.model;
 
-import com.movieapp.screenings.domain.ScreeningBuilder;
+import com.movieapp.screenings.domain.builder.ScreeningBuilder;
 import lombok.Getter;
 import lombok.Setter;
 

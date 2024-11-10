@@ -22,8 +22,7 @@ class ScreeningBuilderTest {
         Screening screening = Screening.builder()
                 .withMovieId(movieId)
                 .withScreeningRoomId(screeningRoomId)
-                .withStartTime(startTime)
-                .withDuration(duration)
+                .withScreeningTime(startTime, duration)
                 .build();
 
         assertNotNull(screening);

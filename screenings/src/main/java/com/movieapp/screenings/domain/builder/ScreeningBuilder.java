@@ -1,4 +1,4 @@
-package com.movieapp.screenings.domain;
+package com.movieapp.screenings.domain.builder;
 
 import com.movieapp.screenings.domain.model.MovieId;
 import com.movieapp.screenings.domain.model.Screening;
@@ -11,8 +11,7 @@ import java.util.UUID;
 public class ScreeningBuilder {
     private MovieId movieId;
     private ScreeningRoomId screeningRoomId;
-    private Instant startTime;
-    private int duration;
+    private ScreeningTime time;
 
     public ScreeningBuilder withMovieId(UUID movieId) {
         this.movieId = new MovieId(movieId);
@@ -24,18 +23,12 @@ public class ScreeningBuilder {
         return this;
     }
 
-    public ScreeningBuilder withStartTime(Instant startTime) {
-        this.startTime = startTime;
-        return this;
-    }
-
-    public ScreeningBuilder withDuration(int duration) {
-        this.duration = duration;
+    public ScreeningBuilder withScreeningTime(Instant startTime, int duration) {
+        this.time = ScreeningTime.from(startTime, duration);
         return this;
     }
 
     public Screening build() {
-        ScreeningTime time = ScreeningTime.from(startTime, duration);
         return new Screening(movieId, screeningRoomId, time);
     }
 }
