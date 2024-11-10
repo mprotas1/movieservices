@@ -3,6 +3,9 @@ package com.movieapp.screenings.application.service;
 import com.movieapp.screenings.application.dto.ScreeningCreateRequest;
 import com.movieapp.screenings.application.dto.ScreeningDTO;
 
+import java.util.List;
+
 public interface ScreeningApplicationService {
     ScreeningDTO createScreening(ScreeningCreateRequest request);
+    List<ScreeningDTO> findAll();
 }
