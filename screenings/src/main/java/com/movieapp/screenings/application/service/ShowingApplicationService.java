@@ -21,7 +21,8 @@ class ShowingApplicationService implements ScreeningApplicationService {
     public ScreeningDTO createScreening(ScreeningCreateRequest request) {
         Screening mapped = ScreeningMapper.toEntity(request);
         Screening screening = screeningDomainService.createScreening(mapped);
-        return ScreeningMapper.toDTO(screening);
+        Screening savedScreening = repository.save(screening);
+        return ScreeningMapper.toDTO(savedScreening);
     }
 
     @Override

@@ -13,6 +13,8 @@ class ShowingDomainService implements ScreeningDomainService {
 
     @Override
     public Screening createScreening(Screening screening) {
+        // check, if screening room is existing and not already occupied by microservice API call - write the code
+
         if (overlappingScreeningExistsInScreeningRoom(screening)) {
             throw new OverlappingScreeningException("Screening overlaps with another screening in the same room - please choose another time");
         }
