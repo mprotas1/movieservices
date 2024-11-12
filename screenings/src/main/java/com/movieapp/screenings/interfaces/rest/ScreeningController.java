@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -24,7 +26,13 @@ class ScreeningController {
         log.debug("Creating new Screening with request: {}", request);
         var screening = screeningService.createScreening(request);
         log.debug("Created Screening: {}", screening);
-        return ResponseEntity.ok(screening);
+        return ResponseEntity.created(getScreeningLocation(screening)).body(screening);
+    }
+
+    private URI getScreeningLocation(ScreeningDTO screening) {
+        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(screening.screeningId())
+                .toUri();
     }
 
     @GetMapping
