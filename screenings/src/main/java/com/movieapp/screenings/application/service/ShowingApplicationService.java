@@ -7,12 +7,14 @@ import com.movieapp.screenings.domain.model.Screening;
 import com.movieapp.screenings.domain.respository.ScreeningRepository;
 import com.movieapp.screenings.domain.service.ScreeningDomainService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 class ShowingApplicationService implements ScreeningApplicationService {
     private final ScreeningDomainService screeningDomainService;
     private final ScreeningRepository repository;
@@ -22,6 +24,7 @@ class ShowingApplicationService implements ScreeningApplicationService {
         Screening mapped = ScreeningMapper.toEntity(request);
         Screening screening = screeningDomainService.createScreening(mapped);
         Screening savedScreening = repository.save(screening);
+        log.debug("Created Screening: {}", savedScreening);
         return ScreeningMapper.toDTO(savedScreening);
     }
 
