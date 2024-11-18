@@ -51,7 +51,7 @@ class CinemaRoomsController {
     @PutMapping("/{roomNumber}")
     ResponseEntity<CinemaRoomDTO> updateRoomCapacity(@PathVariable String cinemaId,
                                                      @PathVariable int roomNumber,
-                                                     @RequestParam(required = true) int newCapacity) {
+                                                     @RequestParam int newCapacity) {
         log.debug("Updating room with number {} from cinema with id {}", roomNumber, cinemaId);
         CinemaId id = new CinemaId(UUID.fromString(cinemaId));
         CinemaRoomDTO dto = cinemaRoomService.updateCapacity(id, roomNumber, newCapacity);

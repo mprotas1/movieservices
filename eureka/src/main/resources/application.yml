@@ -4,6 +4,8 @@ spring:
   cloud:
     vault:
       enabled: false
+      kv:
+        enabled: false
 server:
   port: 8761
 eureka:
