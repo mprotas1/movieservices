@@ -26,9 +26,11 @@ services:
     volumes:
         - postgres:/data/postgres
     ports:
-        - "5443:5432"
+        - "5443:5443"
+    expose:
+      - "5443"
     networks:
-        - postgres
+        - screenings
     restart: unless-stopped
 
   pgadmin:
@@ -44,6 +46,7 @@ services:
       - "5050:80"
     networks:
       - postgres
+      - screenings
     restart: unless-stopped
     depends_on:
       - customersdb
@@ -91,10 +94,27 @@ services:
       - ./vault:/vault/file
     command: ["server", "-dev"]
 
+  screeningsapp:
+    container_name: screeningsapp
+    build:
+      context: ./screenings
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_ADDRESS=jdbc:postgresql://screeningsdb:5443/screeningsdb
+    depends_on:
+      - screeningsdb
+    networks:
+      - screenings
+    ports:
+      - "8006:8006"
+
 networks:
   postgres:
     driver: bridge
   mysql:
+    driver: bridge
+  screenings:
     driver: bridge
 
 volumes:
