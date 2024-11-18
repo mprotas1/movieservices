@@ -1,0 +1,32 @@
+# Spring application properties
+spring:
+  application:
+    name: screenings-service
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show_sql: true
+  profiles:
+    active: dev
+
+# Server properties
+server:
+  port: 8006
+  servlet:
+    context-path: /screenings
+
+# Eureka Client configuration
+eureka:
+    client:
+      serviceUrl:
+        defaultZone: http://localhost:8761/eureka/
+
+# Vault configuration
+spring.cloud.vault:
+  enabled: false
+  kv:
+    enabled: false
