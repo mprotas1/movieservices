@@ -13,32 +13,39 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class JwtFilter extends BasicAuthenticationFilter {
+public class JwtFilter extends OncePerRequestFilter {
     private final Logger LOG = LoggerFactory.getLogger(this.getClass().getName());
     private final TokenService tokenService;
     private final UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
 
     private final int TOKEN_INDEX = 7;
     private final String BEARER_PREFIX = "Bearer ";
 
     public JwtFilter(AuthenticationManager authenticationManager, TokenService tokenService, UserDetailsService userDetailsService) {
-        super(authenticationManager);
         this.tokenService = tokenService;
         this.userDetailsService = userDetailsService;
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         Optional<String> token = retrieveTokenFromRequest(request);
 
-        if(token.isEmpty() || !token.get().startsWith(BEARER_PREFIX)) {
+        if(request.getServletPath().contains("/auth")) {
+            LOG.debug("The request path contains 'auth' - passing through the filter chain");
             filterChain.doFilter(request, response);
+            return;
+        }
+
+        if(token.isEmpty() || !token.get().startsWith(BEARER_PREFIX)) {
             LOG.debug("The token is either empty or does not start with 'Bearer' pre-fix - returning");
+            filterChain.doFilter(request, response);
             return;
         }
 
@@ -52,7 +59,7 @@ public class JwtFilter extends BasicAuthenticationFilter {
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        Authentication authenticate = getAuthenticationManager().authenticate(authenticationToken);
+        Authentication authenticate = authenticationManager.authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         filterChain.doFilter(request, response);
     }
