@@ -25,7 +25,6 @@ class DataSourceConfiguration {
     }
 
     @Bean
-    @Primary
     public Flyway flyway(@Qualifier("postgresqlDataSource") DataSource dataSource) {
         return Flyway.configure()
                 .dataSource(dataSource)
@@ -36,9 +35,7 @@ class DataSourceConfiguration {
 
     @Bean
     public ApplicationRunner migrateFlyway(Flyway flyway) {
-        return args -> {
-            flyway.migrate();
-        };
+        return args -> flyway.migrate();
     }
 
 }

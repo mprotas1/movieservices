@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -27,19 +28,21 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
-public class SecurityConfiguration {
+class SecurityConfiguration {
     private final TokenService tokenService;
     private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
+                .authenticationManager(authenticationManager())
+                .userDetailsService(userDetailsService())
                 .authorizeHttpRequests(request -> {
-                    request.requestMatchers("/users/auth/**").permitAll();
-                    request.anyRequest().authenticated();
+                    request.requestMatchers("/auth/**").permitAll()
+                            .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-                .addFilterBefore(jwtFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .cors(CorsConfigurer::disable)
                 .build();
@@ -67,7 +70,6 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    @Order(1)
     public JwtFilter jwtFilter() {
         return new JwtFilter(authenticationManager(), tokenService, userDetailsService());
     }

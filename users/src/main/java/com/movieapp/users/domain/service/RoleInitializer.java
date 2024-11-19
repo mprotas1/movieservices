@@ -5,10 +5,12 @@ import com.movieapp.users.domain.entity.RoleType;
 import com.movieapp.users.domain.repository.RoleRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@DependsOn("flyway")
 class RoleInitializer {
     private final RoleService roleService;
     private final RoleRepository roleRepository;
