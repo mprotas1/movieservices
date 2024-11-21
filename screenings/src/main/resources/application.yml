@@ -21,7 +21,7 @@ server:
 
 app:
   db:
-    address: ${DB_ADDRESS:localhost}
+    address: ${DB_ADDRESS:jdbc:postgresql://localhost:5443/screeningsdb}
 
 # Eureka Client configuration
 eureka:
