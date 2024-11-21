@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(locations = "/application-test-properties.yml")
+@TestPropertySource(locations = "/application.yml")
 @Testcontainers
 public abstract class TestContainersBase {
 

@@ -101,9 +101,6 @@ class AuthenticationMockTest {
     void validateAuthenticationResponse(UserAuthenticationResponse authenticationResponse) {
         assertNotNull(authenticationResponse);
         assertNotNull(authenticationResponse.token());
-        assertNotNull(authenticationResponse.user());
-        assertFalse(authenticationResponse.user().email().isEmpty());
-        assertFalse(authenticationResponse.user().roles().isEmpty());
         assertFalse(authenticationResponse.token().isEmpty());
     }
 

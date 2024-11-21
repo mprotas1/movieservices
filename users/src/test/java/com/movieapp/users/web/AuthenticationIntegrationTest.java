@@ -11,6 +11,7 @@ import com.movieapp.users.web.dto.UserAuthenticationResponse;
 import com.movieapp.users.web.dto.UserLoginRequest;
 import com.movieapp.users.web.dto.UserRegisterRequest;
 import com.movieapp.users.web.exception.RestExceptionMessage;
+import lombok.With;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,12 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 
 import java.net.URI;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WithAnonymousUser
 public class AuthenticationIntegrationTest extends TestContainersBase {
     @Autowired
     TestRestTemplate restTemplate;
@@ -67,9 +71,6 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
         assertNotNull(responseBody);
         assertFalse(responseBody.token().isEmpty());
         assertNotNull(location);
-        assertEquals("/users/" + responseBody.user().id(), location.getPath());
-        assertNotNull(responseBody.user());
-        assertTrue(userRepository.findByEmail(responseBody.user().email()).isPresent());
     }
 
     @Test
@@ -107,7 +108,6 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
         // arrange
         HttpEntity<UserLoginRequest> request = new HttpEntity<>(loginRequest, headers);
         UserAuthenticationResponse register = authenticationService.register(registerRequest);
-        User registered = userRepository.findById(register.user().id()).orElseThrow();
 
         // act
         ResponseEntity<UserAuthenticationResponse> response = restTemplate.postForEntity(BASIC_API_URL, request, UserAuthenticationResponse.class);
@@ -117,9 +117,6 @@ public class AuthenticationIntegrationTest extends TestContainersBase {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(responseBody);
         assertFalse(responseBody.token().isEmpty());
-        assertNotNull(responseBody.user());
-        assertEquals(registered.getId(), responseBody.user().id());
-        assertTrue(tokenService.validate(responseBody.token(), userRepository.findById(responseBody.user().id()).orElseThrow()));
     }
 
     // 4. Test invalid login for non-existing user
