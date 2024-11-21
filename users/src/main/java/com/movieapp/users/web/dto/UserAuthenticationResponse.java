@@ -1,3 +1,3 @@
 package com.movieapp.users.web.dto;
 
-public record UserAuthenticationResponse(UserDTO user, String token) {}
+public record UserAuthenticationResponse(String token) {}

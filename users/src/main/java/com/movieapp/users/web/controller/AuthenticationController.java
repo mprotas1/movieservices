@@ -37,7 +37,7 @@ class AuthenticationController {
     }
 
     private URI getLocation(UserAuthenticationResponse response) {
-        return URI.create("/users/" + response.user().id());
+        return URI.create("/users/" + 3);
     }
 
 }

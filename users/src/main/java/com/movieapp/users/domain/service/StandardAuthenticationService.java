@@ -41,7 +41,7 @@ class StandardAuthenticationService implements AuthenticationService {
         String token = tokenService.generateToken(userWithRole);
         UserDTO userDTO = userMapper.toDTO(userWithRole);
         log.debug("Successfully created user with e-mail: {}", userWithRole.getEmail());
-        return new UserAuthenticationResponse(userDTO, token);
+        return new UserAuthenticationResponse(token);
     }
 
     @Override
@@ -56,7 +56,7 @@ class StandardAuthenticationService implements AuthenticationService {
         String token = tokenService.generateToken(details);
         log.debug("Successfully authenticated user with e-mail: {}", request.email());
         UserDTO dto = userMapper.toDTO(details);
-        return new UserAuthenticationResponse(dto, token);
+        return new UserAuthenticationResponse(token);
     }
 
     private void validateEmail(String email) {
