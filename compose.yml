@@ -12,7 +12,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - postgres
+      - customers
     restart: unless-stopped
 
   screeningsdb:
@@ -26,7 +26,7 @@ services:
     volumes:
         - postgres:/data/postgres
     ports:
-        - "5443:5443"
+        - "5443:5432"
     expose:
       - "5443"
     networks:
@@ -45,15 +45,12 @@ services:
     ports:
       - "5050:80"
     networks:
-      - postgres
+      - customers
       - screenings
     restart: unless-stopped
-    depends_on:
-      - customersdb
-      - screeningsdb
 
-  mysql:
-    container_name: mysql
+  cinemasdb:
+    container_name: cinemasdb
     image: mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=secret
@@ -65,21 +62,21 @@ services:
     volumes:
       - mysql:/var/lib/mysql
     networks:
-      - mysql
+      - cinemas
     restart: unless-stopped
 
   mysqladmin:
     container_name: mysqladmin
     image: phpmyadmin/phpmyadmin:latest
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: cinemasdb
       PMA_PORT: 3306
       PMA_USER: user
       PMA_PASSWORD: secret
     ports:
       - "8001:80"
     networks:
-      - mysql
+      - cinemas
     restart: unless-stopped
 
   vault:
@@ -94,25 +91,10 @@ services:
       - ./vault:/vault/file
     command: ["server", "-dev"]
 
-  screeningsapp:
-    container_name: screeningsapp
-    build:
-      context: ./screenings
-      dockerfile: Dockerfile
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - DB_ADDRESS=jdbc:postgresql://screeningsdb:5443/screeningsdb
-    depends_on:
-      - screeningsdb
-    networks:
-      - screenings
-    ports:
-      - "8006:8006"
-
 networks:
-  postgres:
+  customers:
     driver: bridge
-  mysql:
+  cinemas:
     driver: bridge
   screenings:
     driver: bridge
