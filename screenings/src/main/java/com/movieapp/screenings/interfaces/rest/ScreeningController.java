@@ -29,17 +29,17 @@ class ScreeningController {
         return ResponseEntity.created(getScreeningLocation(screening)).body(screening);
     }
 
-    private URI getScreeningLocation(ScreeningDTO screening) {
-        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(screening.screeningId())
-                .toUri();
-    }
-
     @GetMapping
     ResponseEntity<List<ScreeningDTO>> findAll() {
         var screenings = screeningService.findAll();
         log.debug("Found {} Screenings", screenings.size());
         return ResponseEntity.ok(screenings);
+    }
+
+    private URI getScreeningLocation(ScreeningDTO screening) {
+        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(screening.screeningId())
+                .toUri();
     }
 
 }
