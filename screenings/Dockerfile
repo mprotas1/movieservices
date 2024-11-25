@@ -1,5 +1,5 @@
 FROM openjdk:22-jdk-slim
-LABEL authors="mprotas"
+WORKDIR /app
 
 ARG JAR_FILE=target/*.jar
 
