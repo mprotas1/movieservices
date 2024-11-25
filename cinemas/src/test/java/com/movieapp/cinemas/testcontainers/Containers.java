@@ -3,6 +3,7 @@ package com.movieapp.cinemas.testcontainers;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
@@ -13,7 +14,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
 @ExtendWith(SpringExtension.class)
-@TestPropertySource(locations = "/application.yml")
+@TestPropertySource(locations = "classpath:application-test.yml")
+@ActiveProfiles("test")
 public abstract class Containers {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
