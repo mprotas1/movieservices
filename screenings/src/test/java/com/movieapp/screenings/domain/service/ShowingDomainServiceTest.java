@@ -2,6 +2,7 @@ package com.movieapp.screenings.domain.service;
 
 import com.movieapp.screenings.application.dto.ScreeningRoomDTO;
 import com.movieapp.screenings.domain.exception.OverlappingScreeningException;
+import com.movieapp.screenings.domain.exception.ScreeningRoomDoesNotExistException;
 import com.movieapp.screenings.domain.model.MovieId;
 import com.movieapp.screenings.domain.model.Screening;
 import com.movieapp.screenings.domain.model.ScreeningRoomId;
@@ -112,7 +113,7 @@ class ShowingDomainServiceTest {
         when(cinemasClient.getScreeningRoomById(any(ScreeningRoomId.class)))
                 .thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> showingDomainService.createScreening(targetScreening));
+        assertThrows(ScreeningRoomDoesNotExistException.class, () -> showingDomainService.createScreening(targetScreening));
     }
 
 }

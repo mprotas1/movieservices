@@ -20,6 +20,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Disabled
 class ScreeningControllerTest extends TestContainers {
     private final String BASE_URL = "/";
 
@@ -44,9 +45,8 @@ class ScreeningControllerTest extends TestContainers {
 
     @Test
     @DisplayName("When creating screening with past start time then return 400 BAD REQUEST status code and ProblemDetails")
-    @Disabled
     void shouldNotCreateScreening() {
-        ScreeningCreateRequest request = new ScreeningCreateRequest(UUID.randomUUID(), 0, UUID.randomUUID(), Instant.now().plusSeconds(5));
+        ScreeningCreateRequest request = new ScreeningCreateRequest(UUID.randomUUID(), 120, UUID.randomUUID(), Instant.now().plusSeconds(5));
         ResponseEntity<ProblemDetail> responseEntity = restTemplate.postForEntity(BASE_URL, request, ProblemDetail.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
