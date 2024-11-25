@@ -65,6 +65,37 @@ services:
       - cinemas
     restart: unless-stopped
 
+  eurekaservice:
+    container_name: eurekaservice
+    image: eurekaservice:latest
+    build:
+      context: ./eureka
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - customers
+      - cinemas
+      - screenings
+    restart: unless-stopped
+
+  screeningsapp:
+    container_name: screeningsapp
+    build:
+      context: ./screenings
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
+    ports:
+      - "8006:8006"
+    depends_on:
+      - eurekaservice
+      - screeningsdb
+    networks:
+      - screenings
+    restart: unless-stopped
+
   mysqladmin:
     container_name: mysqladmin
     image: phpmyadmin/phpmyadmin:latest
