@@ -1,0 +1,22 @@
+# Spring application properties
+spring:
+  application:
+    name: screenings-service
+  profiles:
+    active: test
+  cloud:
+    vault:
+      enabled: false
+      kv:
+        enabled: false
+
+# Eureka Discovery Client configuration
+eureka:
+  client:
+    enabled: false
+
+# Server properties
+server:
+  port: 8006
+  servlet:
+    context-path: /screenings
