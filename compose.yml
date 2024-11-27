@@ -87,6 +87,7 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=dev
       - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
+      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
     ports:
       - "8006:8006"
     depends_on:
@@ -94,6 +95,24 @@ services:
       - screeningsdb
     networks:
       - screenings
+    restart: unless-stopped
+
+  cinemasapp:
+    container_name: cinemasapp
+    build:
+      context: ./cinemas
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - DB_ADDRESS=jdbc:mysql://cinemasdb:3306/cinemasdb
+      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+    ports:
+      - "8005:8005"
+    depends_on:
+      - eurekaservice
+      - cinemasdb
+    networks:
+      - cinemas
     restart: unless-stopped
 
   mysqladmin:
