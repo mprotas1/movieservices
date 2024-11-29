@@ -2,6 +2,7 @@ package com.movieapp.cinemas.config;
 
 import org.flywaydb.core.Flyway;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -12,14 +13,22 @@ import javax.sql.DataSource;
 
 @Configuration
 class DataSourceConfiguration {
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    @Value("${spring.datasource.password}")
+    private String password;
 
     @Bean
     @Primary
     public DataSource mySqlDataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:mysql://localhost:3306/cinemasdb")
-                .username("root")
-                .password("secret")
+                .url(url)
+                .username(username)
+                .password(password)
                 .driverClassName("com.mysql.cj.jdbc.Driver")
                 .build();
     }
