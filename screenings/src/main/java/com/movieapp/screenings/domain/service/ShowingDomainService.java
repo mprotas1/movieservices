@@ -14,11 +14,15 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 @Slf4j
 class ShowingDomainService implements ScreeningDomainService {
     private final ScreeningRepository repository;
     private final CinemasClient cinemasClient;
+
+    ShowingDomainService(ScreeningRepository repository, CinemasClient cinemasClient) {
+        this.repository = repository;
+        this.cinemasClient = cinemasClient;
+    }
 
     @Override
     public Screening createScreening(Screening screening) {

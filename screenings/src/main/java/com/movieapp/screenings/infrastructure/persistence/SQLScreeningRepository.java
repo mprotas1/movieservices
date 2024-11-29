@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Profile(value = {"dev", "prod"})
 class SQLScreeningRepository implements ScreeningRepository {
     private final JpaScreeningRepository repository;
 

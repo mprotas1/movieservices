@@ -10,8 +10,13 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show_sql: true
-  profiles:
-    active: dev
+
+# Vault configuration
+  cloud:
+    vault:
+      enabled: false
+      kv:
+        enabled: false
 
 # Server properties
 server:
@@ -19,6 +24,7 @@ server:
   servlet:
     context-path: /screenings
 
+# Database configuration
 app:
   db:
     address: ${DB_ADDRESS:jdbc:postgresql://localhost:5443/screeningsdb}
@@ -34,3 +40,10 @@ spring.cloud.vault:
   enabled: false
   kv:
     enabled: false
+    address: ${DB_ADDRESS:jdbc:postgresql://localhost:5432/screeningsdb}
+
+# Eureka Client configuration
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761/eureka/}

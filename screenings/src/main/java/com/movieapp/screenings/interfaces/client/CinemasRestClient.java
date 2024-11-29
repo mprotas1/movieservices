@@ -14,7 +14,6 @@ import java.util.Optional;
 @Component
 @AllArgsConstructor
 @Slf4j
-@Profile({"dev", "prod"})
 class CinemasRestClient implements CinemasClient {
     private final RestTemplate restTemplate;
 
