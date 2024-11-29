@@ -1,4 +1,19 @@
 services:
+  eurekaservice:
+    container_name: eurekaservice
+    build:
+      context: ./eureka
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - customers
+      - cinemas
+      - screenings
+    expose:
+      - "8761"
+    restart: unless-stopped
+
   customersdb:
     container_name: customersdb
     image: postgres:latest
@@ -13,6 +28,8 @@ services:
       - "5432:5432"
     networks:
       - customers
+    expose:
+      - "5432"
     restart: unless-stopped
 
   screeningsdb:
@@ -24,9 +41,9 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_DB=screeningsdb
     volumes:
-        - postgres:/data/postgres
+      - postgres:/data/postgres
     ports:
-        - "5443:5432"
+      - "5443:5432"
     expose:
       - "5443"
     networks:
@@ -54,8 +71,8 @@ services:
     image: mysql:latest
     environment:
       - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_USER=user
       - MYSQL_PASSWORD=secret
+      - MYSQL_USER=user
       - MYSQL_DATABASE=cinemasdb
     ports:
         - "3306:3306"
@@ -63,38 +80,8 @@ services:
       - mysql:/var/lib/mysql
     networks:
       - cinemas
-    restart: unless-stopped
-
-  eurekaservice:
-    container_name: eurekaservice
-    image: eurekaservice:latest
-    build:
-      context: ./eureka
-      dockerfile: Dockerfile
-    ports:
-      - "8761:8761"
-    networks:
-      - customers
-      - cinemas
-      - screenings
-    restart: unless-stopped
-
-  screeningsapp:
-    container_name: screeningsapp
-    build:
-      context: ./screenings
-      dockerfile: Dockerfile
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
-      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
-    ports:
-      - "8006:8006"
-    depends_on:
-      - eurekaservice
-      - screeningsdb
-    networks:
-      - screenings
+    expose:
+        - "3306"
     restart: unless-stopped
 
   cinemasapp:
@@ -103,9 +90,10 @@ services:
       context: ./cinemas
       dockerfile: Dockerfile
     environment:
-      - SPRING_PROFILES_ACTIVE=dev
       - DB_ADDRESS=jdbc:mysql://cinemasdb:3306/cinemasdb
       - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+      - VAULT_ADDR=http://vault:8200
+      - VAULT_TOKEN=root-token
     ports:
       - "8005:8005"
     depends_on:
@@ -129,6 +117,23 @@ services:
       - cinemas
     restart: unless-stopped
 
+  screeningsapp:
+    container_name: screeningsapp
+    build:
+      context: ./screenings
+      dockerfile: Dockerfile
+    environment:
+        - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
+        - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+    ports:
+      - "8006:8006"
+    depends_on:
+      - eurekaservice
+      - screeningsdb
+    networks:
+      - screenings
+    restart: unless-stopped
+
   vault:
     container_name: vault
     image: hashicorp/vault:latest
@@ -139,6 +144,10 @@ services:
       - "8200:8200"
     volumes:
       - ./vault:/vault/file
+    networks:
+      - cinemas
+    expose:
+      - "8200"
     command: ["server", "-dev"]
 
 networks:
