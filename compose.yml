@@ -140,6 +140,28 @@ services:
       - cinemas
     restart: unless-stopped
 
+  customersapp:
+    container_name: customersapp
+    build:
+      context: ./users
+      dockerfile: Dockerfile
+    environment:
+      - DB_ADDRESS=jdbc:postgresql://customersdb:5432/usersdb
+      - DB_USER=user
+      - DB_PASSWORD=secret
+      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eurekaservice
+      - customersdb
+    networks:
+      - customers
+      - cinemas
+      - screenings
+    restart: unless-stopped
+
   vault:
     container_name: vault
     image: hashicorp/vault:latest

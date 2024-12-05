@@ -91,3 +91,83 @@ dist/
 *.zip
 *.tar.gz
 *.rar
+
+# Python-specific files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual environment directories
+venv/
+.env/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Python eggs and distribution files
+*.egg
+*.egg-info/
+dist/
+build/
+*.whl
+
+# Coverage reports
+htmlcov/
+*.cover
+*.py,cover
+.hypothesis/
+.cache/
+
+# Pytest cache
+.pytest_cache/
+
+# Temporary files and logs
+*.log
+*.pot
+*.pyo
+*.tmp
+*.temp
+
+# IDEs
+.idea/
+*.iml
+*.iws
+.vscode/
+
+# System-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Byte-compiled files
+*.pyc
+
+# Local configurations
+*.env
+.env/
+
+# Sphinx documentation
+docs/_build/
+
+# PyInstaller
+*.spec
+
+# Packaging
+*.lock
+pip-log.txt
+pip-delete-this-directory.txt
+
+# macOS-specific files
+.DS_Store
+
+# Windows-specific files
+Thumbs.db
+ehthumbs.db
+
+# AWS SAM build artifacts
+.aws-sam/build/
+
+# Docker-related files
+docker-compose.override.yml
+.env.docker
