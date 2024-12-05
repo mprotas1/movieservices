@@ -47,7 +47,7 @@ services:
     expose:
       - "5443"
     networks:
-        - screenings
+      - screenings
     restart: unless-stopped
 
   pgadmin:
@@ -64,6 +64,7 @@ services:
     networks:
       - customers
       - screenings
+      - movies
     restart: unless-stopped
 
   cinemasdb:
@@ -82,6 +83,24 @@ services:
       - cinemas
     expose:
         - "3306"
+    restart: unless-stopped
+
+  moviesdb:
+    container_name: moviesdb
+    image: postgres:latest
+    environment:
+      - POSTGRES_ROOT_PASSWORD=secret
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=user
+      - POSTGRES_DB=moviesdb
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5453:5432"
+    expose:
+      - "5453"
+    networks:
+      - movies
     restart: unless-stopped
 
   cinemasapp:
@@ -184,6 +203,8 @@ networks:
   cinemas:
     driver: bridge
   screenings:
+    driver: bridge
+  movies:
     driver: bridge
 
 volumes:
