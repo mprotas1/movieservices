@@ -31,19 +31,6 @@ app:
 
 # Eureka Client configuration
 eureka:
-    client:
-      serviceUrl:
-        defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761/eureka/}
-
-# Vault configuration
-spring.cloud.vault:
-  enabled: false
-  kv:
-    enabled: false
-    address: ${DB_ADDRESS:jdbc:postgresql://localhost:5432/screeningsdb}
-
-# Eureka Client configuration
-eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761/eureka/}
