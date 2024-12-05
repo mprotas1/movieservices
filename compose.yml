@@ -92,15 +92,20 @@ services:
     environment:
       - DB_ADDRESS=jdbc:mysql://cinemasdb:3306/cinemasdb
       - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
-      - VAULT_ADDR=http://vault:8200
+      - VAULT_SCHEME=http
+      - VAULT_PORT=8200
       - VAULT_TOKEN=root-token
+      - VAULT_URI=http://vault:8200
+      - PORT=8005
     ports:
       - "8005:8005"
     depends_on:
+      - vault
       - eurekaservice
       - cinemasdb
     networks:
       - cinemas
+      - screenings
     restart: unless-stopped
 
   mysqladmin:
@@ -132,6 +137,7 @@ services:
       - screeningsdb
     networks:
       - screenings
+      - cinemas
     restart: unless-stopped
 
   vault:
