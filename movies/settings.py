@@ -1,15 +1,15 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    database: str = 'moviesdb'  # Domyślna wartość
+    database: str = 'moviesdb'
     user: str = 'user'
     password: str = 'secret'
     host: str = 'localhost'
-    port: int = 5432
+    port: int = 5453
 
     class Config:
-        env_prefix = 'DB_'  # Prefix dla zmiennych środowiskowych (np. DB_DATABASE)
-        env_file = '.env'  # Automatyczne wczytywanie zmiennych z pliku .env (jeśli istnieje)
+        env_prefix = 'DB_'
+        env_file = '.env'
 
 def get_settings():
     return Settings()
