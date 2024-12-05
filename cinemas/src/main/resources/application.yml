@@ -30,6 +30,7 @@ spring:
       authentication: token
 
 server:
+  port: ${PORT:8005}
   servlet:
     context-path: /cinemas
 
