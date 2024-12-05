@@ -1,5 +1,4 @@
 FROM openjdk:22-jdk-slim
-WORKDIR /app
 
 ARG JAR_FILE=target/*.jar
 
