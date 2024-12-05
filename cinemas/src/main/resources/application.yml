@@ -21,7 +21,7 @@ spring:
 
   cloud:
     vault:
-      uri: ${VAULT_ADDR:http://127.0.0.1:8200}
+      uri: ${VAULT_URI:http://127.0.0.1:8200}
       token: ${VAULT_TOKEN:root-token}
       kv:
         enabled: true
@@ -29,12 +29,7 @@ spring:
         application-name: cinemas-service
       authentication: token
 
-vault:
-  host: ${VAULT_ADDR:http://127.0.0.1}
-  port: ${VAULT_PORT:8200}
-
 server:
-  port: 8005
   servlet:
     context-path: /cinemas
 
