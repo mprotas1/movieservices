@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+
 class Settings(BaseSettings):
     database: str = 'moviesdb'
     user: str = 'user'
@@ -10,6 +11,7 @@ class Settings(BaseSettings):
     class Config:
         env_prefix = 'DB_'
         env_file = '.env'
+
 
 def get_settings():
     return Settings()
