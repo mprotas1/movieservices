@@ -1,8 +1,24 @@
 services:
-  postgres:
-    container_name: postgres
+  eurekaservice:
+    container_name: eurekaservice
+    build:
+      context: ./eureka
+      dockerfile: Dockerfile
+    ports:
+      - "8761:8761"
+    networks:
+      - customers
+      - cinemas
+      - screenings
+    expose:
+      - "8761"
+    restart: unless-stopped
+
+  customersdb:
+    container_name: customersdb
     image: postgres:latest
     environment:
+      - POSTGRES_ROOT_PASSWORD=secret
       - POSTGRES_PASSWORD=secret
       - POSTGRES_USER=user
       - POSTGRES_DB=usersdb
@@ -11,7 +27,27 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - postgres
+      - customers
+    expose:
+      - "5432"
+    restart: unless-stopped
+
+  screeningsdb:
+    container_name: screeningsdb
+    image: postgres:latest
+    environment:
+      - POSTGRES_ROOT_PASSWORD=secret
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=user
+      - POSTGRES_DB=screeningsdb
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5443:5432"
+    expose:
+      - "5443"
+    networks:
+      - screenings
     restart: unless-stopped
 
   pgadmin:
@@ -26,13 +62,153 @@ services:
     ports:
       - "5050:80"
     networks:
-      - postgres
+      - customers
+      - screenings
+      - movies
     restart: unless-stopped
 
+  cinemasdb:
+    container_name: cinemasdb
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_PASSWORD=secret
+      - MYSQL_USER=user
+      - MYSQL_DATABASE=cinemasdb
+    ports:
+        - "3306:3306"
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - cinemas
+    expose:
+        - "3306"
+    restart: unless-stopped
+
+  moviesdb:
+    container_name: moviesdb
+    image: postgres:latest
+    environment:
+      - POSTGRES_ROOT_PASSWORD=secret
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_USER=user
+      - POSTGRES_DB=moviesdb
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5453:5432"
+    expose:
+      - "5453"
+    networks:
+      - movies
+    restart: unless-stopped
+
+  cinemasapp:
+    container_name: cinemasapp
+    build:
+      context: ./cinemas
+      dockerfile: Dockerfile
+    environment:
+      - DB_ADDRESS=jdbc:mysql://cinemasdb:3306/cinemasdb
+      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+      - VAULT_SCHEME=http
+      - VAULT_PORT=8200
+      - VAULT_TOKEN=root-token
+      - VAULT_URI=http://vault:8200
+      - PORT=8005
+    ports:
+      - "8005:8005"
+    depends_on:
+      - vault
+      - eurekaservice
+      - cinemasdb
+    networks:
+      - cinemas
+      - screenings
+    restart: unless-stopped
+
+  mysqladmin:
+    container_name: mysqladmin
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: cinemasdb
+      PMA_PORT: 3306
+      PMA_USER: user
+      PMA_PASSWORD: secret
+    ports:
+      - "8001:80"
+    networks:
+      - cinemas
+    restart: unless-stopped
+
+  screeningsapp:
+    container_name: screeningsapp
+    build:
+      context: ./screenings
+      dockerfile: Dockerfile
+    environment:
+        - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
+        - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+    ports:
+      - "8006:8006"
+    depends_on:
+      - eurekaservice
+      - screeningsdb
+    networks:
+      - screenings
+      - cinemas
+    restart: unless-stopped
+
+  customersapp:
+    container_name: customersapp
+    build:
+      context: ./users
+      dockerfile: Dockerfile
+    environment:
+      - DB_ADDRESS=jdbc:postgresql://customersdb:5432/usersdb
+      - DB_USER=user
+      - DB_PASSWORD=secret
+      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eurekaservice
+      - customersdb
+    networks:
+      - customers
+      - cinemas
+      - screenings
+    restart: unless-stopped
+
+  vault:
+    container_name: vault
+    image: hashicorp/vault:latest
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root-token
+      VAULT_ADDR: http://127.0.0.1:8200
+    ports:
+      - "8200:8200"
+    volumes:
+      - ./vault:/vault/file
+    networks:
+      - cinemas
+    expose:
+      - "8200"
+    command: ["server", "-dev"]
+
 networks:
-  postgres:
+  customers:
+    driver: bridge
+  cinemas:
+    driver: bridge
+  screenings:
+    driver: bridge
+  movies:
     driver: bridge
 
 volumes:
   postgres:
   pgadmin:
+  mysql:
+  vault:

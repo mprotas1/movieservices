@@ -13,7 +13,10 @@ The application is part of a research paper on comparing microservices architect
 The Cinema Microservices Application is a model for an enterprise application that oversees all cinema-based operations. It consists of user management, theatre maintenance, movie repertoire updates, and other related tasks. Dependencies are split up between list of microservices which has their own responsibilites. The application is built using REST API architectural styles in concjuction with the microservices architectural pattern.
 
 ## Microservices
-* TBD
+* users service [Java 22 + PostgreSQL stack]
+* cinemas service [Java 22 + MongoDB stack]
+* cloud gateway [Java Spring Cloud Gateway implementation]
+* recommendations service
 
 ## Technology stack
 * Spring Boot
@@ -25,9 +28,11 @@ The Cinema Microservices Application is a model for an enterprise application th
 * PostgreSQL
 * MongoDB
 * Redis
+* HashiCorp Vault
+* Google Maps API
 
 ## Requirments
-The application (every service) needs for correct boot at least Java with version 21 and a running Docker Deamon for running all containers.
+The application (every service) needs for correct boot at least Java with version 21 and a running Docker Deamon for running all dependent containers.
 
 ## Installation
 To install the application you need to have an active and running Docker Deamon.

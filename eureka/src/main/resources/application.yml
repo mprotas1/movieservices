@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: eureka
+  cloud:
+    vault:
+      enabled: false
+      kv:
+        enabled: false
+server:
+  port: 8761
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
