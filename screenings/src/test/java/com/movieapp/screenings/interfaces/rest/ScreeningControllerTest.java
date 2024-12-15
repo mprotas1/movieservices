@@ -33,7 +33,7 @@ class ScreeningControllerTest extends TestContainers {
     @Test
     @DisplayName("When creating screening then return 201 CREATED status code and DTO")
     void shouldCreateScreening() {
-        ScreeningCreateRequest request = new ScreeningCreateRequest(UUID.randomUUID(), 120, UUID.randomUUID(), Instant.now().plusSeconds(5));
+        ScreeningCreateRequest request = new ScreeningCreateRequest(1L, 120, UUID.randomUUID(), Instant.now().plusSeconds(5));
         ResponseEntity<ScreeningDTO> responseEntity = restTemplate.postForEntity(BASE_URL, request, ScreeningDTO.class);
         ScreeningDTO dto = responseEntity.getBody();
 
@@ -46,7 +46,7 @@ class ScreeningControllerTest extends TestContainers {
     @Test
     @DisplayName("When creating screening with past start time then return 400 BAD REQUEST status code and ProblemDetails")
     void shouldNotCreateScreening() {
-        ScreeningCreateRequest request = new ScreeningCreateRequest(UUID.randomUUID(), 120, UUID.randomUUID(), Instant.now().plusSeconds(5));
+        ScreeningCreateRequest request = new ScreeningCreateRequest(1L, 120, UUID.randomUUID(), Instant.now().plusSeconds(5));
         ResponseEntity<ProblemDetail> responseEntity = restTemplate.postForEntity(BASE_URL, request, ProblemDetail.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -57,7 +57,7 @@ class ScreeningControllerTest extends TestContainers {
     @DisplayName("When finding all screenings then return 200 OK status code and list of DTOs")
     void shouldFindAllScreenings() {
         Screening screening = Screening.builder()
-                .withMovieId(UUID.randomUUID())
+                .withMovieId(1L)
                 .withScreeningTime(Instant.now().plusSeconds(5), 120)
                 .withScreeningRoomId(UUID.randomUUID())
                 .build();

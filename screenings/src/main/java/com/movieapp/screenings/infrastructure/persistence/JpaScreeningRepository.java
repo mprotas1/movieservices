@@ -9,6 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface JpaScreeningRepository extends JpaRepository<ScreeningEntity, UUID> {
-    List<ScreeningEntity> findAllByMovieId(UUID movieId);
+    List<ScreeningEntity> findAllByMovieId(Long movieId);
     List<ScreeningEntity> findAllByScreeningRoomId(UUID screeningRoomId);
 }

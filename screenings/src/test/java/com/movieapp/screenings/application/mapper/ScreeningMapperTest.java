@@ -23,7 +23,7 @@ class ScreeningMapperTest {
     @Test
     @DisplayName("Should map ScreeningCreateRequest to Screening entity")
     void shouldMapCreateRequestToEntity() {
-        MovieId movieId = new MovieId(randomUUID());
+        MovieId movieId = new MovieId(1L);
         ScreeningRoomId screeningRoomId = new ScreeningRoomId(randomUUID());
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         int duration = 120;
@@ -43,12 +43,12 @@ class ScreeningMapperTest {
     @DisplayName("Should map ScreeningDTO to Screening entity")
     void shouldMapScreeningDTOToEntity() {
         UUID screeningId = randomUUID();
-        MovieId movieId = new MovieId(randomUUID());
+        MovieId movieId = new MovieId(1L);
         ScreeningRoomId screeningRoomId = new ScreeningRoomId(randomUUID());
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
-        ScreeningDTO dto = new ScreeningDTO(screeningId, movieId.id(), screeningRoomId.id(), startTime, endTime);
+        ScreeningDTO dto = new ScreeningDTO(screeningId, movieId.id(), screeningRoomId.id(), startTime, endTime, "Movie Title");
 
         assertNotNull(dto);
         assertEquals(screeningId, dto.screeningId());
@@ -62,7 +62,7 @@ class ScreeningMapperTest {
     @Test
     @DisplayName("Should map Screening entity to ScreeningDTO")
     void shouldMapEntityToDTO() {
-        MovieId movieId = new MovieId(randomUUID());
+        MovieId movieId = new MovieId(1L);
         ScreeningRoomId screeningRoomId = new ScreeningRoomId(randomUUID());
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
@@ -90,7 +90,7 @@ class ScreeningMapperTest {
 
         ScreeningEntity entity = new ScreeningEntity();
         entity.setId(screeningId);
-        entity.setMovieId(movieId);
+        entity.setMovieId(1L);
         entity.setScreeningRoomId(screeningRoomId);
         entity.setStartTime(startTime);
         entity.setEndTime(endTime);
@@ -114,7 +114,7 @@ class ScreeningMapperTest {
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
         Screening domainModel = new Screening(
-                new MovieId(movieId),
+                new MovieId(1L),
                 new ScreeningRoomId(screeningRoomId),
                 new ScreeningTime(startTime, endTime)
         );

@@ -13,7 +13,7 @@ public class ScreeningBuilder {
     private ScreeningRoomId screeningRoomId;
     private ScreeningTime time;
 
-    public ScreeningBuilder withMovieId(UUID movieId) {
+    public ScreeningBuilder withMovieId(Long movieId) {
         this.movieId = new MovieId(movieId);
         return this;
     }

@@ -14,7 +14,7 @@ class ScreeningBuilderTest {
 
     @Test
     void shouldBuildScreening() {
-        UUID movieId = UUID.randomUUID();
+        Long movieId = 1L;
         UUID screeningRoomId = UUID.randomUUID();
         Instant startTime = Instant.now().plus(5, ChronoUnit.SECONDS);
         int duration = 120;
