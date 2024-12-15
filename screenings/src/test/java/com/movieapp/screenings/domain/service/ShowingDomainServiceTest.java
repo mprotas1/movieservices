@@ -42,13 +42,13 @@ class ShowingDomainServiceTest {
         ScreeningTime overlappingTime = ScreeningTime.from(now.plus(5, ChronoUnit.MINUTES), 55);
 
         Screening targetScreening = new Screening(
-                new MovieId(UUID.randomUUID()),
+                new MovieId(1L),
                 new ScreeningRoomId(UUID.randomUUID()),
                 overlappingTime
         );
 
         Screening existingOverlappingScreening = new Screening(
-                new MovieId(UUID.randomUUID()),
+                new MovieId(1L),
                 new ScreeningRoomId(UUID.randomUUID()),
                 time
         );
@@ -68,13 +68,13 @@ class ShowingDomainServiceTest {
         ScreeningTime time = ScreeningTime.from(now.plus(5, ChronoUnit.SECONDS), 65);
 
         Screening targetScreening = Screening.builder()
-                .withMovieId(UUID.randomUUID())
+                .withMovieId(1L)
                 .withScreeningRoomId(UUID.randomUUID())
                 .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
                 .build();
 
         Screening existingNonOverlappingScreening = new Screening(
-                new MovieId(UUID.randomUUID()),
+                new MovieId(1L),
                 new ScreeningRoomId(UUID.randomUUID()),
                 time
         );
@@ -91,7 +91,7 @@ class ShowingDomainServiceTest {
     @Test
     void shouldAcceptWhenScreeningRoomExists() {
         Screening targetScreening = Screening.builder()
-                .withMovieId(UUID.randomUUID())
+                .withMovieId(1L)
                 .withScreeningRoomId(UUID.randomUUID())
                 .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
                 .build();
@@ -105,7 +105,7 @@ class ShowingDomainServiceTest {
     @Test
     void shouldRejectWhenScreeningRoomDoesNotExist() {
         Screening targetScreening = Screening.builder()
-                .withMovieId(UUID.randomUUID())
+                .withMovieId(1L)
                 .withScreeningRoomId(UUID.randomUUID())
                 .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
                 .build();

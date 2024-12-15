@@ -21,7 +21,7 @@ class InMemoryScreeningRepositoryTest {
     void setUp() {
         inMemoryScreeningRepository = new InMemoryScreeningRepository();
         screening = Screening.builder().withScreeningRoomId(UUID.randomUUID())
-                .withMovieId(UUID.randomUUID())
+                .withMovieId(1L)
                 .withScreeningTime(Instant.now().plus(5, ChronoUnit.MINUTES), 120).
                 build();
     }

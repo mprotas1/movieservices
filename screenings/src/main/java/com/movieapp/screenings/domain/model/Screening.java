@@ -15,6 +15,7 @@ public class Screening {
     private MovieId movieId;
     private ScreeningRoomId screeningRoomId;
     private ScreeningTime time;
+    private String movieTitle;
 
     public Screening(MovieId movieId, ScreeningRoomId screeningRoomId, ScreeningTime time) {
         this.screeningId = new ScreeningId(UUID.randomUUID());

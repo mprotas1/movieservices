@@ -29,7 +29,8 @@ public class ScreeningMapper {
                 screening.getMovieId().id(),
                 screening.getScreeningRoomId().id(),
                 screening.getTime().getStartTime(),
-                screening.getTime().getEndTime()
+                screening.getTime().getEndTime(),
+                screening.getMovieTitle()
         );
     }
 
@@ -38,7 +39,8 @@ public class ScreeningMapper {
                 new ScreeningId(entity.getId()),
                 new MovieId(entity.getMovieId()),
                 new ScreeningRoomId(entity.getScreeningRoomId()),
-                new ScreeningTime(entity.getStartTime(), entity.getEndTime())
+                new ScreeningTime(entity.getStartTime(), entity.getEndTime()),
+                entity.getMovieTitle()
         );
     }
 
