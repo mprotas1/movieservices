@@ -149,6 +149,8 @@ services:
     environment:
         - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
         - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
+        - MOVIES_SERVICE_URL=http://movies-service/movies
+        - CINEMAS_SERVICE_URL=http://cinemas-service/cinemas
     ports:
       - "8006:8006"
     depends_on:
