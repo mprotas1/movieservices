@@ -3,7 +3,9 @@ package com.movieapp.screenings.interfaces.client;
 import com.movieapp.screenings.application.dto.ScreeningRoomDTO;
 import com.movieapp.screenings.domain.model.ScreeningRoomId;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -12,9 +14,11 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 class CinemasRestClient implements CinemasClient {
+    @Value("${cinemas.service.url}")
+    private String CINEMAS_SERVICE_URL;
     private final RestTemplate restTemplate;
 
     @Override
@@ -31,7 +35,7 @@ class CinemasRestClient implements CinemasClient {
     }
 
     private String buildUrl(ScreeningRoomId screeningRoomId) {
-        return "http://cinemas-service/cinemas/rooms/" + screeningRoomId.id().toString();
+        return CINEMAS_SERVICE_URL + "/rooms/" + screeningRoomId.id().toString();
     }
 
 }
