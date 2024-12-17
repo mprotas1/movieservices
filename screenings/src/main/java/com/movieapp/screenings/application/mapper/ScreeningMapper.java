@@ -1,27 +1,10 @@
 package com.movieapp.screenings.application.mapper;
 
-import com.movieapp.screenings.application.dto.ScreeningCreateRequest;
 import com.movieapp.screenings.application.dto.ScreeningDTO;
 import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.infrastructure.entity.ScreeningEntity;
 
 public class ScreeningMapper {
-
-    public static Screening toEntity(ScreeningCreateRequest request) {
-        return new Screening(
-                new MovieId(request.movieId()),
-                new ScreeningRoomId(request.screeningRoomId()),
-                ScreeningTime.from(request.startTime(), request.duration())
-        );
-    }
-
-    public static Screening toEntity(ScreeningDTO dto) {
-        return new Screening(
-                new MovieId(dto.movieId()),
-                new ScreeningRoomId(dto.screeningRoomId()),
-                new ScreeningTime(dto.startTime(), dto.endTime())
-        );
-    }
 
     public static ScreeningDTO toDTO(Screening screening) {
         return new ScreeningDTO(
@@ -30,7 +13,8 @@ public class ScreeningMapper {
                 screening.getScreeningRoomId().id(),
                 screening.getTime().getStartTime(),
                 screening.getTime().getEndTime(),
-                screening.getMovieTitle()
+                screening.getMovieTitle(),
+                screening.getScreeningRoomNumber()
         );
     }
 
@@ -40,7 +24,8 @@ public class ScreeningMapper {
                 new MovieId(entity.getMovieId()),
                 new ScreeningRoomId(entity.getScreeningRoomId()),
                 new ScreeningTime(entity.getStartTime(), entity.getEndTime()),
-                entity.getMovieTitle()
+                entity.getMovieTitle(),
+                entity.getScreeningRoomNumber()
         );
     }
 
@@ -51,6 +36,8 @@ public class ScreeningMapper {
         entity.setScreeningRoomId(screening.getScreeningRoomId().id());
         entity.setStartTime(screening.getTime().getStartTime());
         entity.setEndTime(screening.getTime().getEndTime());
+        entity.setMovieTitle(screening.getMovieTitle());
+        entity.setScreeningRoomNumber(screening.getScreeningRoomNumber());
         return entity;
     }
 

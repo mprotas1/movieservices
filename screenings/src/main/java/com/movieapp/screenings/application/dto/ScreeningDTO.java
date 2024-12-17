@@ -8,4 +8,5 @@ public record ScreeningDTO(UUID screeningId,
                            UUID screeningRoomId,
                            Instant startTime,
                            Instant endTime,
-                           String movieTitle) {}
+                           String movieTitle,
+                           int screeningRoomNumber) {}
