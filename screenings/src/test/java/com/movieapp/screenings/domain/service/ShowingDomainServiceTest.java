@@ -1,13 +1,11 @@
 package com.movieapp.screenings.domain.service;
 
-import com.movieapp.screenings.application.dto.ScreeningRoomDTO;
 import com.movieapp.screenings.domain.exception.OverlappingScreeningException;
-import com.movieapp.screenings.domain.exception.ScreeningRoomDoesNotExistException;
 import com.movieapp.screenings.domain.model.MovieId;
 import com.movieapp.screenings.domain.model.Screening;
 import com.movieapp.screenings.domain.model.ScreeningRoomId;
 import com.movieapp.screenings.domain.model.ScreeningTime;
-import com.movieapp.screenings.domain.respository.ScreeningRepository;
+import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import com.movieapp.screenings.interfaces.client.CinemasClient;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -44,17 +41,18 @@ class ShowingDomainServiceTest {
         Screening targetScreening = new Screening(
                 new MovieId(1L),
                 new ScreeningRoomId(UUID.randomUUID()),
-                overlappingTime
+                overlappingTime,
+                "Movie Title",
+                1
         );
 
         Screening existingOverlappingScreening = new Screening(
                 new MovieId(1L),
                 new ScreeningRoomId(UUID.randomUUID()),
-                time
+                time,
+                "Movie Title",
+                1
         );
-
-        when(cinemasClient.getScreeningRoomById(any(ScreeningRoomId.class)))
-                .thenReturn(Optional.of(new ScreeningRoomDTO(UUID.randomUUID(), UUID.randomUUID(), 1, 100)));
 
         when(screeningRepository.findAllByScreeningRoomId(any(ScreeningRoomId.class)))
                 .thenReturn(List.of(existingOverlappingScreening));
@@ -76,14 +74,10 @@ class ShowingDomainServiceTest {
         Screening existingNonOverlappingScreening = new Screening(
                 new MovieId(1L),
                 new ScreeningRoomId(UUID.randomUUID()),
-                time
+                time,
+                "Movie Title",
+                1
         );
-
-        when(cinemasClient.getScreeningRoomById(any(ScreeningRoomId.class)))
-                .thenReturn(Optional.of(new ScreeningRoomDTO(UUID.randomUUID(), UUID.randomUUID(), 1, 100)));
-
-        when(screeningRepository.findAllByScreeningRoomId(any(ScreeningRoomId.class)))
-                .thenReturn(List.of(existingNonOverlappingScreening));
 
         assertDoesNotThrow(() -> showingDomainService.createScreening(targetScreening));
     }
@@ -96,24 +90,7 @@ class ShowingDomainServiceTest {
                 .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
                 .build();
 
-        when(cinemasClient.getScreeningRoomById(any(ScreeningRoomId.class)))
-                .thenReturn(Optional.of(new ScreeningRoomDTO(UUID.randomUUID(), UUID.randomUUID(), 1, 100)));
-
         showingDomainService.createScreening(targetScreening);
-    }
-
-    @Test
-    void shouldRejectWhenScreeningRoomDoesNotExist() {
-        Screening targetScreening = Screening.builder()
-                .withMovieId(1L)
-                .withScreeningRoomId(UUID.randomUUID())
-                .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
-                .build();
-
-        when(cinemasClient.getScreeningRoomById(any(ScreeningRoomId.class)))
-                .thenReturn(Optional.empty());
-
-        assertThrows(ScreeningRoomDoesNotExistException.class, () -> showingDomainService.createScreening(targetScreening));
     }
 
 }
