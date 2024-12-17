@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
@@ -23,15 +24,19 @@ class CinemasRestClient implements CinemasClient {
 
     @Override
     public Optional<ScreeningRoomDTO> getScreeningRoomById(ScreeningRoomId screeningRoomId) {
-        ResponseEntity<ScreeningRoomDTO> roomResponseEntity = restTemplate.getForEntity(buildUrl(screeningRoomId), ScreeningRoomDTO.class);
-
-        if(roomResponseEntity.getStatusCode().isError()) {
-            log.error("Error while fetching screening room with screeningRoomId: {}", screeningRoomId);
+        try {
+            ResponseEntity<ScreeningRoomDTO> roomResponseEntity = restTemplate.getForEntity(buildUrl(screeningRoomId), ScreeningRoomDTO.class);
+            if(roomResponseEntity.getStatusCode().isError()) {
+                log.error("Error while fetching screening room with screeningRoomId: {}", screeningRoomId);
+                return Optional.empty();
+            }
+            log.debug("Fetched screening room with screeningRoomId: {}", screeningRoomId);
+            return Optional.ofNullable(roomResponseEntity.getBody());
+        }
+        catch (HttpClientErrorException.NotFound httpException) {
+            log.error("Caught HttpException during fetching Screening Room with id: {}", screeningRoomId);
             return Optional.empty();
         }
-
-        log.debug("Fetched screening room with screeningRoomId: {}", screeningRoomId);
-        return Optional.ofNullable(roomResponseEntity.getBody());
     }
 
     private String buildUrl(ScreeningRoomId screeningRoomId) {
