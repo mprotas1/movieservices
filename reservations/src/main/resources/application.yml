@@ -1,0 +1,23 @@
+server:
+  port: ${PORT:8400}
+
+spring:
+  datasource:
+    hikari:
+      jdbc-url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/reservations}
+      username: ${DATABASE_USER:postgres}
+      password: ${DATABASE_PASSWORD:password}
+      driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+services:
+  url:
+    screenings: ${SCREENINGS_URL:http://localhost:8300}
+    cinemas: ${CINEMAS_URL:http://localhost:8200}
+    users: ${USERS_URL:http://localhost:8100}
