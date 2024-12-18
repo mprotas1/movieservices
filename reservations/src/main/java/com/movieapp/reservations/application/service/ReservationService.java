@@ -1,10 +1,9 @@
 package com.movieapp.reservations.application.service;
 
+import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
 import com.movieapp.reservations.application.mapper.ReservationMapper;
-import com.movieapp.domain.*;
 import com.movieapp.reservations.domain.*;
-import domain.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +19,8 @@ class ReservationService implements ReservationApplicationService {
     private final ReservationRepository reservationRepository;
 
     @Override
-    public ReservationDTO makeReservation(ReservationDTO reservationDTO) {
-        log.debug("Making reservation: {}", reservationDTO);
+    public ReservationDTO makeReservation(ReservationCreateRequest request) {
+        log.debug("Making reservation for request: {}", request);
         return null;
     }
 
@@ -44,6 +43,13 @@ class ReservationService implements ReservationApplicationService {
         return reservationRepository.findByScreeningIdAndSeatId(screeningId, seatId)
                 .map(ReservationMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Reservation with screeningId: " + screeningId.id() + " and seatId: " + seatId.id() + " not found"));
+    }
+
+    @Override
+    public List<ReservationDTO> findAll() {
+        return reservationRepository.findAll().stream()
+                .map(ReservationMapper::toDTO)
+                .toList();
     }
 
     @Override

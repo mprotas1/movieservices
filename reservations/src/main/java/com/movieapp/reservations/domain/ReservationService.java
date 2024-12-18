@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -15,22 +17,21 @@ class ReservationService implements ReservationDomainService {
     @Override
     public Reservation makeReservation(ReservationCreateRequest reservationDTO) {
         log.debug("Making reservation: {}", reservationDTO);
-        validateScreening(reservationDTO.getScreeningId());
-        validateSeat(reservationDTO.getSeatId());
-        validateUser(reservationDTO.getUserId());
-        Reservation reservation = ReservationMapper.
-        return null;
+        validateScreening(reservationDTO.screeningId());
+        validateSeat(reservationDTO.seatId());
+        validateUser(reservationDTO.userId());
+        return ReservationMapper.toDomain(reservationDTO);
     }
 
-    private void validateScreening(ScreeningId screeningId) {
+    private void validateScreening(UUID screeningId) {
         // check if Screening exists by REST API call
     }
 
-    private void validateSeat(SeatId seatId) {
+    private void validateSeat(UUID seatId) {
         // check if Seat exists by REST API call and if it is available
     }
 
-    private void validateUser(UserId userId) {
+    private void validateUser(Long userId) {
         // check if User exists by REST API call
     }
 
