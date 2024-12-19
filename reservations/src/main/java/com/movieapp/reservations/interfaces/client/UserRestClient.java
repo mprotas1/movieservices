@@ -11,11 +11,14 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 class UserRestClient implements UserClient {
     @Value("${services.url.users}")
-    private final String USER_SERVICE_URL;
+    private String USER_SERVICE_URL;
     private final RestTemplate restTemplate;
+
+    UserRestClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public Optional<UserDTO> getUser(Long id) {

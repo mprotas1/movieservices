@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-class ReservationService implements ReservationApplicationService {
+class ReservationAppService implements ReservationApplicationService {
     private final ReservationDomainService reservationDomainService;
     private final ReservationRepository reservationRepository;
 

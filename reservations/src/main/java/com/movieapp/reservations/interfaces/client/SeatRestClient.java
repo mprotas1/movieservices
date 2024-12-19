@@ -13,11 +13,14 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 class SeatRestClient implements SeatClient {
     @Value("${services.url.cinemas}")
-    private final String SEATS_URL;
+    private String SEATS_URL;
     private final RestTemplate restTemplate;
+
+    SeatRestClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public Optional<SeatDTO> getSeat(UUID id) {

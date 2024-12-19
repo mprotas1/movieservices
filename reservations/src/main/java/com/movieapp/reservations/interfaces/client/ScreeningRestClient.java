@@ -13,11 +13,14 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 class ScreeningRestClient implements ScreeningClient {
     @Value("${services.url.screenings}")
-    private final String SCREENING_SERVICE_URL;
+    private String SCREENING_SERVICE_URL;
     private final RestTemplate restTemplate;
+
+    ScreeningRestClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     @Override
     public Optional<ScreeningDTO> getScreening(UUID id) {

@@ -3,14 +3,14 @@ package com.movieapp.reservations.infrastructure.repository;
 import com.movieapp.reservations.application.mapper.ReservationMapper;
 import com.movieapp.reservations.domain.*;
 import com.movieapp.reservations.infrastructure.entity.ReservationEntity;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-@AllArgsConstructor
+@RequiredArgsConstructor
 class Reservations implements ReservationRepository {
     private final JpaReservationRepository jpaReservationRepository;
 

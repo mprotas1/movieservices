@@ -2,6 +2,7 @@ package com.movieapp.reservations.domain;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.mapper.ReservationMapper;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import java.util.UUID;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 class ReservationService implements ReservationDomainService {
     private final ReservationRepository reservationRepository;
 
