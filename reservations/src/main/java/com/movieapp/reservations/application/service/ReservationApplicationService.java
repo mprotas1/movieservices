@@ -11,7 +11,8 @@ import java.util.List;
 
 public interface ReservationApplicationService {
     ReservationDTO makeReservation(ReservationCreateRequest reservationDTO);
-    ReservationDTO cancelReservation(ReservationId reservationDTO);
+    ReservationDTO confirmReservation(ReservationId reservationId);
+    ReservationDTO cancelReservation(ReservationId reservationId);
     ReservationDTO findById(ReservationId reservationId);
     ReservationDTO findByScreeningIdAndSeatId(ScreeningId screeningId, SeatId seatId);
     List<ReservationDTO> findAll();

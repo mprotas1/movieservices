@@ -27,8 +27,13 @@ class ReservationAppService implements ReservationApplicationService {
     }
 
     @Override
-    public ReservationDTO cancelReservation(ReservationId reservationDTO) {
-        log.debug("Cancelling reservation with id: {}", reservationDTO.getId());
+    public ReservationDTO confirmReservation(ReservationId reservationId) {
+        return null;
+    }
+
+    @Override
+    public ReservationDTO cancelReservation(ReservationId reservationId) {
+        log.debug("Cancelling reservation with id: {}", reservationId.getId());
 
         return null;
     }
