@@ -45,15 +45,15 @@ class ReservationController {
         return ResponseEntity.ok(reservationDTOs);
     }
 
-    @GetMapping
-    ResponseEntity<List<ReservationDTO>> findUserReservations(@RequestParam Long userId) {
+    @GetMapping("/byUser/{userId}")
+    ResponseEntity<List<ReservationDTO>> findUserReservations(@PathVariable Long userId) {
         log.debug("Searching for all reservations of user with id: {}", userId);
         List<ReservationDTO> reservationDTOs = reservationApplicationService.findUserReservations(new UserId(userId));
         return ResponseEntity.ok(reservationDTOs);
     }
 
-    @GetMapping
-    ResponseEntity<List<ReservationDTO>> findByScreeningId(@RequestParam UUID screeningId) {
+    @GetMapping("/byScreening/{screeningId}")
+    ResponseEntity<List<ReservationDTO>> findByScreeningId(@PathVariable UUID screeningId) {
         log.debug("Searching for all reservations of screening with id: {}", screeningId);
         List<ReservationDTO> reservationDTOs = reservationApplicationService.findAllByScreeningId(new ScreeningId(screeningId));
         return ResponseEntity.ok(reservationDTOs);

@@ -16,6 +16,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  cloud:
+    vault:
+      kv:
+        enabled: false
+      enabled: false
+
 services:
   url:
     screenings: ${SCREENINGS_URL:http://localhost:8300}
