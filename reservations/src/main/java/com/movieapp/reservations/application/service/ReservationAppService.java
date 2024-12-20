@@ -21,7 +21,9 @@ class ReservationAppService implements ReservationApplicationService {
     @Override
     public ReservationDTO makeReservation(ReservationCreateRequest request) {
         log.debug("Making reservation for request: {}", request);
-        return null;
+        Reservation createdReservation = reservationDomainService.makeReservation(request);
+        log.debug("Reservation created: {}", createdReservation);
+        return ReservationMapper.toDTO(createdReservation);
     }
 
     @Override
