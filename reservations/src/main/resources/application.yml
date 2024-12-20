@@ -24,6 +24,6 @@ spring:
 
 services:
   url:
-    screenings: ${SCREENINGS_URL:http://localhost:8300}
-    cinemas: ${CINEMAS_URL:http://localhost:8200}
-    users: ${USERS_URL:http://localhost:8100}
+    screenings: ${SCREENINGS_URL:http://localhost:8006/screenings}
+    cinemas: ${CINEMAS_URL:http://localhost:8005}
+    users: ${USERS_URL:http://localhost:8081/users}
