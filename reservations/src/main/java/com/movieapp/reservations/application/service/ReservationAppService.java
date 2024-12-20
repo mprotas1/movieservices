@@ -14,19 +14,26 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-class ReservationService implements ReservationApplicationService {
+class ReservationAppService implements ReservationApplicationService {
     private final ReservationDomainService reservationDomainService;
     private final ReservationRepository reservationRepository;
 
     @Override
     public ReservationDTO makeReservation(ReservationCreateRequest request) {
         log.debug("Making reservation for request: {}", request);
+        Reservation createdReservation = reservationDomainService.makeReservation(request);
+        log.debug("Reservation created: {}", createdReservation);
+        return ReservationMapper.toDTO(createdReservation);
+    }
+
+    @Override
+    public ReservationDTO confirmReservation(ReservationId reservationId) {
         return null;
     }
 
     @Override
-    public ReservationDTO cancelReservation(ReservationId reservationDTO) {
-        log.debug("Cancelling reservation with id: {}", reservationDTO.getId());
+    public ReservationDTO cancelReservation(ReservationId reservationId) {
+        log.debug("Cancelling reservation with id: {}", reservationId.getId());
 
         return null;
     }
