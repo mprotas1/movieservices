@@ -21,6 +21,9 @@ public class Reservation {
     }
 
     public void confirm() {
+        if(this.status == ReservationStatus.CANCELLED) {
+            throw new InvalidReservationTransitionException("Cannot confirm a cancelled reservation");
+        }
         this.status = ReservationStatus.CONFIRMED;
     }
 

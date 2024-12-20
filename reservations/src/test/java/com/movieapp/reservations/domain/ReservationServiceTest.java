@@ -7,6 +7,7 @@ import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.interfaces.client.ScreeningClient;
 import com.movieapp.reservations.interfaces.client.SeatClient;
 import com.movieapp.reservations.interfaces.client.UserClient;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -202,5 +203,84 @@ class ReservationServiceTest {
         // then
         assertThrows(UserNotFoundException.class, () -> reservationService.makeReservation(request));
     }
+
+    @Test
+    @DisplayName("Should confirm reservation")
+    void shouldConfirmReservation() {
+        // given
+        UUID screeningId = UUID.randomUUID();
+        UUID seatId = UUID.randomUUID();
+        Long userId = 1L;
+        Reservation reservation = new Reservation(
+                new ScreeningId(screeningId),
+                new SeatId(seatId),
+                new UserId(userId)
+        );
+
+        // when
+        when(reservationRepository.findById(reservation.getReservationId())).thenReturn(Optional.of(reservation));
+        when(reservationRepository.save(reservation)).thenReturn(reservation);
+
+        // then
+        Reservation confirmedReservation = reservationService.confirmReservation(reservation.getReservationId());
+        assertEquals(ReservationStatus.CONFIRMED, confirmedReservation.getStatus());
+    }
+
+    @Test
+    @DisplayName("Should not confirm non-existing reservation")
+    void shouldNotConfirmNonExistingReservation() {
+        // given
+        var reservationId = new ReservationId(UUID.randomUUID());
+
+        // when
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.empty());
+
+        // then
+        assertThrows(EntityNotFoundException.class, () -> reservationService.confirmReservation(reservationId));
+    }
+
+    @Test
+    @DisplayName("Should not confirm cancelled reservation")
+    void shouldNotConfirmCancelledReservation() {
+        // given
+        UUID screeningId = UUID.randomUUID();
+        UUID seatId = UUID.randomUUID();
+        Long userId = 1L;
+        Reservation reservation = new Reservation(
+                new ScreeningId(screeningId),
+                new SeatId(seatId),
+                new UserId(userId)
+        );
+
+        // when
+        when(reservationRepository.findById(reservation.getReservationId())).thenReturn(Optional.of(reservation));
+
+        // then
+        reservationService.cancelReservation(reservation.getReservationId());
+        assertThrows(InvalidReservationTransitionException.class, () -> reservationService.confirmReservation(reservation.getReservationId()));
+    }
+
+    @Test
+    @DisplayName("Should cancel reservation")
+    void shouldCancelReservation() {
+        // given
+        UUID screeningId = UUID.randomUUID();
+        UUID seatId = UUID.randomUUID();
+        Long userId = 1L;
+        Reservation reservation = new Reservation(
+                new ScreeningId(screeningId),
+                new SeatId(seatId),
+                new UserId(userId)
+        );
+
+        // when
+        when(reservationRepository.findById(reservation.getReservationId())).thenReturn(Optional.of(reservation));
+        when(reservationRepository.save(reservation)).thenReturn(reservation);
+
+        // then
+        Reservation cancelledReservation = reservationService.cancelReservation(reservation.getReservationId());
+        assertEquals(ReservationStatus.CANCELLED, cancelledReservation.getStatus());
+    }
+
 
 }

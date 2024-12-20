@@ -4,5 +4,6 @@ import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 
 public interface ReservationDomainService {
     Reservation makeReservation(ReservationCreateRequest request);
-
+    Reservation confirmReservation(ReservationId reservationId);
+    Reservation cancelReservation(ReservationId reservationId);
 }
