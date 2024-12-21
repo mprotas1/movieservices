@@ -1,15 +1,8 @@
 # Server port - default 8400
 server:
-  port: ${PORT:8400}
+  port: 8400
 
 spring:
-  # DataSource configuration
-  datasource:
-    hikari:
-      jdbc-url: ${DATABASE_URL:jdbc:postgresql://localhost:5444/reservations}
-      username: ${DATABASE_USER:postgres}
-      password: ${DATABASE_PASSWORD:password}
-      driver-class-name: org.postgresql.Driver
   # Spring JPA configuration
   jpa:
     hibernate:
@@ -26,7 +19,7 @@ spring:
       enabled: false
   # Spring Profiles
   profiles:
-    active: ${PROFILE:default}
+    active: test
 
 # External microservices URLs
 services:
