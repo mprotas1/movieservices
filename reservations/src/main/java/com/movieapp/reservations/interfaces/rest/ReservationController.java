@@ -3,7 +3,6 @@ package com.movieapp.reservations.interfaces.rest;
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
 import com.movieapp.reservations.application.service.ReservationApplicationService;
-import com.movieapp.reservations.domain.ReservationDomainService;
 import com.movieapp.reservations.domain.ReservationId;
 import com.movieapp.reservations.domain.ScreeningId;
 import com.movieapp.reservations.domain.UserId;
@@ -35,6 +34,22 @@ class ReservationController {
         log.debug("Searching for reservation with id: {}", id);
         ReservationDTO reservationDTO = applicationService.findById(new ReservationId(id));
         log.debug("Reservation found: {}", reservationDTO);
+        return ResponseEntity.ok(reservationDTO);
+    }
+
+    @PutMapping("/cancel/{reservationId}")
+    ResponseEntity<ReservationDTO> cancelReservation(@PathVariable UUID reservationId) {
+        log.debug("Cancelling reservation with id: {}", reservationId);
+        ReservationDTO reservationDTO = applicationService.cancelReservation(new ReservationId(reservationId));
+        log.debug("Reservation cancelled: {}", reservationDTO);
+        return ResponseEntity.ok(reservationDTO);
+    }
+
+    @PutMapping("/confirm/{reservationId}")
+    ResponseEntity<ReservationDTO> confirmReservation(@PathVariable UUID reservationId) {
+        log.debug("Confirming reservation with id: {}", reservationId);
+        ReservationDTO reservationDTO = applicationService.confirmReservation(new ReservationId(reservationId));
+        log.debug("Reservation confirmed: {}", reservationDTO);
         return ResponseEntity.ok(reservationDTO);
     }
 
