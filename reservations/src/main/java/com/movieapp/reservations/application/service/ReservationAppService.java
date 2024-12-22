@@ -28,14 +28,16 @@ class ReservationAppService implements ReservationApplicationService {
 
     @Override
     public ReservationDTO confirmReservation(ReservationId reservationId) {
-        return null;
+        log.debug("Confirming reservation with id: {}", reservationId.getId());
+        Reservation reservation = reservationDomainService.confirmReservation(reservationId);
+        return ReservationMapper.toDTO(reservation);
     }
 
     @Override
     public ReservationDTO cancelReservation(ReservationId reservationId) {
         log.debug("Cancelling reservation with id: {}", reservationId.getId());
-
-        return null;
+        Reservation reservation = reservationDomainService.cancelReservation(reservationId);
+        return ReservationMapper.toDTO(reservation);
     }
 
     @Override
@@ -76,6 +78,11 @@ class ReservationAppService implements ReservationApplicationService {
     @Override
     public void deleteById(ReservationId reservationId) {
         log.debug("Deleting reservation with id: {}", reservationId.getId());
-        reservationRepository.deleteById(reservationId);
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Reservation with id: " + reservationId.getId() + " not found")
+                );
+        reservationRepository.delete(reservation);
     }
+
 }
