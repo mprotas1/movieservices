@@ -15,6 +15,7 @@ public class ScreeningEntity {
     private UUID id;
     private Long movieId;
     private UUID screeningRoomId;
+    private UUID cinemaId;
     private Instant startTime;
     private Instant endTime;
     private String movieTitle;

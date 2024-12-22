@@ -2,10 +2,7 @@ package com.movieapp.screenings.application.mapper;
 
 import com.movieapp.screenings.application.dto.ScreeningCreateRequest;
 import com.movieapp.screenings.application.dto.ScreeningDTO;
-import com.movieapp.screenings.domain.model.MovieId;
-import com.movieapp.screenings.domain.model.Screening;
-import com.movieapp.screenings.domain.model.ScreeningRoomId;
-import com.movieapp.screenings.domain.model.ScreeningTime;
+import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.infrastructure.entity.ScreeningEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,10 +46,19 @@ class ScreeningMapperTest {
         UUID screeningId = randomUUID();
         MovieId movieId = new MovieId(1L);
         ScreeningRoomId screeningRoomId = new ScreeningRoomId(randomUUID());
+        CinemaId cinemaId = new CinemaId(randomUUID());
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
-        ScreeningDTO dto = new ScreeningDTO(screeningId, movieId.id(), screeningRoomId.id(), startTime, endTime, "Movie Title", 1);
+        ScreeningDTO dto = new ScreeningDTO(
+                screeningId,
+                movieId.id(),
+                screeningRoomId.id(),
+                cinemaId.id(),
+                startTime,
+                endTime,
+                "Movie Title",
+                1);
 
         assertNotNull(dto);
         assertEquals(screeningId, dto.screeningId());
@@ -62,16 +68,17 @@ class ScreeningMapperTest {
         assertEquals(endTime, dto.endTime());
     }
 
-    // Test should map Screening entity to ScreeningDTO
     @Test
     @DisplayName("Should map Screening entity to ScreeningDTO")
     void shouldMapEntityToDTO() {
         MovieId movieId = new MovieId(1L);
         ScreeningRoomId screeningRoomId = new ScreeningRoomId(randomUUID());
+        CinemaId cinemaId = new CinemaId(randomUUID());
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
         Screening screening = new Screening(movieId, screeningRoomId, new ScreeningTime(startTime, endTime), "Some title", 1);
+        screening.setCinemaId(cinemaId);
         ScreeningDTO dto = ScreeningMapper.toDTO(screening);
 
         assertNotNull(dto);

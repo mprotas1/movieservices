@@ -11,6 +11,7 @@ public class ScreeningMapper {
                 screening.getScreeningId().id(),
                 screening.getMovieId().id(),
                 screening.getScreeningRoomId().id(),
+                screening.getCinemaId().id(),
                 screening.getTime().getStartTime(),
                 screening.getTime().getEndTime(),
                 screening.getMovieTitle(),
@@ -22,6 +23,7 @@ public class ScreeningMapper {
         return new Screening(
                 new ScreeningId(entity.getId()),
                 new MovieId(entity.getMovieId()),
+                new CinemaId(entity.getCinemaId()),
                 new ScreeningRoomId(entity.getScreeningRoomId()),
                 new ScreeningTime(entity.getStartTime(), entity.getEndTime()),
                 entity.getMovieTitle(),
