@@ -1,0 +1,36 @@
+# Server port - default 8400
+server:
+  port: ${PORT:8400}
+
+spring:
+  # DataSource configuration
+  datasource:
+    hikari:
+      jdbc-url: ${DATABASE_URL:jdbc:postgresql://localhost:5444/reservations}
+      username: ${DATABASE_USER:postgres}
+      password: ${DATABASE_PASSWORD:password}
+      driver-class-name: org.postgresql.Driver
+  # Spring JPA configuration
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  # Spring Cloud configuration
+  cloud:
+    vault:
+      kv:
+        enabled: false
+      enabled: false
+  # Spring Profiles
+  profiles:
+    active: ${PROFILE:default}
+
+# External microservices URLs
+services:
+  url:
+    screenings: ${SCREENINGS_URL:http://localhost:8006/screenings}
+    cinemas: ${CINEMAS_URL:http://localhost:8005}
+    users: ${USERS_URL:http://localhost:8081/users}

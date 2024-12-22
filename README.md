@@ -10,29 +10,35 @@ The application is part of a research paper on comparing microservices architect
 * [Installation guide](#installation)
 
 ## Description
-The Cinema Microservices Application is a model for an enterprise application that oversees all cinema-based operations. It consists of user management, theatre maintenance, movie repertoire updates, and other related tasks. Dependencies are split up between list of microservices which has their own responsibilites. The application is built using REST API architectural styles in concjuction with the microservices architectural pattern.
+The Cinema Microservices Application is a scalable and modular enterprise system designed to manage all aspects of cinema operations. This project demonstrates the power of microservices architecture combined with REST API principles to deliver a robust and efficient solution for modern cinema networks.
+
+The application is tailored to handle critical tasks such as user management, theater maintenance, movie scheduling, ticket reservations, and notifications, while also laying the groundwork for advanced services like personalized recommendations. Each microservice is focused on a specific domain, ensuring high cohesion and loose coupling, which are hallmarks of microservices design.
 
 ## Microservices
-* users service [Java 22 + PostgreSQL stack]
-* cinemas service [Java 22 + MongoDB stack]
+* users service [Java 22 + Spring Boot] - handling user creation, authentication with JWT Token and user data management (including roles)
+* cinemas service [Java 22 + Spring Boot] - management of the cinema network and display functionality for potential customers
+* movies service [Python + FastAPI] - storage of movies that are displayed in our theatres
+* screenings service [Java 22 + Spring Boot] - management of the occurrences of the film in specific cinema theatre
+* reservations service [Java 22 + Spring Boot] - maintaining user reservations
+* notifications service - planned [GOLang + gin] - sending proper notifications to users with informations about their reservations, recommendations et cetera
 * cloud gateway [Java Spring Cloud Gateway implementation]
-* recommendations service
+* recommendations service planned
 
 ## Technology stack
 * Spring Boot
+* Python
+* GOLang
 * JUnit5 and Mockito
 * Testcontainers
 * Docker
-* RabbitMQ
+* RabbitMQ / Kafka
 * Eureka Server
 * PostgreSQL
-* MongoDB
-* Redis
 * HashiCorp Vault
 * Google Maps API
 
 ## Requirments
-The application (every service) needs for correct boot at least Java with version 21 and a running Docker Deamon for running all dependent containers.
+The application (every Java service) needs for correct boot at least Java with version 21 and a running Docker Deamon for running all dependent containers. For Python services - use Python 3 and FastAPI.
 
 ## Installation
-To install the application you need to have an active and running Docker Deamon.
+To install the application, you must have an active and running Docker daemon.
