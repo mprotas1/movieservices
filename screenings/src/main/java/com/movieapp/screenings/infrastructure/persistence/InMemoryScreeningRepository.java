@@ -4,7 +4,7 @@ import com.movieapp.screenings.domain.model.MovieId;
 import com.movieapp.screenings.domain.model.Screening;
 import com.movieapp.screenings.domain.model.ScreeningId;
 import com.movieapp.screenings.domain.model.ScreeningRoomId;
-import com.movieapp.screenings.domain.respository.ScreeningRepository;
+import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 

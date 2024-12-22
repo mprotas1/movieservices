@@ -18,4 +18,5 @@ public class ScreeningEntity {
     private Instant startTime;
     private Instant endTime;
     private String movieTitle;
+    private int screeningRoomNumber;
 }

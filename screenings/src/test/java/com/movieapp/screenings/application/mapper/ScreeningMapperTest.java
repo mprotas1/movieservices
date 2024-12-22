@@ -28,9 +28,13 @@ class ScreeningMapperTest {
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         int duration = 120;
 
-        ScreeningCreateRequest request = new ScreeningCreateRequest(movieId.id(), duration, screeningRoomId.id(), startTime);
+        ScreeningCreateRequest request = new ScreeningCreateRequest(movieId.id(), screeningRoomId.id(), startTime);
 
-        Screening screening = ScreeningMapper.toEntity(request);
+        Screening screening = Screening.builder()
+                .withMovieId(request.movieId())
+                .withScreeningRoomId(request.screeningRoomId())
+                .withScreeningTime(startTime, duration)
+                .build();
 
         assertNotNull(screening);
         assertEquals(movieId, screening.getMovieId());
@@ -48,7 +52,7 @@ class ScreeningMapperTest {
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
-        ScreeningDTO dto = new ScreeningDTO(screeningId, movieId.id(), screeningRoomId.id(), startTime, endTime, "Movie Title");
+        ScreeningDTO dto = new ScreeningDTO(screeningId, movieId.id(), screeningRoomId.id(), startTime, endTime, "Movie Title", 1);
 
         assertNotNull(dto);
         assertEquals(screeningId, dto.screeningId());
@@ -67,8 +71,7 @@ class ScreeningMapperTest {
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
-        Screening screening = new Screening(movieId, screeningRoomId, new ScreeningTime(startTime, endTime));
-
+        Screening screening = new Screening(movieId, screeningRoomId, new ScreeningTime(startTime, endTime), "Some title", 1);
         ScreeningDTO dto = ScreeningMapper.toDTO(screening);
 
         assertNotNull(dto);
@@ -83,7 +86,7 @@ class ScreeningMapperTest {
     @DisplayName("Should map ScreeningEntity to Screening domain model")
     void shouldMapEntityToScreeningDomainModel() {
         UUID screeningId = randomUUID();
-        UUID movieId = randomUUID();
+        Long movieId = 1L;
         UUID screeningRoomId = randomUUID();
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
@@ -108,7 +111,7 @@ class ScreeningMapperTest {
     @Test
     @DisplayName("Should map Screening domain model to ScreeningEntity")
     void shouldMapDomainModelToEntity() {
-        UUID movieId = randomUUID();
+        Long movieId = 1L;
         UUID screeningRoomId = randomUUID();
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
@@ -116,7 +119,9 @@ class ScreeningMapperTest {
         Screening domainModel = new Screening(
                 new MovieId(1L),
                 new ScreeningRoomId(screeningRoomId),
-                new ScreeningTime(startTime, endTime)
+                new ScreeningTime(startTime, endTime),
+                "Some title",
+                1
         );
 
         ScreeningEntity entity = ScreeningMapper.domainModelToEntity(domainModel);

@@ -1,3 +1,9 @@
 package com.movieapp.screenings.application.dto;
 
-public record MovieDTO(Long movieId, String title, String description, int duration) {}
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record MovieDTO(Long id,
+                       String title,
+                       String description,
+                       @JsonProperty("duration_in_minutes")
+                       int duration) {}

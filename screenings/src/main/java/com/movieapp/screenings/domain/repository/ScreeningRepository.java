@@ -1,4 +1,4 @@
-package com.movieapp.screenings.domain.respository;
+package com.movieapp.screenings.domain.repository;
 
 import com.movieapp.screenings.domain.model.MovieId;
 import com.movieapp.screenings.domain.model.Screening;

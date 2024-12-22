@@ -20,7 +20,7 @@ spring:
 
 # Server properties
 server:
-  port: 8006
+  port: 8008
   servlet:
     context-path: /screenings
 
@@ -32,12 +32,12 @@ app:
 # Movies service configuration
 movies:
   service:
-    url: ${MOVIES_SERVICE_URL:http://localhost:8005/movies}
+    url: ${MOVIES_SERVICE_URL:http://localhost:8000/movies}
 
 # Cinemas service configuration
 cinemas:
   service:
-    url: ${CINEMAS_SERVICE_URL:http://localhost:8004/cinemas}
+    url: ${CINEMAS_SERVICE_URL:http://localhost:8005/cinemas}
 
 # Eureka Client configuration
 eureka:

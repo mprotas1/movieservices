@@ -12,6 +12,8 @@ public class ScreeningBuilder {
     private MovieId movieId;
     private ScreeningRoomId screeningRoomId;
     private ScreeningTime time;
+    private String title;
+    private int screeningRoomNumber;
 
     public ScreeningBuilder withMovieId(Long movieId) {
         this.movieId = new MovieId(movieId);
@@ -28,7 +30,17 @@ public class ScreeningBuilder {
         return this;
     }
 
+    public ScreeningBuilder withMovieTitle(String movieTitle) {
+        this.title = movieTitle;
+        return this;
+    }
+
+    public ScreeningBuilder withScreeningRoomNumber(int screeningRoomNumber) {
+        this.screeningRoomNumber = screeningRoomNumber;
+        return this;
+    }
+
     public Screening build() {
-        return new Screening(movieId, screeningRoomId, time);
+        return new Screening(movieId, screeningRoomId, time, title, screeningRoomNumber);
     }
 }

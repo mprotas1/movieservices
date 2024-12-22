@@ -13,15 +13,19 @@ import java.util.UUID;
 public class Screening {
     private ScreeningId screeningId;
     private MovieId movieId;
+    private CinemaId cinemaId;
     private ScreeningRoomId screeningRoomId;
     private ScreeningTime time;
     private String movieTitle;
+    private int screeningRoomNumber;
 
-    public Screening(MovieId movieId, ScreeningRoomId screeningRoomId, ScreeningTime time) {
+    public Screening(MovieId movieId, ScreeningRoomId screeningRoomId, ScreeningTime time, String title, int screeningRoomNumber) {
         this.screeningId = new ScreeningId(UUID.randomUUID());
         this.movieId = movieId;
         this.screeningRoomId = screeningRoomId;
         this.time = time;
+        this.movieTitle = title;
+        this.screeningRoomNumber = screeningRoomNumber;
     }
 
     public static ScreeningBuilder builder() {
