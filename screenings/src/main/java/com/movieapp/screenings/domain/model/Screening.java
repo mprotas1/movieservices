@@ -13,6 +13,7 @@ import java.util.UUID;
 public class Screening {
     private ScreeningId screeningId;
     private MovieId movieId;
+    private CinemaId cinemaId;
     private ScreeningRoomId screeningRoomId;
     private ScreeningTime time;
     private String movieTitle;
