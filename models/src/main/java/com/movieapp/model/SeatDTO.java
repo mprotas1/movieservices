@@ -6,4 +6,5 @@ public record SeatDTO(UUID id,
                       UUID screeningRoomId,
                       int row,
                       int column,
-                      int type) {}
+                      String type,
+                      double price) {}
