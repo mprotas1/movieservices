@@ -20,4 +20,9 @@ public class ReservationId {
         return new ReservationId();
     }
 
+    @Override
+    public String toString() {
+        return id.toString();
+    }
+
 }
