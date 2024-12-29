@@ -2,7 +2,9 @@ package com.movieapp.cinemas.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -10,7 +12,8 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity(name = "cinemas")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class Cinema {
     @EmbeddedId
@@ -18,14 +21,13 @@ public class Cinema {
     private String name;
     @Embedded
     private Coordinates coordinates;
-
     @Embedded
     private Address address;
     @OneToMany(mappedBy = "cinemaId",
-               cascade = CascadeType.ALL,
+               cascade = CascadeType.ALL, // nie wszystkie może potrzebne?
                fetch = FetchType.LAZY,
                orphanRemoval = true)
-    private List<CinemaRoom> rooms;
+    private List<CinemaRoom> rooms; // set lepszy
 
     public Cinema(String name, Address address, Coordinates coordinates) {
         Assert.notNull(name, "Cinema name must not be null");

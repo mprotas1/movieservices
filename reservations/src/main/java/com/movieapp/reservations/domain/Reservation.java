@@ -2,9 +2,12 @@ package com.movieapp.reservations.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
 @AllArgsConstructor
+@Getter
+@Setter
 public class Reservation {
     private ReservationId reservationId;
     private UserId userId;

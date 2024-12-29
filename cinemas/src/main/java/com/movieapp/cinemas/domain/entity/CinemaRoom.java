@@ -5,16 +5,18 @@ import com.movieapp.cinemas.domain.strategy.DefaultCreateSeatsStrategy;
 import com.movieapp.cinemas.domain.strategy.DefaultUpdateSeatsStrategy;
 import com.movieapp.cinemas.domain.strategy.UpdateSeatsStrategy;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.util.Assert;
 
 import java.util.List;
 
 @Entity
 @Table(name = "cinema_rooms")
-@Data
 @NoArgsConstructor
+@Getter
+@Setter
 public class CinemaRoom {
     @EmbeddedId
     private CinemaRoomId id;

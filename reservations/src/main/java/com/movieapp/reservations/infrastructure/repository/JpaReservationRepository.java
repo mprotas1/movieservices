@@ -9,12 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Repository
 public interface JpaReservationRepository extends JpaRepository<ReservationEntity, UUID> {
-    @Query("SELECT r FROM ReservationEntity r WHERE r.screeningId = :id")
-    List<ReservationEntity> findByScreeningId(UUID id);
-    @Query("SELECT r FROM ReservationEntity r WHERE r.userId = :id")
-    List<ReservationEntity> findByUserId(Long id);
-    @Query("SELECT r FROM ReservationEntity r WHERE r.screeningId = :screeningId AND r.seatId = :seatId")
+    List<ReservationEntity> findByScreeningId(UUID screeningId);
+    List<ReservationEntity> findByUserId(Long userId);
     Optional<ReservationEntity> findByScreeningIdAndSeatId(UUID screeningId, UUID seatId);
 }
