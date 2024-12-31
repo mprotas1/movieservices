@@ -8,6 +8,7 @@ import com.movieapp.cinemas.domain.repository.CinemaRepository;
 import com.movieapp.cinemas.domain.repository.CinemaRoomRepository;
 import com.movieapp.cinemas.service.model.CinemaRoomDTO;
 import com.movieapp.cinemas.service.model.CinemaRoomInformation;
+import com.movieapp.cinemas.service.model.SeatDTO;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +29,12 @@ class ScreeningRoomService implements CinemaRoomService {
     @Qualifier("cinemaDatabaseRepository")
     private final CinemaRepository cinemaRepository;
     private final CinemaRoomRepository cinemaRoomRepository;
+    private final SeatsMapper seatsMapper;
 
     @Override
     public CinemaRoomDTO findById(CinemaRoomId id) {
         return cinemaRoomRepository.findById(id)
-                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinemaId().getUuid(), room.getNumber(), room.getCapacity()))
+                .map(this::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Room with id " + id + " not found"));
     }
 
@@ -50,7 +52,7 @@ class ScreeningRoomService implements CinemaRoomService {
         contextCinema.addRoom(savedRoom);
         UUID cinemaId = savedRoom.getCinemaId().getUuid();
         log.debug("Room with number {} added to cinema with id {}", roomNumber, cinemaId);
-        return new CinemaRoomDTO(savedRoom.getId().getValue(), cinemaId, savedRoom.getNumber(), savedRoom.getCapacity());
+        return toDTO(savedRoom);
     }
 
     @Override
@@ -61,20 +63,20 @@ class ScreeningRoomService implements CinemaRoomService {
         room.updateCapacity(newCapacity);
         CinemaRoom updatedRoom = cinemaRoomRepository.save(room);
         log.debug("Capacity for room with id {} updated to {}", room.getId().getValue(), newCapacity);
-        return new CinemaRoomDTO(updatedRoom.getId().getValue(), cinemaId.getUuid(), updatedRoom.getNumber(), updatedRoom.getCapacity());
+        return toDTO(updatedRoom);
     }
 
     @Override
     public CinemaRoomDTO findByCinemaAndNumber(CinemaId cinemaId, int roomNumber) {
         return cinemaRoomRepository.findByCinemaAndNumber(cinemaId, roomNumber)
-                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinemaId().getUuid(), room.getNumber(), room.getCapacity()))
+                .map(this::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Room with number: " + roomNumber + " not found"));
     }
 
     @Override
     public List<CinemaRoomDTO> findByCinemaId(CinemaId cinemaId) {
         return cinemaRoomRepository.findByCinemaId(cinemaId).stream()
-                .map(room -> new CinemaRoomDTO(room.getId().getValue(), room.getCinemaId().getUuid(), room.getNumber(), room.getCapacity()))
+                .map(this::toDTO)
                 .toList();
     }
 
@@ -101,6 +103,22 @@ class ScreeningRoomService implements CinemaRoomService {
 
     private static Predicate<CinemaRoom> isSameNumber(int roomNumber) {
         return room -> room.getNumber() == roomNumber;
+    }
+
+    private CinemaRoomDTO toDTO(CinemaRoom room) {
+        return new CinemaRoomDTO(
+                room.getId().getValue(),
+                room.getCinemaId().getUuid(),
+                room.getNumber(),
+                room.getCapacity(),
+                getMappedSeats(room)
+        );
+    }
+
+    private List<SeatDTO> getMappedSeats(CinemaRoom room) {
+        return room.getSeats().stream()
+                .map(seatsMapper::toDTO)
+                .toList();
     }
 
 }

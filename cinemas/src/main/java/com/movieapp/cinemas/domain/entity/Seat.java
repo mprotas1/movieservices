@@ -1,13 +1,12 @@
 package com.movieapp.cinemas.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.ToString;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity(name = "seats")
-@Data
 @NoArgsConstructor
+@Getter
+@Setter
 @ToString
 public class Seat {
     @EmbeddedId
@@ -19,6 +18,13 @@ public class Seat {
     @ManyToOne
     @JoinColumn(name = "cinema_room_id", nullable = false)
     private CinemaRoom room;
+
+    public Seat(SeatId id, SeatPosition position, SeatType type, CinemaRoom room) {
+        this.id = id;
+        this.position = position;
+        this.seatType = type;
+        this.room = room;
+    }
 
     public Seat(SeatPosition position, SeatType type, CinemaRoom room) {
         this.id = new SeatId();
