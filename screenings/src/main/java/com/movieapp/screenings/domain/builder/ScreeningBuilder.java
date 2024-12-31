@@ -1,11 +1,10 @@
 package com.movieapp.screenings.domain.builder;
 
-import com.movieapp.screenings.domain.model.MovieId;
-import com.movieapp.screenings.domain.model.Screening;
-import com.movieapp.screenings.domain.model.ScreeningRoomId;
-import com.movieapp.screenings.domain.model.ScreeningTime;
+import com.movieapp.screenings.domain.model.*;
 
 import java.time.Instant;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class ScreeningBuilder {
@@ -14,6 +13,7 @@ public class ScreeningBuilder {
     private ScreeningTime time;
     private String title;
     private int screeningRoomNumber;
+    private ScreeningSeats seats;
 
     public ScreeningBuilder withMovieId(Long movieId) {
         this.movieId = new MovieId(movieId);
@@ -40,7 +40,19 @@ public class ScreeningBuilder {
         return this;
     }
 
+    public ScreeningBuilder withScreeningSeats(Collection<Seat> seats) {
+        this.seats = new ScreeningSeats(new HashSet<>(seats));
+        return this;
+    }
+
     public Screening build() {
-        return new Screening(movieId, screeningRoomId, time, title, screeningRoomNumber);
+        return new Screening(
+                movieId,
+                screeningRoomId,
+                time,
+                title,
+                screeningRoomNumber,
+                seats
+        );
     }
 }

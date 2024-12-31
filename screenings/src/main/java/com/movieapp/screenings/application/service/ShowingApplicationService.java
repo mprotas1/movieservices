@@ -4,11 +4,11 @@ import com.movieapp.screenings.application.dto.MovieDTO;
 import com.movieapp.screenings.application.dto.ScreeningCreateRequest;
 import com.movieapp.screenings.application.dto.ScreeningDTO;
 import com.movieapp.screenings.application.dto.ScreeningRoomDTO;
+import com.movieapp.screenings.application.dto.*;
 import com.movieapp.screenings.application.mapper.ScreeningMapper;
 import com.movieapp.screenings.domain.exception.MovieDoesNotExistException;
 import com.movieapp.screenings.domain.exception.ScreeningRoomDoesNotExistException;
-import com.movieapp.screenings.domain.model.Screening;
-import com.movieapp.screenings.domain.model.ScreeningRoomId;
+import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import com.movieapp.screenings.domain.service.ScreeningDomainService;
 import com.movieapp.screenings.interfaces.client.CinemasClient;
@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,6 +42,7 @@ class ShowingApplicationService implements ScreeningApplicationService {
                 .withScreeningTime(request.startTime(), movieDTO.duration())
                 .withMovieTitle(movieDTO.title())
                 .withScreeningRoomNumber(screeningRoomDTO.number())
+                .withScreeningSeats(getMappedSeats(screeningRoomDTO.seats(), request.screeningRoomId()))
                 .build();
         Screening screening = screeningDomainService.createScreening(mapped);
         Screening savedScreening = repository.save(screening);
@@ -64,6 +66,16 @@ class ShowingApplicationService implements ScreeningApplicationService {
     private MovieDTO getMovie(Long movieId) {
         return moviesClient.getMovieById(movieId)
                 .orElseThrow(() -> new MovieDoesNotExistException("Movie with id: " + movieId + " does not exist"));
+    }
+
+    private Collection<Seat> getMappedSeats(List<SeatDTO> seats, UUID screeningId) {
+        return seats.stream()
+                .map(seat -> new Seat(new SeatId(seat.id()),
+                        new ScreeningId(screeningId),
+                        seat.row(),
+                        seat.column(),
+                        false)
+                ).toList();
     }
 
 }
