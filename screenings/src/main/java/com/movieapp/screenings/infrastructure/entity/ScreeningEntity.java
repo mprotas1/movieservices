@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.Instant;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -20,4 +21,6 @@ public class ScreeningEntity {
     private Instant endTime;
     private String movieTitle;
     private int screeningRoomNumber;
+    @OneToMany(mappedBy = "screeningId", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Set<ScreeningSeatEntity> seats;
 }

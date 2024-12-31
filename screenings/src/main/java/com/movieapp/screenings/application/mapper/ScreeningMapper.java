@@ -4,6 +4,8 @@ import com.movieapp.screenings.application.dto.ScreeningDTO;
 import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.infrastructure.entity.ScreeningEntity;
 
+import java.util.stream.Collectors;
+
 public class ScreeningMapper {
 
     public static ScreeningDTO toDTO(Screening screening) {
@@ -20,6 +22,14 @@ public class ScreeningMapper {
     }
 
     public static Screening entityToDomainModel(ScreeningEntity entity) {
+        var screeningSeats = entity.getSeats().stream()
+                .map(seatEntity -> new Seat(
+                        new SeatId(seatEntity.getSeatId()),
+                        new ScreeningId(seatEntity.getScreeningId()),
+                        seatEntity.getRow(),
+                        seatEntity.getColumn(),
+                        seatEntity.isReserved()
+                )).collect(Collectors.toSet());
         return new Screening(
                 new ScreeningId(entity.getId()),
                 new MovieId(entity.getMovieId()),
@@ -27,7 +37,8 @@ public class ScreeningMapper {
                 new ScreeningRoomId(entity.getScreeningRoomId()),
                 new ScreeningTime(entity.getStartTime(), entity.getEndTime()),
                 entity.getMovieTitle(),
-                entity.getScreeningRoomNumber()
+                entity.getScreeningRoomNumber(),
+                new ScreeningSeats(screeningSeats)
         );
     }
 
