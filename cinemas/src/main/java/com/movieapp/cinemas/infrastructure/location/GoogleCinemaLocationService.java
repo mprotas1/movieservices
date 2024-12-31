@@ -14,16 +14,19 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @Primary
-@RequiredArgsConstructor
 @Profile("!test")
 class GoogleCinemaLocationService implements CinemaLocationService {
     private final Logger log = LoggerFactory.getLogger(this.getClass().getName());
     @Value("${googlemaps.api-key}")
     private String API_KEY;
     private final String BASE_URL = "https://maps.googleapis.com/maps/api/geocode/json?address=";
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
     private final CoordinatesMapper coordinatesMapper;
+
+    GoogleCinemaLocationService(RestTemplate restTemplate, CoordinatesMapper coordinatesMapper) {
+        this.restTemplate = restTemplate;
+        this.coordinatesMapper = coordinatesMapper;
+    }
 
     @Override
     public Coordinates getCoordinates(String city, String street, String postalCode) {
