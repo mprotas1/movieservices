@@ -19,16 +19,6 @@ spring:
     user: user
     password: secret
 
-  cloud:
-    vault:
-      uri: ${VAULT_URI:http://127.0.0.1:8200}
-      token: ${VAULT_TOKEN:root-token}
-      kv:
-        enabled: true
-        backend: secret
-        application-name: cinemas-service
-      authentication: token
-
 server:
   port: ${PORT:8005}
   servlet:
@@ -38,3 +28,6 @@ eureka:
   client:
     serviceUrl:
       defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8761/eureka/}
+
+googlemaps:
+  api-key: ${GOOGLE_MAPS_API_KEY}
