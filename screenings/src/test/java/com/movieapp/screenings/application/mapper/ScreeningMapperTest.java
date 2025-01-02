@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ScreeningMapperTest {
+    private ScreeningMapper screeningMapper = new ScreeningMapper(new SeatMapper());
 
     @Test
     @DisplayName("Should map ScreeningCreateRequest to Screening entity")
@@ -79,7 +80,7 @@ class ScreeningMapperTest {
 
         Screening screening = new Screening(movieId, screeningRoomId, new ScreeningTime(startTime, endTime), "Some title", 1);
         screening.setCinemaId(cinemaId);
-        ScreeningDTO dto = ScreeningMapper.toDTO(screening);
+        ScreeningDTO dto = screeningMapper.toDTO(screening);
 
         assertNotNull(dto);
         assertEquals(screening.getScreeningId().id(), dto.screeningId());
@@ -105,7 +106,7 @@ class ScreeningMapperTest {
         entity.setStartTime(startTime);
         entity.setEndTime(endTime);
 
-        Screening domainModel = ScreeningMapper.entityToDomainModel(entity);
+        Screening domainModel = screeningMapper.entityToDomainModel(entity);
 
         assertNotNull(domainModel);
         assertEquals(screeningId, domainModel.getScreeningId().id());
@@ -131,7 +132,7 @@ class ScreeningMapperTest {
                 1
         );
 
-        ScreeningEntity entity = ScreeningMapper.domainModelToEntity(domainModel);
+        ScreeningEntity entity = screeningMapper.domainModelToEntity(domainModel);
 
         assertNotNull(entity);
         assertEquals(domainModel.getScreeningId().id(), entity.getId());
