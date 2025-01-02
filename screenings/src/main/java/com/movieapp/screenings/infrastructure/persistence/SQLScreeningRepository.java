@@ -22,7 +22,7 @@ class SQLScreeningRepository implements ScreeningRepository {
 
     @Override
     public Screening save(Screening screening) {
-        ScreeningEntity entity = repository.save(ScreeningMapper.domainModelToEntity(screening));
+         ScreeningEntity entity = repository.save(ScreeningMapper.domainModelToEntity(screening));
         return ScreeningMapper.entityToDomainModel(entity);
     }
 

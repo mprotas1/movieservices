@@ -3,6 +3,7 @@ package com.movieapp.screenings.application.mapper;
 import com.movieapp.screenings.application.dto.ScreeningDTO;
 import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.infrastructure.entity.ScreeningEntity;
+import com.movieapp.screenings.infrastructure.entity.ScreeningSeatEntity;
 
 import java.util.stream.Collectors;
 
@@ -23,11 +24,12 @@ public class ScreeningMapper {
 
     public static Screening entityToDomainModel(ScreeningEntity entity) {
         var screeningSeats = entity.getSeats().stream()
-                .map(seatEntity -> new Seat(
+                .map(seatEntity -> new ScreeningSeat(
                         new SeatId(seatEntity.getSeatId()),
                         new ScreeningId(seatEntity.getScreeningId()),
                         seatEntity.getRow(),
                         seatEntity.getColumn(),
+                        seatEntity.getType(),
                         seatEntity.isReserved()
                 )).collect(Collectors.toSet());
         return new Screening(
@@ -51,6 +53,16 @@ public class ScreeningMapper {
         entity.setEndTime(screening.getTime().getEndTime());
         entity.setMovieTitle(screening.getMovieTitle());
         entity.setScreeningRoomNumber(screening.getScreeningRoomNumber());
+        entity.setSeats(screening.getSeats().screeningSeats().stream()
+                .map(screeningSeat -> {
+                    ScreeningSeatEntity seatEntity = new ScreeningSeatEntity();
+                    seatEntity.setSeatId(screeningSeat.getSeatId().id());
+                    seatEntity.setScreeningId(screeningSeat.getScreeningId().id());
+                    seatEntity.setRow(screeningSeat.getRow());
+                    seatEntity.setColumn(screeningSeat.getColumn());
+                    seatEntity.setReserved(screeningSeat.isReserved());
+                    return seatEntity;
+                }).collect(Collectors.toSet()));
         return entity;
     }
 

@@ -40,8 +40,8 @@ public class ScreeningBuilder {
         return this;
     }
 
-    public ScreeningBuilder withScreeningSeats(Collection<Seat> seats) {
-        this.seats = new ScreeningSeats(new HashSet<>(seats));
+    public ScreeningBuilder withScreeningSeats(Collection<ScreeningSeat> screeningSeats) {
+        this.seats = new ScreeningSeats(new HashSet<>(screeningSeats));
         return this;
     }
 

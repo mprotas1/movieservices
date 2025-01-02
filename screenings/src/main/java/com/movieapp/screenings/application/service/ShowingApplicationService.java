@@ -6,6 +6,7 @@ import com.movieapp.screenings.application.dto.ScreeningDTO;
 import com.movieapp.screenings.application.dto.ScreeningRoomDTO;
 import com.movieapp.screenings.application.dto.*;
 import com.movieapp.screenings.application.mapper.ScreeningMapper;
+import com.movieapp.screenings.application.mapper.SeatMapper;
 import com.movieapp.screenings.domain.exception.MovieDoesNotExistException;
 import com.movieapp.screenings.domain.exception.ScreeningRoomDoesNotExistException;
 import com.movieapp.screenings.domain.model.*;
@@ -30,6 +31,7 @@ class ShowingApplicationService implements ScreeningApplicationService {
     private final ScreeningRepository repository;
     private final CinemasClient cinemasClient;
     private final MoviesClient moviesClient;
+    private final SeatMapper seatMapper;
 
     @Override
     @Transactional
@@ -68,14 +70,10 @@ class ShowingApplicationService implements ScreeningApplicationService {
                 .orElseThrow(() -> new MovieDoesNotExistException("Movie with id: " + movieId + " does not exist"));
     }
 
-    private Collection<Seat> getMappedSeats(List<SeatDTO> seats, UUID screeningId) {
+    private Collection<ScreeningSeat> getMappedSeats(List<SeatDTO> seats, UUID screeningId) {
         return seats.stream()
-                .map(seat -> new Seat(new SeatId(seat.id()),
-                        new ScreeningId(screeningId),
-                        seat.row(),
-                        seat.column(),
-                        false)
-                ).toList();
+                .map(seatDTO -> seatMapper.toDomain(seatDTO, new ScreeningId(screeningId)))
+                .toList();
     }
 
 }
