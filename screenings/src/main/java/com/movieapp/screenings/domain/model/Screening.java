@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Collections;
 import java.util.UUID;
 
 @Getter
@@ -19,6 +20,20 @@ public class Screening {
     private String movieTitle;
     private int screeningRoomNumber;
     private ScreeningSeats seats;
+
+    public Screening(MovieId movieId,
+                     ScreeningRoomId screeningRoomId,
+                     ScreeningTime time,
+                     String title,
+                     int screeningRoomNumber) {
+        this.screeningId = new ScreeningId(UUID.randomUUID());
+        this.movieId = movieId;
+        this.screeningRoomId = screeningRoomId;
+        this.time = time;
+        this.movieTitle = title;
+        this.screeningRoomNumber = screeningRoomNumber;
+        this.seats = new ScreeningSeats(Collections.emptySet());
+    }
 
     public Screening(MovieId movieId,
                      ScreeningRoomId screeningRoomId,
