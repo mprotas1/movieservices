@@ -19,7 +19,6 @@
     <module>gateway</module>
     <module>eureka</module>
     <module>reservations</module>
-    <module>models</module>
   </modules>
 
   <properties>
