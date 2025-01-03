@@ -14,7 +14,6 @@ public class SeatMapper {
 
     public ScreeningSeat toDomain(SeatDTO dto, ScreeningId screeningId) {
         return new ScreeningSeat(
-                new SeatId(dto.id()),
                 screeningId,
                 dto.row(),
                 dto.column()

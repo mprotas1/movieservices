@@ -12,7 +12,6 @@ import java.util.UUID;
 @Data
 public class ScreeningEntity {
     @Id
-    @GeneratedValue
     private UUID id;
     private Long movieId;
     private UUID screeningRoomId;

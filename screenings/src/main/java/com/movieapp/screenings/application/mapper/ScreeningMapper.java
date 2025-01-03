@@ -51,6 +51,7 @@ public class ScreeningMapper {
         entity.setEndTime(screening.getTime().getEndTime());
         entity.setMovieTitle(screening.getMovieTitle());
         entity.setScreeningRoomNumber(screening.getScreeningRoomNumber());
+        entity.setCinemaId(screening.getCinemaId().id());
         entity.setSeats(screening.getSeats().screeningSeats().stream()
                 .map(seatMapper::toEntity)
                 .collect(Collectors.toSet()));

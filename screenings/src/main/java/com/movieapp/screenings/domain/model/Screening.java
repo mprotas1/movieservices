@@ -21,18 +21,29 @@ public class Screening {
     private int screeningRoomNumber;
     private ScreeningSeats seats;
 
-    public Screening(MovieId movieId,
-                     ScreeningRoomId screeningRoomId,
-                     ScreeningTime time,
-                     String title,
-                     int screeningRoomNumber) {
+    private Screening(CinemaId cinemaId,
+                      MovieId movieId,
+                      ScreeningRoomId screeningRoomId,
+                      ScreeningTime time,
+                      String title,
+                      int screeningRoomNumber) {
         this.screeningId = new ScreeningId(UUID.randomUUID());
+        this.cinemaId = cinemaId;
         this.movieId = movieId;
         this.screeningRoomId = screeningRoomId;
         this.time = time;
         this.movieTitle = title;
         this.screeningRoomNumber = screeningRoomNumber;
         this.seats = new ScreeningSeats(Collections.emptySet());
+    }
+
+    public static Screening create(CinemaId cinemaId,
+                                   MovieId movieId,
+                                   ScreeningRoomId screeningRoomId,
+                                   ScreeningTime time,
+                                   String title,
+                                   int screeningRoomNumber) {
+        return new Screening(cinemaId, movieId, screeningRoomId, time, title, screeningRoomNumber);
     }
 
     public Screening(MovieId movieId,

@@ -11,6 +11,7 @@ public class ScreeningBuilder {
     private MovieId movieId;
     private ScreeningRoomId screeningRoomId;
     private ScreeningTime time;
+    private CinemaId cinemaId;
     private String title;
     private int screeningRoomNumber;
     private ScreeningSeats seats;
@@ -45,14 +46,12 @@ public class ScreeningBuilder {
         return this;
     }
 
+    public ScreeningBuilder withCinemaId(UUID cinemaId) {
+        this.cinemaId = new CinemaId(cinemaId);
+        return this;
+    }
+
     public Screening build() {
-        return new Screening(
-                movieId,
-                screeningRoomId,
-                time,
-                title,
-                screeningRoomNumber,
-                seats
-        );
+        return Screening.create(cinemaId, movieId, screeningRoomId, time, title, screeningRoomNumber);
     }
 }

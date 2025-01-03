@@ -14,14 +14,17 @@ import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import com.movieapp.screenings.domain.service.ScreeningDomainService;
 import com.movieapp.screenings.interfaces.client.CinemasClient;
 import com.movieapp.screenings.interfaces.client.MoviesClient;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -31,6 +34,7 @@ class ShowingApplicationService implements ScreeningApplicationService {
     private final ScreeningRepository repository;
     private final CinemasClient cinemasClient;
     private final MoviesClient moviesClient;
+    private final ScreeningMapper screeningMapper;
     private final SeatMapper seatMapper;
 
     @Override
@@ -40,23 +44,31 @@ class ShowingApplicationService implements ScreeningApplicationService {
         MovieDTO movieDTO = getMovie(request.movieId());
         Screening mapped = Screening.builder()
                 .withMovieId(request.movieId())
+                .withCinemaId(screeningRoomDTO.cinemaId())
                 .withScreeningRoomId(request.screeningRoomId())
                 .withScreeningTime(request.startTime(), movieDTO.duration())
                 .withMovieTitle(movieDTO.title())
                 .withScreeningRoomNumber(screeningRoomDTO.number())
-                .withScreeningSeats(getMappedSeats(screeningRoomDTO.seats(), request.screeningRoomId()))
                 .build();
+        mapped.setSeats(new ScreeningSeats(new HashSet<>(getMappedSeats(screeningRoomDTO.seats(), mapped.getScreeningId().id()))));
         Screening screening = screeningDomainService.createScreening(mapped);
         Screening savedScreening = repository.save(screening);
         log.debug("Created Screening: {}", savedScreening);
-        return ScreeningMapper.toDTO(savedScreening);
+        return screeningMapper.toDTO(savedScreening);
     }
 
     @Override
     public List<ScreeningDTO> findAll() {
         return repository.findAll().stream()
-                .map(ScreeningMapper::toDTO)
+                .map(screeningMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    public ScreeningDTO findById(UUID screeningId) {
+        return repository.findById(new ScreeningId(screeningId))
+                .map(screeningMapper::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Screening with id: " + screeningId + " does not exist"));
     }
 
     private ScreeningRoomDTO getScreeningRoom(UUID screeningRoomId) {
@@ -72,7 +84,7 @@ class ShowingApplicationService implements ScreeningApplicationService {
 
     private Collection<ScreeningSeat> getMappedSeats(List<SeatDTO> seats, UUID screeningId) {
         return seats.stream()
-                .map(seatDTO -> seatMapper.toDomain(seatDTO, new ScreeningId(screeningId)))
+                .map(seat -> seatMapper.toDomain(seat, new ScreeningId(screeningId)))
                 .toList();
     }
 

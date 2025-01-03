@@ -33,6 +33,7 @@ public class ScreeningSeat {
         this.screeningId = screeningId;
         this.row = row;
         this.column = column;
+        this.isReserved = false;
     }
 
 }

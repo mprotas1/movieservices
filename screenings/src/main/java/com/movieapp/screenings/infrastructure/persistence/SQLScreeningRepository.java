@@ -15,41 +15,43 @@ import java.util.Optional;
 @Repository
 class SQLScreeningRepository implements ScreeningRepository {
     private final JpaScreeningRepository repository;
+    private final ScreeningMapper screeningMapper;
 
-    SQLScreeningRepository(JpaScreeningRepository repository) {
+    SQLScreeningRepository(JpaScreeningRepository repository, ScreeningMapper screeningMapper) {
         this.repository = repository;
+        this.screeningMapper = screeningMapper;
     }
 
     @Override
     public Screening save(Screening screening) {
-         ScreeningEntity entity = repository.save(ScreeningMapper.domainModelToEntity(screening));
-        return ScreeningMapper.entityToDomainModel(entity);
+        ScreeningEntity entity = repository.save(screeningMapper.domainModelToEntity(screening));
+        return screeningMapper.entityToDomainModel(entity);
     }
 
     @Override
     public Optional<Screening> findById(ScreeningId screeningId) {
         return repository.findById(screeningId.id())
-                .map(ScreeningMapper::entityToDomainModel);
+                .map(screeningMapper::entityToDomainModel);
     }
 
     @Override
     public List<Screening> findAll() {
         return repository.findAll().stream()
-                .map(ScreeningMapper::entityToDomainModel)
+                .map(screeningMapper::entityToDomainModel)
                 .toList();
     }
 
     @Override
     public List<Screening> findAllByMovieId(MovieId movieId) {
         return repository.findAllByMovieId(movieId.id()).stream()
-                .map(ScreeningMapper::entityToDomainModel)
+                .map(screeningMapper::entityToDomainModel)
                 .toList();
     }
 
     @Override
     public List<Screening> findAllByScreeningRoomId(ScreeningRoomId screeningRoomId) {
         return repository.findAllByScreeningRoomId(screeningRoomId.id()).stream()
-                .map(ScreeningMapper::entityToDomainModel)
+                .map(screeningMapper::entityToDomainModel)
                 .toList();
     }
 
