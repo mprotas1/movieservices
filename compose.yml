@@ -122,30 +122,6 @@ services:
       - movies
     restart: unless-stopped
 
-  cinemasapp:
-    container_name: cinemasapp
-    build:
-      context: ./cinemas
-      dockerfile: Dockerfile
-    environment:
-      - DB_ADDRESS=jdbc:mysql://cinemasdb:3306/cinemasdb
-      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
-      - VAULT_SCHEME=http
-      - VAULT_PORT=8200
-      - VAULT_TOKEN=root-token
-      - VAULT_URI=http://vault:8200
-      - PORT=8005
-    ports:
-      - "8005:8005"
-    depends_on:
-      - vault
-      - eurekaservice
-      - cinemasdb
-    networks:
-      - cinemas
-      - screenings
-    restart: unless-stopped
-
   mysqladmin:
     container_name: mysqladmin
     image: phpmyadmin/phpmyadmin:latest
@@ -158,48 +134,6 @@ services:
       - "8001:80"
     networks:
       - cinemas
-    restart: unless-stopped
-
-  screeningsapp:
-    container_name: screeningsapp
-    build:
-      context: ./screenings
-      dockerfile: Dockerfile
-    environment:
-        - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
-        - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
-        - MOVIES_SERVICE_URL=http://localhost:8000/movies
-        - CINEMAS_SERVICE_URL=http://cinemas-service/cinemas
-    ports:
-      - "8006:8006"
-    depends_on:
-      - eurekaservice
-      - screeningsdb
-    networks:
-      - screenings
-      - cinemas
-    restart: unless-stopped
-
-  customersapp:
-    container_name: customersapp
-    build:
-      context: ./users
-      dockerfile: Dockerfile
-    environment:
-      - DB_ADDRESS=jdbc:postgresql://customersdb:5432/usersdb
-      - DB_USER=user
-      - DB_PASSWORD=secret
-      - EUREKA_SERVICE_URL=http://eurekaservice:8761/eureka/
-      - PORT=8081
-    ports:
-      - "8081:8081"
-    depends_on:
-      - eurekaservice
-      - customersdb
-    networks:
-      - customers
-      - cinemas
-      - screenings
     restart: unless-stopped
 
   vault:
