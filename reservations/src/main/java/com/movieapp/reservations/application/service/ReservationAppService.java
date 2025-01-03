@@ -4,6 +4,7 @@ import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
 import com.movieapp.reservations.application.mapper.ReservationMapper;
 import com.movieapp.reservations.domain.*;
+import com.movieapp.reservations.interfaces.kafka.KafkaProducer;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ class ReservationAppService implements ReservationApplicationService {
     private final ReservationDomainService reservationDomainService;
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public ReservationDTO makeReservation(ReservationCreateRequest request) {
@@ -25,7 +27,9 @@ class ReservationAppService implements ReservationApplicationService {
         Reservation createdReservation = reservationDomainService.makeReservation(request);
         log.debug("Reservation created: {}", createdReservation);
         Reservation saved = reservationRepository.save(createdReservation);
-        return reservationMapper.toDTO(saved);
+        ReservationDTO dto = reservationMapper.toDTO(saved);
+        kafkaProducer.reservationCreated(dto);
+        return dto;
     }
 
     @Override
