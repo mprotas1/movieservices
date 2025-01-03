@@ -1,11 +1,6 @@
 spring:
   application:
     name: customer-service
-  cloud:
-    vault:
-      enabled: false
-      kv:
-        enabled: false
   datasource:
     url: ${DB_ADDRESS:jdbc:postgresql://localhost:5432/usersdb}
     driverClassName: org.postgresql.Driver
