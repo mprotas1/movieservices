@@ -14,7 +14,6 @@ public interface ReservationApplicationService {
     ReservationDTO confirmReservation(ReservationId reservationId);
     ReservationDTO cancelReservation(ReservationId reservationId);
     ReservationDTO findById(ReservationId reservationId);
-    ReservationDTO findByScreeningIdAndSeatId(ScreeningId screeningId, SeatId seatId);
     List<ReservationDTO> findAll();
     List<ReservationDTO> findAllByScreeningId(ScreeningId screeningId);
     List<ReservationDTO> findUserReservations(UserId userId);

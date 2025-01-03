@@ -17,61 +17,56 @@ import java.util.List;
 class ReservationAppService implements ReservationApplicationService {
     private final ReservationDomainService reservationDomainService;
     private final ReservationRepository reservationRepository;
+    private final ReservationMapper reservationMapper;
 
     @Override
     public ReservationDTO makeReservation(ReservationCreateRequest request) {
         log.debug("Making reservation for request: {}", request);
         Reservation createdReservation = reservationDomainService.makeReservation(request);
         log.debug("Reservation created: {}", createdReservation);
-        return ReservationMapper.toDTO(createdReservation);
+        Reservation saved = reservationRepository.save(createdReservation);
+        return reservationMapper.toDTO(saved);
     }
 
     @Override
     public ReservationDTO confirmReservation(ReservationId reservationId) {
         log.debug("Confirming reservation with id: {}", reservationId.getId());
         Reservation reservation = reservationDomainService.confirmReservation(reservationId);
-        return ReservationMapper.toDTO(reservation);
+        return reservationMapper.toDTO(reservation);
     }
 
     @Override
     public ReservationDTO cancelReservation(ReservationId reservationId) {
         log.debug("Cancelling reservation with id: {}", reservationId.getId());
         Reservation reservation = reservationDomainService.cancelReservation(reservationId);
-        return ReservationMapper.toDTO(reservation);
+        return reservationMapper.toDTO(reservation);
     }
 
     @Override
     public ReservationDTO findById(ReservationId reservationId) {
         return reservationRepository.findById(reservationId)
-                .map(ReservationMapper::toDTO)
+                .map(reservationMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + reservationId.getId() + " not found"));
-    }
-
-    @Override
-    public ReservationDTO findByScreeningIdAndSeatId(ScreeningId screeningId, SeatId seatId) {
-        return reservationRepository.findByScreeningIdAndSeatId(screeningId, seatId)
-                .map(ReservationMapper::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Reservation with screeningId: " + screeningId.id() + " and seatId: " + seatId.id() + " not found"));
     }
 
     @Override
     public List<ReservationDTO> findAll() {
         return reservationRepository.findAll().stream()
-                .map(ReservationMapper::toDTO)
+                .map(reservationMapper::toDTO)
                 .toList();
     }
 
     @Override
     public List<ReservationDTO> findAllByScreeningId(ScreeningId screeningId) {
         return reservationRepository.findByScreeningId(screeningId).stream()
-                .map(ReservationMapper::toDTO)
+                .map(reservationMapper::toDTO)
                 .toList();
     }
 
     @Override
     public List<ReservationDTO> findUserReservations(UserId userId) {
         return reservationRepository.findByUserId(userId).stream()
-                .map(ReservationMapper::toDTO)
+                .map(reservationMapper::toDTO)
                 .toList();
     }
 

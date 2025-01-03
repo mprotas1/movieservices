@@ -16,7 +16,7 @@ spring:
   # Spring JPA configuration
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
     show-sql: true
     properties:
       hibernate:
@@ -28,6 +28,5 @@ spring:
 # External microservices URLs
 services:
   url:
-    screenings: ${SCREENINGS_URL:http://localhost:8006/screenings}
+    screenings: ${SCREENINGS_URL:http://localhost:8008/screenings}
     cinemas: ${CINEMAS_URL:http://localhost:8005}
-    users: ${USERS_URL:http://localhost:8081/users}

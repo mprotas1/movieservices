@@ -7,47 +7,61 @@ import com.movieapp.reservations.domain.ScreeningId;
 import com.movieapp.reservations.domain.SeatId;
 import com.movieapp.reservations.domain.UserId;
 import com.movieapp.reservations.infrastructure.entity.ReservationEntity;
+import com.movieapp.reservations.infrastructure.entity.SeatEntity;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ReservationMapper {
 
-    public static ReservationDTO toDTO(Reservation reservation) {
+    public ReservationDTO toDTO(Reservation reservation) {
         return new ReservationDTO(reservation.getReservationId().getId(),
                 reservation.getScreeningId().id(),
-                reservation.getSeatId().id(),
+                reservation.getSeatIds().stream()
+                                .map(SeatId::id)
+                                .toList(),
                 reservation.getUserId().id(),
                 reservation.getStatus().name()
         );
     }
 
-    public static ReservationDTO toDTO(ReservationEntity entity) {
+    public ReservationDTO toDTO(ReservationEntity entity) {
         return new ReservationDTO(entity.getId(),
                 entity.getScreeningId(),
-                entity.getSeatId(),
+                entity.getSeats().stream()
+                        .map(SeatEntity::getId)
+                        .toList(),
                 entity.getUserId(),
                 entity.getStatus()
         );
     }
 
-    public static Reservation toDomain(ReservationCreateRequest request) {
+    public Reservation toDomain(ReservationCreateRequest request) {
         return new Reservation(
                 new ScreeningId(request.screeningId()),
-                new SeatId(request.seatId()),
+                request.seatIds().stream()
+                        .map(SeatId::new)
+                        .toList(),
                 new UserId(request.userId())
         );
     }
 
-    public static Reservation toDomain(ReservationEntity entity) {
+    public Reservation toDomain(ReservationEntity entity) {
         return new Reservation(
                 new ScreeningId(entity.getScreeningId()),
-                new SeatId(entity.getSeatId()),
+                entity.getSeats().stream()
+                        .map(seatEntity -> new SeatId(seatEntity.getId()))
+                        .toList(),
                 new UserId(entity.getUserId())
         );
     }
 
     public static ReservationEntity toEntity(Reservation reservation) {
         return new ReservationEntity(
+                reservation.getReservationId().getId(),
                 reservation.getScreeningId().id(),
-                reservation.getSeatId().id(),
+                reservation.getSeatIds().stream()
+                        .map(SeatId::id)
+                        .toList(),
                 reservation.getUserId().id(),
                 reservation.getStatus().name()
         );

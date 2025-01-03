@@ -15,44 +15,39 @@ import java.util.Optional;
 @RequiredArgsConstructor
 class Reservations implements ReservationRepository {
     private final JpaReservationRepository jpaReservationRepository;
+    private final ReservationMapper reservationMapper;
 
     @Override
     public Reservation save(Reservation reservation) {
         ReservationEntity reservationEntity = ReservationMapper.toEntity(reservation);
         ReservationEntity savedReservationEntity = jpaReservationRepository.save(reservationEntity);
-        return ReservationMapper.toDomain(savedReservationEntity);
+        return reservationMapper.toDomain(savedReservationEntity);
     }
 
     @Override
     public Optional<Reservation> findById(ReservationId reservationId) {
         Optional<ReservationEntity> entityById = jpaReservationRepository.findById(reservationId.getId());
-        return entityById.map(ReservationMapper::toDomain);
-    }
-
-    @Override
-    public Optional<Reservation> findByScreeningIdAndSeatId(ScreeningId screeningId, SeatId seatId) {
-        return jpaReservationRepository.findByScreeningIdAndSeatId(screeningId.id(), seatId.id())
-                .map(ReservationMapper::toDomain);
+        return entityById.map(reservationMapper::toDomain);
     }
 
     @Override
     public List<Reservation> findAll() {
         return jpaReservationRepository.findAll().stream()
-                .map(ReservationMapper::toDomain)
+                .map(reservationMapper::toDomain)
                 .toList();
     }
 
     @Override
     public List<Reservation> findByScreeningId(ScreeningId screeningId) {
         return jpaReservationRepository.findByScreeningId(screeningId.id()).stream()
-                .map(ReservationMapper::toDomain)
+                .map(reservationMapper::toDomain)
                 .toList();
     }
 
     @Override
     public List<Reservation> findByUserId(UserId userId) {
         return jpaReservationRepository.findByUserId(userId.id()).stream()
-                .map(ReservationMapper::toDomain)
+                .map(reservationMapper::toDomain)
                 .toList();
     }
 

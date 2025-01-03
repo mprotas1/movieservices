@@ -21,13 +21,6 @@ public class InMemoryReservationRepository implements ReservationRepository {
     }
 
     @Override
-    public Optional<Reservation> findByScreeningIdAndSeatId(ScreeningId screeningId, SeatId seatId) {
-        return reservations.values().stream()
-                .filter(reservation -> reservation.getScreeningId().equals(screeningId) && reservation.getSeatId().equals(seatId))
-                .findFirst();
-    }
-
-    @Override
     public List<Reservation> findAll() {
         return new ArrayList<>(reservations.values());
     }

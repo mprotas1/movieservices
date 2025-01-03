@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -12,13 +14,13 @@ public class Reservation {
     private ReservationId reservationId;
     private UserId userId;
     private ScreeningId screeningId;
-    private SeatId seatId;
+    private List<SeatId> seatIds;
     private ReservationStatus status;
 
-    public Reservation(ScreeningId screeningId, SeatId seatId, UserId userId) {
+    public Reservation(ScreeningId screeningId, List<SeatId> seatIds, UserId userId) {
         this.reservationId = ReservationId.generate();
         this.screeningId = screeningId;
-        this.seatId = seatId;
+        this.seatIds = seatIds;
         this.userId = userId;
         this.status = ReservationStatus.PENDING;
     }

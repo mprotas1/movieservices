@@ -12,5 +12,4 @@ import java.util.UUID;
 public interface JpaReservationRepository extends JpaRepository<ReservationEntity, UUID> {
     List<ReservationEntity> findByScreeningId(UUID screeningId);
     List<ReservationEntity> findByUserId(Long userId);
-    Optional<ReservationEntity> findByScreeningIdAndSeatId(UUID screeningId, UUID seatId);
 }
