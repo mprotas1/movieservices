@@ -20,20 +20,22 @@ public class ScreeningSeat {
     private SeatType seatType;
     private boolean isReserved;
 
-    public ScreeningSeat(ScreeningId screeningId, int row, int column) {
+    public ScreeningSeat(ScreeningId screeningId, int row, int column, SeatType seatType) {
         this.seatId = new SeatId(UUID.randomUUID());
         this.screeningId = screeningId;
         this.row = row;
         this.column = column;
+        this.seatType = seatType;
         this.isReserved = false;
     }
 
-    public ScreeningSeat(SeatId seatId, ScreeningId screeningId, int row, int column) {
+    public ScreeningSeat(SeatId seatId, ScreeningId screeningId, int row, int column, boolean isReserved, SeatType seatType) {
         this.seatId = seatId;
         this.screeningId = screeningId;
         this.row = row;
         this.column = column;
-        this.isReserved = false;
+        this.seatType = seatType;
+        this.isReserved = isReserved;
     }
 
 }

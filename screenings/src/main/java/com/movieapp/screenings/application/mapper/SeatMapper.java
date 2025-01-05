@@ -2,6 +2,7 @@ package com.movieapp.screenings.application.mapper;
 
 import com.movieapp.screenings.application.dto.ScreeningSeatDTO;
 import com.movieapp.screenings.application.dto.SeatDTO;
+import com.movieapp.screenings.application.dto.SeatType;
 import com.movieapp.screenings.domain.model.ScreeningId;
 import com.movieapp.screenings.domain.model.ScreeningRoomId;
 import com.movieapp.screenings.domain.model.ScreeningSeat;
@@ -16,7 +17,8 @@ public class SeatMapper {
         return new ScreeningSeat(
                 screeningId,
                 dto.row(),
-                dto.column()
+                dto.column(),
+                SeatType.fromString(dto.type())
         );
     }
 
@@ -25,7 +27,9 @@ public class SeatMapper {
                 new SeatId(entity.getId()),
                 new ScreeningId(entity.getScreeningId()),
                 entity.getRow(),
-                entity.getColumn()
+                entity.getColumn(),
+                entity.isReserved(),
+                entity.getType()
         );
     }
 

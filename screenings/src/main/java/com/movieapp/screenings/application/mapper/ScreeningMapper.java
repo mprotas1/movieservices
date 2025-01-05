@@ -22,7 +22,10 @@ public class ScreeningMapper {
                 screening.getTime().getStartTime(),
                 screening.getTime().getEndTime(),
                 screening.getMovieTitle(),
-                screening.getScreeningRoomNumber()
+                screening.getScreeningRoomNumber(),
+                screening.getSeats().screeningSeats().stream()
+                        .map(seat -> seatMapper.toDTO(seat, screening.getScreeningRoomId()))
+                        .collect(Collectors.toList())
         );
     }
 
