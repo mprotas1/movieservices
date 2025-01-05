@@ -19,7 +19,6 @@ class ReservationService implements ReservationDomainService {
     @Transactional
     public Reservation makeReservation(ReservationCreateRequest reservationDTO) {
         log.debug("Making reservation: {}", reservationDTO);
-        // Notify the Screening service to block the seats
         return reservationMapper.toDomain(reservationDTO);
     }
 
