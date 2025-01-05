@@ -8,12 +8,6 @@ const SERVER_PORT = ":8001"
 const CONTEXT_PATH = "/api/v1/pricing"
 
 func main() {
-	properties := GetProperties("pricing.properties").Entries
-
-	for s := range properties {
-		println(properties[s])
-	}
-
 	router := GetRouter()
 	err := router.Run(SERVER_PORT)
 	if err != nil {
@@ -31,10 +25,20 @@ func CalculatePrice(c *gin.Context) {
 	var screeningDTO ScreeningDTO
 
 	if err := c.BindJSON(&screeningDTO); err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
+		c.JSON(400, BuildProblemDetail("Invalid Request Data", "Bad Request", 400))
 		return
 	}
 
 	result := CalculateSeatPricing(screeningDTO)
 	c.IndentedJSON(200, result)
+}
+
+func BuildProblemDetail(detail string, title string, status int) ProblemDetail {
+	return ProblemDetail{
+		Type:     "about:blank",
+		Title:    title,
+		Status:   status,
+		Detail:   detail,
+		Instance: CONTEXT_PATH,
+	}
 }

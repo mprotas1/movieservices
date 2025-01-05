@@ -37,3 +37,11 @@ type PricedScreeningSeatDTO struct {
 type Properties struct {
 	Entries map[string]string
 }
+
+type ProblemDetail struct {
+	Type     string `json:"type"`
+	Title    string `json:"title"`
+	Status   int    `json:"status"`
+	Detail   string `json:"detail"`
+	Instance string `json:"instance"`
+}
