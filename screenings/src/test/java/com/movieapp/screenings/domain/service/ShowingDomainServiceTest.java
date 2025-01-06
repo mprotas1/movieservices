@@ -38,21 +38,17 @@ class ShowingDomainServiceTest {
         ScreeningTime time = ScreeningTime.from(now.plus(5, ChronoUnit.SECONDS), 65);
         ScreeningTime overlappingTime = ScreeningTime.from(now.plus(5, ChronoUnit.MINUTES), 55);
 
-        Screening targetScreening = new Screening(
-                new MovieId(1L),
-                new ScreeningRoomId(UUID.randomUUID()),
-                overlappingTime,
-                "Movie Title",
-                1
-        );
+        Screening targetScreening = Screening.builder()
+                .withMovieId(1L)
+                .withScreeningRoomId(UUID.randomUUID())
+                .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
+                .build();
 
-        Screening existingOverlappingScreening = new Screening(
-                new MovieId(1L),
-                new ScreeningRoomId(UUID.randomUUID()),
-                time,
-                "Movie Title",
-                1
-        );
+        Screening existingOverlappingScreening = Screening.builder()
+                .withMovieId(1L)
+                .withScreeningRoomId(UUID.randomUUID())
+                .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
+                .build();
 
         when(screeningRepository.findAllByScreeningRoomId(any(ScreeningRoomId.class)))
                 .thenReturn(List.of(existingOverlappingScreening));
@@ -71,13 +67,14 @@ class ShowingDomainServiceTest {
                 .withScreeningTime(Instant.now().plus(1, ChronoUnit.DAYS), 85)
                 .build();
 
-        Screening existingNonOverlappingScreening = new Screening(
-                new MovieId(1L),
-                new ScreeningRoomId(UUID.randomUUID()),
-                time,
-                "Movie Title",
-                1
-        );
+        Screening existingNonOverlappingScreening = Screening.builder()
+                .withMovieId(1L)
+                .withScreeningRoomId(UUID.randomUUID())
+                .withScreeningTime(Instant.now().plus(25, ChronoUnit.DAYS), 85)
+                .build();
+
+        when(screeningRepository.findAllByScreeningRoomId(any(ScreeningRoomId.class)))
+                .thenReturn(List.of(existingNonOverlappingScreening));
 
         assertDoesNotThrow(() -> showingDomainService.createScreening(targetScreening));
     }

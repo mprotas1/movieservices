@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 import java.util.UUID;
 
 import static java.util.UUID.randomUUID;
@@ -58,8 +59,10 @@ class ScreeningMapperTest {
                 cinemaId.id(),
                 startTime,
                 endTime,
-                "Movie Title",
-                1);
+                "Some title",
+                1,
+                null
+        );
 
         assertNotNull(dto);
         assertEquals(screeningId, dto.screeningId());
@@ -78,7 +81,15 @@ class ScreeningMapperTest {
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
-        Screening screening = new Screening(movieId, screeningRoomId, new ScreeningTime(startTime, endTime), "Some title", 1);
+        Screening screening = Screening.create(
+                cinemaId,
+                movieId,
+                screeningRoomId,
+                new ScreeningTime(startTime, endTime),
+                "Some title",
+                1
+        );
+
         screening.setCinemaId(cinemaId);
         ScreeningDTO dto = screeningMapper.toDTO(screening);
 
@@ -105,6 +116,7 @@ class ScreeningMapperTest {
         entity.setScreeningRoomId(screeningRoomId);
         entity.setStartTime(startTime);
         entity.setEndTime(endTime);
+        entity.setSeats(new HashSet<>());
 
         Screening domainModel = screeningMapper.entityToDomainModel(entity);
 
@@ -124,8 +136,9 @@ class ScreeningMapperTest {
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
         Instant endTime = startTime.plus(120, ChronoUnit.MINUTES);
 
-        Screening domainModel = new Screening(
-                new MovieId(1L),
+        Screening domainModel = Screening.create(
+                new CinemaId(randomUUID()),
+                new MovieId(movieId),
                 new ScreeningRoomId(screeningRoomId),
                 new ScreeningTime(startTime, endTime),
                 "Some title",
