@@ -1,6 +1,7 @@
 package com.movieapp.screenings.application.dto;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record ScreeningDTO(UUID screeningId,
@@ -10,4 +11,5 @@ public record ScreeningDTO(UUID screeningId,
                            Instant startTime,
                            Instant endTime,
                            String movieTitle,
-                           int screeningRoomNumber) {}
+                           int screeningRoomNumber,
+                           List<ScreeningSeatDTO> seats) {}

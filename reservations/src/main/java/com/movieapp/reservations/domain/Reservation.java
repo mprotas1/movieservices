@@ -17,6 +17,14 @@ public class Reservation {
     private List<SeatId> seatIds;
     private ReservationStatus status;
 
+    public Reservation(ReservationId reservationId, ScreeningId screeningId, List<SeatId> seatIds, UserId userId, ReservationStatus status) {
+        this.reservationId = reservationId;
+        this.screeningId = screeningId;
+        this.seatIds = seatIds;
+        this.userId = userId;
+        this.status = status;
+    }
+
     public Reservation(ScreeningId screeningId, List<SeatId> seatIds, UserId userId) {
         this.reservationId = ReservationId.generate();
         this.screeningId = screeningId;
