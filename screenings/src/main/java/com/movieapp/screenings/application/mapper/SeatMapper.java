@@ -1,7 +1,6 @@
 package com.movieapp.screenings.application.mapper;
 
 import com.movieapp.screenings.application.dto.ScreeningSeatDTO;
-import com.movieapp.screenings.application.dto.SeatDTO;
 import com.movieapp.screenings.application.dto.SeatType;
 import com.movieapp.screenings.domain.model.ScreeningId;
 import com.movieapp.screenings.domain.model.ScreeningRoomId;
@@ -22,6 +21,7 @@ public class SeatMapper {
                 SeatType.fromString(dto.type()),
                 false,
                 null
+		);
     }
 
     public ScreeningSeat toDomain(ScreeningSeatEntity entity) {
