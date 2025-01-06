@@ -1,11 +1,9 @@
 package com.movieapp.screenings.application.mapper;
 
+import com.movieapp.screenings.application.dto.PricedSeatDTO;
 import com.movieapp.screenings.application.dto.ScreeningSeatDTO;
 import com.movieapp.screenings.application.dto.SeatType;
-import com.movieapp.screenings.domain.model.ScreeningId;
-import com.movieapp.screenings.domain.model.ScreeningRoomId;
-import com.movieapp.screenings.domain.model.ScreeningSeat;
-import com.movieapp.screenings.domain.model.SeatId;
+import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.infrastructure.entity.ScreeningSeatEntity;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +19,7 @@ public class SeatMapper {
                 SeatType.fromString(dto.type()),
                 false,
                 null
-        );
+		);
     }
 
     public ScreeningSeat toDomain(ScreeningSeatEntity entity) {
@@ -56,6 +54,17 @@ public class SeatMapper {
                 screeningSeat.getSeatType(),
                 screeningSeat.isReserved(),
                 screeningSeat.getPrice()
+        );
+    }
+
+    public PricedSeatDTO toPricedSeatDTO(ScreeningSeat seat) {
+        return new PricedSeatDTO(
+                seat.getSeatId().id(),
+                seat.getScreeningId().id(),
+                seat.getRow(),
+                seat.getColumn(),
+                seat.getSeatType().name(),
+                seat.getPrice()
         );
     }
 }

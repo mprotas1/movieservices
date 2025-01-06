@@ -25,15 +25,15 @@ class MoviesRestClient implements MoviesClient {
             ResponseEntity<MovieDTO> movieResponseEntity = restTemplate.getForEntity(buildUrl(id), MovieDTO.class);
 
             if(movieResponseEntity.getStatusCode().isError()) {
-                log.error("Error while fetching movie with id: {}", id);
+                log.error("Error while fetching movie with reservationId: {}", id);
                 return Optional.empty();
             }
 
-            log.debug("Fetched movie with id: {}", id);
+            log.debug("Fetched movie with reservationId: {}", id);
             return Optional.ofNullable(movieResponseEntity.getBody());
         }
         catch (HttpClientErrorException httpException) {
-            log.error("Caught HttpException during fetching Movie with id: {}", id);
+            log.error("Caught HttpException during fetching Movie with reservationId: {}", id);
             return Optional.empty();
         }
     }

@@ -43,7 +43,7 @@ class ScreeningController {
     }
 
     private URI getScreeningLocation(ScreeningDTO screening) {
-        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+        return ServletUriComponentsBuilder.fromCurrentRequest().path("/{reservationId}")
                 .buildAndExpand(screening.screeningId())
                 .toUri();
     }

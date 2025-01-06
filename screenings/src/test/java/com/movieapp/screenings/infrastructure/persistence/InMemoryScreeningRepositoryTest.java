@@ -34,7 +34,7 @@ class InMemoryScreeningRepositoryTest {
     }
 
     @Test
-    @DisplayName("In memory repository should find screening by id")
+    @DisplayName("In memory repository should find screening by reservationId")
     void shouldFindScreeningById() {
         Screening saved = inMemoryScreeningRepository.save(screening);
         var foundScreening = inMemoryScreeningRepository.findById(saved.getScreeningId());
@@ -43,7 +43,7 @@ class InMemoryScreeningRepositoryTest {
     }
 
     @Test
-    @DisplayName("In memory repository should not find screening by non-existing id")
+    @DisplayName("In memory repository should not find screening by non-existing reservationId")
     void shouldNotFindScreeningByNonExistingId() {
         ScreeningId screeningId = new ScreeningId(UUID.randomUUID());
         var foundScreening = inMemoryScreeningRepository.findById(screeningId);
@@ -60,7 +60,7 @@ class InMemoryScreeningRepositoryTest {
     }
 
     @Test
-    @DisplayName("In memory repository should find all screenings by movie id")
+    @DisplayName("In memory repository should find all screenings by movie reservationId")
     void shouldFindAllScreeningsByMovieId() {
         Screening saved = inMemoryScreeningRepository.save(screening);
         var screenings = inMemoryScreeningRepository.findAllByMovieId(saved.getMovieId());
@@ -69,7 +69,7 @@ class InMemoryScreeningRepositoryTest {
     }
 
     @Test
-    @DisplayName("In memory repository should find all screenings by screening room id")
+    @DisplayName("In memory repository should find all screenings by screening room reservationId")
     void shouldFindAllScreeningsByScreeningRoomId() {
         Screening saved = inMemoryScreeningRepository.save(screening);
         var screenings = inMemoryScreeningRepository.findAllByScreeningRoomId(saved.getScreeningRoomId());
@@ -78,7 +78,7 @@ class InMemoryScreeningRepositoryTest {
     }
 
     @Test
-    @DisplayName("In memory repository should delete screening by id")
+    @DisplayName("In memory repository should delete screening by reservationId")
     void shouldDeleteScreeningById() {
         Screening saved = inMemoryScreeningRepository.save(screening);
         inMemoryScreeningRepository.deleteById(saved.getScreeningId());

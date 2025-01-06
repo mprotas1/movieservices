@@ -1,11 +1,14 @@
 package com.movieapp.screenings.domain.builder;
 
+import com.movieapp.screenings.application.dto.ScreeningSeatDTO;
+import com.movieapp.screenings.application.dto.SeatType;
 import com.movieapp.screenings.domain.model.*;
 
 import java.time.Instant;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ScreeningBuilder {
     private MovieId movieId;
@@ -14,7 +17,7 @@ public class ScreeningBuilder {
     private CinemaId cinemaId;
     private String title;
     private int screeningRoomNumber;
-    private ScreeningSeats seats;
+    private Collection<ScreeningSeatDTO> seats;
 
     public ScreeningBuilder withMovieId(Long movieId) {
         this.movieId = new MovieId(movieId);
@@ -41,8 +44,8 @@ public class ScreeningBuilder {
         return this;
     }
 
-    public ScreeningBuilder withScreeningSeats(Collection<ScreeningSeat> screeningSeats) {
-        this.seats = new ScreeningSeats(new HashSet<>(screeningSeats));
+    public ScreeningBuilder withScreeningSeats(Collection<ScreeningSeatDTO> screeningSeats) {
+        this.seats = screeningSeats;
         return this;
     }
 
@@ -51,7 +54,20 @@ public class ScreeningBuilder {
         return this;
     }
 
+    public ScreeningSeats mapSeats(Collection<ScreeningSeatDTO> seatDTOs, ScreeningId screeningId) {
+        return new ScreeningSeats(
+                seatDTOs.stream().map(seatDTO -> new ScreeningSeat(
+                        screeningId,
+                        seatDTO.row(),
+                        seatDTO.column(),
+                        SeatType.fromString(seatDTO.type())
+                )).collect(Collectors.toSet())
+        );
+    }
+
     public Screening build() {
-        return Screening.create(cinemaId, movieId, screeningRoomId, time, title, screeningRoomNumber);
+        Screening screening = Screening.create(cinemaId, movieId, screeningRoomId, time, title, screeningRoomNumber);
+        screening.setSeats(mapSeats(seats, screening.getScreeningId()));
+        return screening;
     }
 }

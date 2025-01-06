@@ -13,10 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -30,16 +27,16 @@ class ScreeningSeatAppService implements ScreeningSeatService {
     public Screening priceSeats(ScreeningDTO screeningDTO) {
         var pricedSeats = pricingClient.getSeatsPricing(screeningDTO);
 
-        Screening domain = screeningMapper.toDomain(screeningDTO);
-        ScreeningSeats domainSeats = domain.getSeats();
+        Screening domainScreening = screeningMapper.toDomain(screeningDTO);
+        ScreeningSeats domainSeats = domainScreening.getSeats();
 
         for(ScreeningSeat screeningSeat : domainSeats.screeningSeats()) {
-            var pricedSeatDTO = pricedSeats.stream()
+            Optional<PricedSeatDTO> pricedSeatDTO = pricedSeats.stream()
                     .filter(pricedSeat -> pricedSeat.id().equals(screeningSeat.getSeatId().id()))
                     .findFirst();
 
             if(pricedSeatDTO.isEmpty()) {
-                log.error("Seat with id {} not found in priced seats", screeningSeat.getSeatId().id());
+                log.error("Seat with reservationId {} not found in priced seats", screeningSeat.getSeatId().id());
                 continue;
             }
 
@@ -48,7 +45,7 @@ class ScreeningSeatAppService implements ScreeningSeatService {
         }
 
 
-        return screeningRepository.save(domain);
+        return screeningRepository.save(domainScreening);
     }
 
 }
