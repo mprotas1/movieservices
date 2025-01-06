@@ -34,7 +34,7 @@ class CinemasRestClient implements CinemasClient {
             return Optional.ofNullable(roomResponseEntity.getBody());
         }
         catch (HttpClientErrorException.NotFound httpException) {
-            log.error("Caught HttpException during fetching Screening Room with id: {} with cause: {}", screeningRoomId, httpException.getMessage());
+            log.error("Caught HttpException during fetching Screening Room with reservationId: {} with cause: {}", screeningRoomId, httpException.getMessage());
             return Optional.empty();
         }
     }

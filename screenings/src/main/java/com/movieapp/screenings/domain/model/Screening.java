@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +35,6 @@ public class Screening {
         this.time = time;
         this.movieTitle = title;
         this.screeningRoomNumber = screeningRoomNumber;
-        this.seats = new ScreeningSeats(Collections.emptySet());
     }
 
     public static Screening create(CinemaId cinemaId,

@@ -1,14 +1,14 @@
 package com.movieapp.screenings.application.service;
 
 import com.movieapp.screenings.application.dto.*;
+import com.movieapp.screenings.application.events.SeatsAlreadyLockedEvent;
+import com.movieapp.screenings.application.events.SuccessfulReservationSeatsBookedEvent;
 import com.movieapp.screenings.application.mapper.ScreeningMapper;
 import com.movieapp.screenings.application.mapper.SeatMapper;
 import com.movieapp.screenings.domain.exception.MovieDoesNotExistException;
 import com.movieapp.screenings.domain.exception.ScreeningRoomDoesNotExistException;
-import com.movieapp.screenings.domain.model.Screening;
-import com.movieapp.screenings.domain.model.ScreeningId;
-import com.movieapp.screenings.domain.model.ScreeningRoomId;
-import com.movieapp.screenings.domain.model.ScreeningSeat;
+import com.movieapp.screenings.domain.exception.ScreeningSeatsAlreadyBookedException;
+import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import com.movieapp.screenings.domain.service.ScreeningDomainService;
 import com.movieapp.screenings.interfaces.client.CinemasClient;
@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -49,7 +50,7 @@ class ShowingApplicationService implements ScreeningApplicationService {
                 .withScreeningTime(request.startTime(), movieDTO.duration())
                 .withMovieTitle(movieDTO.title())
                 .withScreeningRoomNumber(screeningRoomDTO.number())
-                .withScreeningSeats(getMappedSeats(screeningRoomDTO.seats()))
+                .withScreeningSeats(screeningRoomDTO.seats())
                 .build();
         Screening screening = screeningDomainService.createScreening(mapped);
         Screening withPricedSeats = createSeatsPricing(screening);
@@ -74,29 +75,40 @@ class ShowingApplicationService implements ScreeningApplicationService {
     public ScreeningDTO findById(UUID screeningId) {
         return repository.findById(new ScreeningId(screeningId))
                 .map(screeningMapper::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Screening with id: " + screeningId + " does not exist"));
+                .orElseThrow(() -> new EntityNotFoundException("Screening with reservationId: " + screeningId + " does not exist"));
     }
 
     @Override
+    @Transactional
     public void lockSeats(ReservationDTO reservationDTO) {
-        screeningDomainService.lockSeats(reservationDTO);
+        Screening screening = repository.findById(new ScreeningId(reservationDTO.screeningId()))
+                .orElseThrow(() -> new EntityNotFoundException("Screening with id: " + reservationDTO.screeningId() + " does not exist"));
+        List<SeatId> seatIds = reservationDTO.screeningSeatIds().stream()
+                .map(SeatId::new)
+                .toList();
+
+        try {
+            Set<ScreeningSeat> bookedSeats = screeningDomainService.lockSeats(screening, seatIds);
+            log.debug("Locked seats: {} for Screening: {}", seatIds, screening);
+            applicationEventPublisher.publishEvent(new SuccessfulSeatsBookingEvent(reservationDTO.id(), bookedSeats.stream()
+                    .map(seatMapper::toPricedSeatDTO)
+                    .toList()));
+        }
+        catch (ScreeningSeatsAlreadyBookedException e) {
+            log.error("Screening seats already booked: {}", e.getAlreadyReservedIds());
+            applicationEventPublisher.publishEvent(new SeatsAlreadyLockedEvent(reservationDTO.id(), e.getAlreadyReservedIds()));
+        }
     }
 
     private ScreeningRoomDTO getScreeningRoom(UUID screeningRoomId) {
         ScreeningRoomId id = new ScreeningRoomId(screeningRoomId);
         return cinemasClient.getScreeningRoomById(id)
-                .orElseThrow(() -> new ScreeningRoomDoesNotExistException("Screening room with id: " + screeningRoomId + " does not exist"));
+                .orElseThrow(() -> new ScreeningRoomDoesNotExistException("Screening room with reservationId: " + screeningRoomId + " does not exist"));
     }
 
     private MovieDTO getMovie(Long movieId) {
         return moviesClient.getMovieById(movieId)
-                .orElseThrow(() -> new MovieDoesNotExistException("Movie with id: " + movieId + " does not exist"));
-    }
-
-    private Collection<ScreeningSeat> getMappedSeats(List<ScreeningSeatDTO> seats) {
-        return seats.stream()
-                .map(seatMapper::toDomain)
-                .toList();
+                .orElseThrow(() -> new MovieDoesNotExistException("Movie with reservationId: " + movieId + " does not exist"));
     }
 
 }
