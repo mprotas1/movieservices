@@ -15,13 +15,19 @@ import java.util.UUID;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class ReservationsKafkaListener {
+class ReservationsKafkaListener {
     private final ReservationApplicationService reservationApplicationService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "screening_seats_reserved", groupId = "basic")
+    @KafkaListener(topics = "screening_seats_already_reserved", groupId = "basic")
     public void onScreeningSeatsReserved(String screeningSeatsReservedEvent) {
         reservationApplicationService.cancelReservation(new ReservationId(getReservationIdFromEvent(screeningSeatsReservedEvent)));
+    }
+
+    @KafkaListener(topics = "successful_seats_booking", groupId = "basic")
+    public void onSuccessfulSeatsBooking(String successfulSeatsBookingEvent) {
+        // next is Payment service to be called with totalAmount for the reservation
+        log.debug("Successful seats booking event received: {}", successfulSeatsBookingEvent);
     }
 
     private UUID getReservationIdFromEvent(String eventJson) {
