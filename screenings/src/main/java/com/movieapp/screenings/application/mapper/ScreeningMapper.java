@@ -6,6 +6,8 @@ import com.movieapp.screenings.infrastructure.entity.ScreeningEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,9 +32,9 @@ public class ScreeningMapper {
     }
 
     public Screening entityToDomainModel(ScreeningEntity entity) {
-        var screeningSeats = entity.getSeats().stream()
+        List<ScreeningSeat> screeningSeats = entity.getSeats().stream()
                 .map(seatMapper::toDomain)
-                .collect(Collectors.toSet());
+                .toList();
         return new Screening(
                 new ScreeningId(entity.getId()),
                 new MovieId(entity.getMovieId()),
@@ -41,7 +43,7 @@ public class ScreeningMapper {
                 new ScreeningTime(entity.getStartTime(), entity.getEndTime()),
                 entity.getMovieTitle(),
                 entity.getScreeningRoomNumber(),
-                new ScreeningSeats(screeningSeats)
+                new ScreeningSeats(new HashSet<>(screeningSeats))
         );
     }
 
@@ -61,4 +63,19 @@ public class ScreeningMapper {
         return entity;
     }
 
+    public Screening toDomain(ScreeningDTO screeningDTO) {
+        return new Screening(
+                new ScreeningId(screeningDTO.screeningId()),
+                new MovieId(screeningDTO.movieId()),
+                new CinemaId(screeningDTO.cinemaId()),
+                new ScreeningRoomId(screeningDTO.screeningRoomId()),
+                new ScreeningTime(screeningDTO.startTime(), screeningDTO.endTime()),
+                screeningDTO.movieTitle(),
+                screeningDTO.screeningRoomNumber(),
+                new ScreeningSeats(screeningDTO.seats().stream()
+                        .map(seatMapper::toDomain)
+                        .collect(Collectors.toSet())
+                )
+        );
+    }
 }

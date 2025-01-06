@@ -32,6 +32,10 @@ cinemas:
   service:
     url: ${CINEMAS_SERVICE_URL:http://localhost:8005/cinemas}
 
+pricing:
+    service:
+        url: ${PRICING_SERVICE_URL:http://localhost:8001/api/v1/pricing}
+
 # Eureka Client configuration
 eureka:
   client:
