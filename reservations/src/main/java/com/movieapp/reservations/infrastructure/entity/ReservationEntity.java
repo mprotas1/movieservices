@@ -16,7 +16,7 @@ public class ReservationEntity {
     private UUID id;
     private UUID screeningId;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<SeatEntity> seats;
+    private List<ReservationSeatEntity> seats;
     private Long userId;
     private String status;
 
@@ -30,12 +30,10 @@ public class ReservationEntity {
         this.status = status;
     }
 
-    private List<SeatEntity> createSeatEntities(List<UUID> seatIds) {
-        return seatIds.stream().map(seatId -> {
-            SeatEntity seatEntity = new SeatEntity();
-            seatEntity.setId(seatId);
-            return seatEntity;
-        }).toList();
+    private List<ReservationSeatEntity> createSeatEntities(List<UUID> seatIds) {
+        return seatIds.stream()
+                .map(seatId -> new ReservationSeatEntity(seatId, this))
+                .toList();
     }
 
 }

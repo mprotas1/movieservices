@@ -5,6 +5,6 @@ import java.util.UUID;
 
 public record ReservationDTO(UUID id,
                              UUID screeningId,
-                             List<UUID> seatIds,
+                             List<UUID> screeningSeatIds,
                              Long userId,
                              String status) {}

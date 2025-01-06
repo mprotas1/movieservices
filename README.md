@@ -31,10 +31,9 @@ The application is tailored to handle critical tasks such as user management, th
 * JUnit5 and Mockito
 * Testcontainers
 * Docker
-* RabbitMQ / Kafka
+* Apache Kafka
 * Eureka Server
 * PostgreSQL
-* HashiCorp Vault
 * Google Maps API
 
 ## Requirments

@@ -1,9 +1,5 @@
 package com.movieapp.screenings.application.service;
 
-import com.movieapp.screenings.application.dto.MovieDTO;
-import com.movieapp.screenings.application.dto.ScreeningCreateRequest;
-import com.movieapp.screenings.application.dto.ScreeningDTO;
-import com.movieapp.screenings.application.dto.ScreeningRoomDTO;
 import com.movieapp.screenings.application.dto.*;
 import com.movieapp.screenings.application.mapper.ScreeningMapper;
 import com.movieapp.screenings.application.mapper.SeatMapper;
@@ -20,18 +16,19 @@ import com.movieapp.screenings.interfaces.client.MoviesClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 @Slf4j
 class ShowingApplicationService implements ScreeningApplicationService {
+    private final ApplicationEventPublisher applicationEventPublisher;
     private final ScreeningDomainService screeningDomainService;
     private final ScreeningRepository repository;
     private final CinemasClient cinemasClient;
@@ -78,6 +75,11 @@ class ShowingApplicationService implements ScreeningApplicationService {
         return repository.findById(new ScreeningId(screeningId))
                 .map(screeningMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Screening with id: " + screeningId + " does not exist"));
+    }
+
+    @Override
+    public void lockSeats(ReservationDTO reservationDTO) {
+        screeningDomainService.lockSeats(reservationDTO);
     }
 
     private ScreeningRoomDTO getScreeningRoom(UUID screeningRoomId) {

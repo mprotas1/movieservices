@@ -2,12 +2,8 @@ package com.movieapp.reservations.application.mapper;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
-import com.movieapp.reservations.domain.Reservation;
-import com.movieapp.reservations.domain.ScreeningId;
-import com.movieapp.reservations.domain.SeatId;
-import com.movieapp.reservations.domain.UserId;
+import com.movieapp.reservations.domain.*;
 import com.movieapp.reservations.infrastructure.entity.ReservationEntity;
-import com.movieapp.reservations.infrastructure.entity.SeatEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,17 +20,6 @@ public class ReservationMapper {
         );
     }
 
-    public ReservationDTO toDTO(ReservationEntity entity) {
-        return new ReservationDTO(entity.getId(),
-                entity.getScreeningId(),
-                entity.getSeats().stream()
-                        .map(SeatEntity::getId)
-                        .toList(),
-                entity.getUserId(),
-                entity.getStatus()
-        );
-    }
-
     public Reservation toDomain(ReservationCreateRequest request) {
         return new Reservation(
                 new ScreeningId(request.screeningId()),
@@ -47,11 +32,13 @@ public class ReservationMapper {
 
     public Reservation toDomain(ReservationEntity entity) {
         return new Reservation(
+                new ReservationId(entity.getId()),
                 new ScreeningId(entity.getScreeningId()),
                 entity.getSeats().stream()
-                        .map(seatEntity -> new SeatId(seatEntity.getId()))
+                        .map(reservationSeatEntity -> new SeatId(reservationSeatEntity.getScreeningSeatId()))
                         .toList(),
-                new UserId(entity.getUserId())
+                new UserId(entity.getUserId()),
+                ReservationStatus.valueOf(entity.getStatus())
         );
     }
 

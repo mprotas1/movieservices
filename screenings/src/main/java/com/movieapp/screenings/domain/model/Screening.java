@@ -1,11 +1,13 @@
 package com.movieapp.screenings.domain.model;
 
 import com.movieapp.screenings.domain.builder.ScreeningBuilder;
+import com.movieapp.screenings.domain.exception.ScreeningSeatsAlreadyBookedException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -59,6 +61,10 @@ public class Screening {
         this.movieTitle = title;
         this.screeningRoomNumber = screeningRoomNumber;
         this.seats = seats;
+    }
+
+    public void lockSeats(List<SeatId> seatIds) throws ScreeningSeatsAlreadyBookedException {
+        seats.lockSeats(seatIds);
     }
 
     public static ScreeningBuilder builder() {
