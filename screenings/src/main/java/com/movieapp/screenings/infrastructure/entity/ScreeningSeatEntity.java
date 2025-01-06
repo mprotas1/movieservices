@@ -26,4 +26,5 @@ public class ScreeningSeatEntity {
     @Enumerated(EnumType.STRING)
     private SeatType type;
     private boolean isReserved;
+    private Double price;
 }

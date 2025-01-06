@@ -9,7 +9,10 @@ import com.movieapp.screenings.application.mapper.ScreeningMapper;
 import com.movieapp.screenings.application.mapper.SeatMapper;
 import com.movieapp.screenings.domain.exception.MovieDoesNotExistException;
 import com.movieapp.screenings.domain.exception.ScreeningRoomDoesNotExistException;
-import com.movieapp.screenings.domain.model.*;
+import com.movieapp.screenings.domain.model.Screening;
+import com.movieapp.screenings.domain.model.ScreeningId;
+import com.movieapp.screenings.domain.model.ScreeningRoomId;
+import com.movieapp.screenings.domain.model.ScreeningSeat;
 import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import com.movieapp.screenings.domain.service.ScreeningDomainService;
 import com.movieapp.screenings.interfaces.client.CinemasClient;
@@ -21,7 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -35,6 +37,7 @@ class ShowingApplicationService implements ScreeningApplicationService {
     private final CinemasClient cinemasClient;
     private final MoviesClient moviesClient;
     private final ScreeningMapper screeningMapper;
+    private final ScreeningSeatService screeningSeatService;
     private final SeatMapper seatMapper;
 
     @Override
@@ -49,12 +52,18 @@ class ShowingApplicationService implements ScreeningApplicationService {
                 .withScreeningTime(request.startTime(), movieDTO.duration())
                 .withMovieTitle(movieDTO.title())
                 .withScreeningRoomNumber(screeningRoomDTO.number())
+                .withScreeningSeats(getMappedSeats(screeningRoomDTO.seats()))
                 .build();
-        mapped.setSeats(new ScreeningSeats(new HashSet<>(getMappedSeats(screeningRoomDTO.seats(), mapped.getScreeningId().id()))));
         Screening screening = screeningDomainService.createScreening(mapped);
-        Screening savedScreening = repository.save(screening);
+        Screening withPricedSeats = createSeatsPricing(screening);
+        Screening savedScreening = repository.save(withPricedSeats);
         log.debug("Created Screening: {}", savedScreening);
         return screeningMapper.toDTO(savedScreening);
+    }
+
+    private Screening createSeatsPricing(Screening screening) {
+        ScreeningDTO screeningDTO = screeningMapper.toDTO(screening);
+        return screeningSeatService.priceSeats(screeningDTO);
     }
 
     @Override
@@ -82,9 +91,9 @@ class ShowingApplicationService implements ScreeningApplicationService {
                 .orElseThrow(() -> new MovieDoesNotExistException("Movie with id: " + movieId + " does not exist"));
     }
 
-    private Collection<ScreeningSeat> getMappedSeats(List<SeatDTO> seats, UUID screeningId) {
+    private Collection<ScreeningSeat> getMappedSeats(List<ScreeningSeatDTO> seats) {
         return seats.stream()
-                .map(seat -> seatMapper.toDomain(seat, new ScreeningId(screeningId)))
+                .map(seatMapper::toDomain)
                 .toList();
     }
 

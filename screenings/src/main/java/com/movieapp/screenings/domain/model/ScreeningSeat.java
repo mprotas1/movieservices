@@ -19,6 +19,7 @@ public class ScreeningSeat {
     private int column;
     private SeatType seatType;
     private boolean isReserved;
+    private Double price;
 
     public ScreeningSeat(ScreeningId screeningId, int row, int column) {
         this.seatId = new SeatId(UUID.randomUUID());

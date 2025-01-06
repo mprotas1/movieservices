@@ -7,4 +7,4 @@ public record ScreeningRoomDTO(UUID roomId,
                                UUID cinemaId,
                                int number,
                                int capacity,
-                               List<SeatDTO> seats) {}
+                               List<ScreeningSeatDTO> seats) {}
