@@ -14,6 +14,7 @@ public class TestContainers {
 
     @Container
     private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER = new PostgreSQLContainer<>("postgres:latest")
+            .withExposedPorts(10500)
             .withDatabaseName("screenings")
             .withUsername("screenings")
             .withPassword("screenings");

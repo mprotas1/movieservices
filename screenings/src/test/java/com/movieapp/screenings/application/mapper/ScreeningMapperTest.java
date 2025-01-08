@@ -90,6 +90,8 @@ class ScreeningMapperTest {
                 1
         );
 
+        screening.setSeats(new ScreeningSeats(new HashSet<>()));
+
         screening.setCinemaId(cinemaId);
         ScreeningDTO dto = screeningMapper.toDTO(screening);
 
@@ -131,6 +133,7 @@ class ScreeningMapperTest {
     @Test
     @DisplayName("Should map Screening domain model to ScreeningEntity")
     void shouldMapDomainModelToEntity() {
+        // given
         Long movieId = 1L;
         UUID screeningRoomId = randomUUID();
         Instant startTime = Instant.now().plus(5, ChronoUnit.MINUTES);
@@ -144,9 +147,12 @@ class ScreeningMapperTest {
                 "Some title",
                 1
         );
+        domainModel.setSeats(new ScreeningSeats(new HashSet<>()));
 
+        // when
         ScreeningEntity entity = screeningMapper.domainModelToEntity(domainModel);
 
+        // then
         assertNotNull(entity);
         assertEquals(domainModel.getScreeningId().id(), entity.getId());
         assertEquals(movieId, entity.getMovieId());
