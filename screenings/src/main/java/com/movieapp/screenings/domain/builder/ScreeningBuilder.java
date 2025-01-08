@@ -6,6 +6,7 @@ import com.movieapp.screenings.domain.model.*;
 
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -55,7 +56,7 @@ public class ScreeningBuilder {
     }
 
     public ScreeningSeats mapSeats(Collection<ScreeningSeatDTO> seatDTOs, ScreeningId screeningId) {
-        return new ScreeningSeats(
+        return seatDTOs == null ? new ScreeningSeats(Collections.emptySet()) : new ScreeningSeats(
                 seatDTOs.stream().map(seatDTO -> new ScreeningSeat(
                         screeningId,
                         seatDTO.row(),
