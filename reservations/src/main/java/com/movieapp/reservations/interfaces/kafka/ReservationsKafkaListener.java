@@ -3,6 +3,7 @@ package com.movieapp.reservations.interfaces.kafka;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.movieapp.reservations.application.dto.ScreeningSeatsAlreadyLockedDTO;
+import com.movieapp.reservations.application.dto.SuccessfulSeatsBookingEvent;
 import com.movieapp.reservations.application.service.ReservationApplicationService;
 import com.movieapp.reservations.domain.ReservationId;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,15 @@ class ReservationsKafkaListener {
     public void onSuccessfulSeatsBooking(String successfulSeatsBookingEvent) {
         // next is Payment service to be called with totalAmount for the reservation
         log.debug("Successful seats booking event received: {}", successfulSeatsBookingEvent);
+        reservationApplicationService.bookReservation(deserialize(successfulSeatsBookingEvent, SuccessfulSeatsBookingEvent.class));
+    }
+
+    private <T> T deserialize(String json, Class<T> clazz) {
+        try {
+            return objectMapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private UUID getReservationIdFromEvent(String eventJson) {

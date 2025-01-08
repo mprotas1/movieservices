@@ -2,12 +2,15 @@ package com.movieapp.reservations.application.service;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
+import com.movieapp.reservations.application.dto.SuccessfulSeatsBookingEvent;
+import com.movieapp.reservations.application.events.ReservationCreatedEvent;
+import com.movieapp.reservations.application.events.ReservationPaymentEvent;
 import com.movieapp.reservations.application.mapper.ReservationMapper;
 import com.movieapp.reservations.domain.*;
-import com.movieapp.reservations.interfaces.kafka.KafkaProducer;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,16 +22,16 @@ class ReservationAppService implements ReservationApplicationService {
     private final ReservationDomainService reservationDomainService;
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
-    private final KafkaProducer kafkaProducer;
+    private final PriceCalculator priceCalculator;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public ReservationDTO makeReservation(ReservationCreateRequest request) {
         log.debug("Making reservation for request: {}", request);
         Reservation createdReservation = reservationDomainService.makeReservation(request);
         log.debug("Reservation created: {}", createdReservation);
-        Reservation saved = reservationRepository.save(createdReservation);
-        ReservationDTO dto = reservationMapper.toDTO(saved);
-        kafkaProducer.reservationCreated(dto);
+        ReservationDTO dto = reservationMapper.toDTO(createdReservation);
+        eventPublisher.publishEvent(new ReservationCreatedEvent(dto));
         return dto;
     }
 
@@ -43,6 +46,22 @@ class ReservationAppService implements ReservationApplicationService {
     public ReservationDTO cancelReservation(ReservationId reservationId) {
         log.debug("Cancelling reservation with id: {}", reservationId.getId());
         Reservation reservation = reservationDomainService.cancelReservation(reservationId);
+        return reservationMapper.toDTO(reservation);
+    }
+
+    @Override
+    public ReservationDTO bookReservation(SuccessfulSeatsBookingEvent bookingEvent) {
+        Double price = priceCalculator.calculatePrice(bookingEvent.seats());
+        Reservation reservation = reservationDomainService.bookReservation(
+                new ReservationId(bookingEvent.reservationId()),
+                new ReservationPrice(price)
+        );
+        log.debug("Reservation booked: {}", reservation);
+        eventPublisher.publishEvent(new ReservationPaymentEvent(
+                reservation.getReservationId().getId(),
+                reservation.getUserId().id(),
+                reservation.getPrice().price())
+        );
         return reservationMapper.toDTO(reservation);
     }
 

@@ -1,7 +1,9 @@
 package com.movieapp.reservations.interfaces.kafka;
 
-import com.movieapp.reservations.application.dto.ReservationDTO;
+import com.movieapp.reservations.application.events.ReservationCreatedEvent;
+import com.movieapp.reservations.application.events.ReservationPaymentEvent;
 
 public interface KafkaProducer {
-    void reservationCreated(ReservationDTO reservationDTO);
+    void reservationCreated(ReservationCreatedEvent event);
+    void askForPayment(ReservationPaymentEvent event);
 }

@@ -19,7 +19,8 @@ class ReservationService implements ReservationDomainService {
     @Transactional
     public Reservation makeReservation(ReservationCreateRequest reservationDTO) {
         log.debug("Making reservation: {}", reservationDTO);
-        return reservationMapper.toDomain(reservationDTO);
+        Reservation domain = reservationMapper.toDomain(reservationDTO);
+        return reservationRepository.save(domain);
     }
 
     @Override
@@ -40,6 +41,16 @@ class ReservationService implements ReservationDomainService {
                 .orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + reservationId.getId() + " not found"));
         reservation.cancel();
         log.debug("Reservation cancelled: {}", reservation);
+        return reservationRepository.save(reservation);
+    }
+
+    @Override
+    public Reservation bookReservation(ReservationId reservationId, ReservationPrice price) {
+        log.debug("Booking reservation with id: {}", reservationId.getId());
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + reservationId.getId() + " not found"));
+        reservation.book(price);
+        log.debug("Reservation booked: {}", reservation);
         return reservationRepository.save(reservation);
     }
 

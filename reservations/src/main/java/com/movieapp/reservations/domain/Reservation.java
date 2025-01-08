@@ -16,16 +16,25 @@ public class Reservation {
     private ScreeningId screeningId;
     private List<SeatId> seatIds;
     private ReservationStatus status;
+    private ReservationPrice price;
 
-    public Reservation(ReservationId reservationId, ScreeningId screeningId, List<SeatId> seatIds, UserId userId, ReservationStatus status) {
+    public Reservation(ReservationId reservationId,
+                       ScreeningId screeningId,
+                       List<SeatId> seatIds,
+                       UserId userId,
+                       ReservationStatus status,
+                       ReservationPrice price) {
         this.reservationId = reservationId;
         this.screeningId = screeningId;
         this.seatIds = seatIds;
         this.userId = userId;
         this.status = status;
+        this.price = price;
     }
 
-    public Reservation(ScreeningId screeningId, List<SeatId> seatIds, UserId userId) {
+    public Reservation(ScreeningId screeningId,
+                       List<SeatId> seatIds,
+                       UserId userId) {
         this.reservationId = ReservationId.generate();
         this.screeningId = screeningId;
         this.seatIds = seatIds;
@@ -42,6 +51,14 @@ public class Reservation {
 
     public void cancel() {
         this.status = ReservationStatus.CANCELLED;
+    }
+
+    public void book(ReservationPrice price) {
+        if(this.status == ReservationStatus.CANCELLED) {
+            throw new InvalidReservationTransitionException("Cannot book a cancelled reservation");
+        }
+        this.price = price;
+        this.status = ReservationStatus.BOOKED;
     }
 
 }

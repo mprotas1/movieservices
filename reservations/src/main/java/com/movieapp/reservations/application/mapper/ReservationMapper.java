@@ -38,7 +38,8 @@ public class ReservationMapper {
                         .map(reservationSeatEntity -> new SeatId(reservationSeatEntity.getScreeningSeatId()))
                         .toList(),
                 new UserId(entity.getUserId()),
-                ReservationStatus.valueOf(entity.getStatus())
+                ReservationStatus.valueOf(entity.getStatus()),
+                new ReservationPrice(entity.getPrice())
         );
     }
 
@@ -50,7 +51,8 @@ public class ReservationMapper {
                         .map(SeatId::id)
                         .toList(),
                 reservation.getUserId().id(),
-                reservation.getStatus().name()
+                reservation.getStatus().name(),
+                reservation.getPrice() == null ? null : reservation.getPrice().price()
         );
     }
 

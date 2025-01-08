@@ -15,19 +15,21 @@ public class ReservationEntity {
     @Id
     private UUID id;
     private UUID screeningId;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ReservationSeatEntity> seats;
     private Long userId;
     private String status;
+    private Double price;
 
     public ReservationEntity() {}
 
-    public ReservationEntity(UUID id, UUID screeningId, List<UUID> seatIds, Long userId, String status) {
+    public ReservationEntity(UUID id, UUID screeningId, List<UUID> seatIds, Long userId, String status, Double price) {
         this.id = id;
         this.screeningId = screeningId;
         this.seats = createSeatEntities(seatIds);
         this.userId = userId;
         this.status = status;
+        this.price = price;
     }
 
     private List<ReservationSeatEntity> createSeatEntities(List<UUID> seatIds) {

@@ -6,4 +6,5 @@ public interface ReservationDomainService {
     Reservation makeReservation(ReservationCreateRequest request);
     Reservation confirmReservation(ReservationId reservationId);
     Reservation cancelReservation(ReservationId reservationId);
+    Reservation bookReservation(ReservationId reservationId, ReservationPrice price);
 }
