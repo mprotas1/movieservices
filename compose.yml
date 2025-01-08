@@ -34,6 +34,24 @@ services:
       - "5432"
     restart: unless-stopped
 
+  paymentsdb:
+    container_name: paymentsdb
+    image: postgres:latest
+    environment:
+      - POSTGRES_ROOT_PASSWORD=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=paymentsdb
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5445:5432"
+    expose:
+      - "5445"
+    networks:
+      - payments
+    restart: unless-stopped
+
   screeningsdb:
     container_name: screeningsdb
     image: postgres:latest
@@ -137,6 +155,7 @@ services:
       - screenings
       - movies
       - reservations
+      - payments
     restart: unless-stopped
 
   # Apache Kafka
@@ -171,6 +190,8 @@ networks:
   movies:
     driver: bridge
   reservations:
+    driver: bridge
+  payments:
     driver: bridge
 
 volumes:
