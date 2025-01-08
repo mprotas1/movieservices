@@ -2,10 +2,9 @@ package com.movieapp.reservations.application.service;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
-import com.movieapp.reservations.application.dto.SuccessfulSeatsBookingEvent;
+import com.movieapp.reservations.application.events.SuccessfulSeatsBookingEvent;
 import com.movieapp.reservations.domain.ReservationId;
 import com.movieapp.reservations.domain.ScreeningId;
-import com.movieapp.reservations.domain.SeatId;
 import com.movieapp.reservations.domain.UserId;
 
 import java.util.List;

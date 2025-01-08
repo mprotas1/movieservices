@@ -2,8 +2,9 @@ package com.movieapp.reservations.interfaces.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.movieapp.reservations.application.events.ScreeningDoesNotExistEvent;
 import com.movieapp.reservations.application.dto.ScreeningSeatsAlreadyLockedDTO;
-import com.movieapp.reservations.application.dto.SuccessfulSeatsBookingEvent;
+import com.movieapp.reservations.application.events.SuccessfulSeatsBookingEvent;
 import com.movieapp.reservations.application.service.ReservationApplicationService;
 import com.movieapp.reservations.domain.ReservationId;
 import lombok.AllArgsConstructor;
@@ -20,16 +21,29 @@ class ReservationsKafkaListener {
     private final ReservationApplicationService reservationApplicationService;
     private final ObjectMapper objectMapper;
 
+    @KafkaListener(topics = "successful_seats_booking", groupId = "basic")
+    void onSuccessfulSeatsBooking(String successfulSeatsBookingEvent) {
+        log.debug("Successful seats booking event received: {}", successfulSeatsBookingEvent);
+        reservationApplicationService.bookReservation(deserialize(successfulSeatsBookingEvent, SuccessfulSeatsBookingEvent.class));
+    }
+
     @KafkaListener(topics = "screening_seats_already_reserved", groupId = "basic")
-    public void onScreeningSeatsReserved(String screeningSeatsReservedEvent) {
+    void onScreeningSeatsReserved(String screeningSeatsReservedEvent) {
+        log.info("Screening seats already reserved event received: {}", screeningSeatsReservedEvent);
         reservationApplicationService.cancelReservation(new ReservationId(getReservationIdFromEvent(screeningSeatsReservedEvent)));
     }
 
-    @KafkaListener(topics = "successful_seats_booking", groupId = "basic")
-    public void onSuccessfulSeatsBooking(String successfulSeatsBookingEvent) {
-        // next is Payment service to be called with totalAmount for the reservation
-        log.debug("Successful seats booking event received: {}", successfulSeatsBookingEvent);
-        reservationApplicationService.bookReservation(deserialize(successfulSeatsBookingEvent, SuccessfulSeatsBookingEvent.class));
+    @KafkaListener(topics = "screening_seats_booking_failed", groupId = "basic")
+    void onScreeningSeatsBookingFailed(String screeningSeatsBookingFailedEvent) {
+        log.debug("Screening seats booking failed event received: {}", screeningSeatsBookingFailedEvent);
+        ScreeningDoesNotExistEvent event = deserialize(screeningSeatsBookingFailedEvent, ScreeningDoesNotExistEvent.class);
+        reservationApplicationService.cancelReservation(new ReservationId(event.screeningId()));
+    }
+
+    @KafkaListener(topics = "no_seats_to_book", groupId = "basic")
+    void onNoSeatsToBook(String noSeatsToBookEvent) {
+        log.debug("No seats to book event received: {}", noSeatsToBookEvent);
+        reservationApplicationService.cancelReservation(new ReservationId(getReservationIdFromEvent(noSeatsToBookEvent)));
     }
 
     private <T> T deserialize(String json, Class<T> clazz) {

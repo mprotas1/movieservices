@@ -2,6 +2,7 @@ package com.movieapp.screenings.domain.model;
 
 import com.movieapp.screenings.domain.builder.ScreeningBuilder;
 import com.movieapp.screenings.domain.exception.ScreeningSeatsAlreadyBookedException;
+import com.movieapp.screenings.domain.exception.ScreeningSeatsBookingException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,7 +62,7 @@ public class Screening {
         this.seats = seats;
     }
 
-    public void lockSeats(List<SeatId> seatIds) throws ScreeningSeatsAlreadyBookedException {
+    public void lockSeats(List<SeatId> seatIds) throws ScreeningSeatsAlreadyBookedException, ScreeningSeatsBookingException {
         seats.lockSeats(seatIds);
     }
 

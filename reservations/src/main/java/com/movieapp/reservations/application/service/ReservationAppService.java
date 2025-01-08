@@ -2,7 +2,7 @@ package com.movieapp.reservations.application.service;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
-import com.movieapp.reservations.application.dto.SuccessfulSeatsBookingEvent;
+import com.movieapp.reservations.application.events.SuccessfulSeatsBookingEvent;
 import com.movieapp.reservations.application.events.ReservationCreatedEvent;
 import com.movieapp.reservations.application.events.ReservationPaymentEvent;
 import com.movieapp.reservations.application.mapper.ReservationMapper;
@@ -31,7 +31,7 @@ class ReservationAppService implements ReservationApplicationService {
         Reservation createdReservation = reservationDomainService.makeReservation(request);
         log.debug("Reservation created: {}", createdReservation);
         ReservationDTO dto = reservationMapper.toDTO(createdReservation);
-        eventPublisher.publishEvent(new ReservationCreatedEvent(dto));
+        notifyReservationIsCreated(dto);
         return dto;
     }
 
@@ -57,14 +57,9 @@ class ReservationAppService implements ReservationApplicationService {
                 new ReservationPrice(price)
         );
         log.debug("Reservation booked: {}", reservation);
-        eventPublisher.publishEvent(new ReservationPaymentEvent(
-                reservation.getReservationId().getId(),
-                reservation.getUserId().id(),
-                reservation.getPrice().price())
-        );
+        notifyReservationIsBooked(reservation);
         return reservationMapper.toDTO(reservation);
     }
-
     @Override
     public ReservationDTO findById(ReservationId reservationId) {
         return reservationRepository.findById(reservationId)
@@ -101,6 +96,18 @@ class ReservationAppService implements ReservationApplicationService {
                         new EntityNotFoundException("Reservation with id: " + reservationId.getId() + " not found")
                 );
         reservationRepository.delete(reservation);
+    }
+
+    private void notifyReservationIsCreated(ReservationDTO dto) {
+        eventPublisher.publishEvent(new ReservationCreatedEvent(dto));
+    }
+
+    private void notifyReservationIsBooked(Reservation reservation) {
+        eventPublisher.publishEvent(new ReservationPaymentEvent(
+                reservation.getReservationId().getId(),
+                reservation.getUserId().id(),
+                reservation.getPrice().price())
+        );
     }
 
 }

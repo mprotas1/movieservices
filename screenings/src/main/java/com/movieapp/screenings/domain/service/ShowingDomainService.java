@@ -2,6 +2,7 @@ package com.movieapp.screenings.domain.service;
 
 import com.movieapp.screenings.domain.exception.OverlappingScreeningException;
 import com.movieapp.screenings.domain.exception.ScreeningSeatsAlreadyBookedException;
+import com.movieapp.screenings.domain.exception.ScreeningSeatsBookingException;
 import com.movieapp.screenings.domain.model.Screening;
 import com.movieapp.screenings.domain.model.ScreeningSeat;
 import com.movieapp.screenings.domain.model.SeatId;
@@ -33,7 +34,7 @@ class ShowingDomainService implements ScreeningDomainService {
     }
 
     @Override
-    public Set<ScreeningSeat> lockSeats(Screening screening, List<SeatId> seatIds) throws ScreeningSeatsAlreadyBookedException {
+    public Set<ScreeningSeat> lockSeats(Screening screening, List<SeatId> seatIds) throws ScreeningSeatsAlreadyBookedException, ScreeningSeatsBookingException {
         screening.lockSeats(seatIds);
         Screening saved = repository.save(screening);
         log.debug("Locked seats for Screening: {}", saved);

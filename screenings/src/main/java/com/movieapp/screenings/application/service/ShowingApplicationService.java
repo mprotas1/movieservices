@@ -1,13 +1,15 @@
 package com.movieapp.screenings.application.service;
 
 import com.movieapp.screenings.application.dto.*;
+import com.movieapp.screenings.application.events.NoSeatsToBookEvent;
+import com.movieapp.screenings.application.events.ScreeningDoesNotExistEvent;
 import com.movieapp.screenings.application.events.SeatsAlreadyLockedEvent;
-import com.movieapp.screenings.application.events.SuccessfulReservationSeatsBookedEvent;
 import com.movieapp.screenings.application.mapper.ScreeningMapper;
 import com.movieapp.screenings.application.mapper.SeatMapper;
 import com.movieapp.screenings.domain.exception.MovieDoesNotExistException;
 import com.movieapp.screenings.domain.exception.ScreeningRoomDoesNotExistException;
 import com.movieapp.screenings.domain.exception.ScreeningSeatsAlreadyBookedException;
+import com.movieapp.screenings.domain.exception.ScreeningSeatsBookingException;
 import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import com.movieapp.screenings.domain.service.ScreeningDomainService;
@@ -20,8 +22,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -81,15 +83,20 @@ class ShowingApplicationService implements ScreeningApplicationService {
     @Override
     @Transactional
     public void lockSeats(ReservationDTO reservationDTO) {
-        Screening screening = repository.findById(new ScreeningId(reservationDTO.screeningId()))
-                .orElseThrow(() -> new EntityNotFoundException("Screening with id: " + reservationDTO.screeningId() + " does not exist"));
+        Optional<Screening> screeningById = repository.findById(new ScreeningId(reservationDTO.screeningId()));
+
+        if(screeningById.isEmpty()) {
+            applicationEventPublisher.publishEvent(new ScreeningDoesNotExistEvent(reservationDTO.id(), reservationDTO.id()));
+            return;
+        }
+
         List<SeatId> seatIds = reservationDTO.screeningSeatIds().stream()
                 .map(SeatId::new)
                 .toList();
 
         try {
-            Set<ScreeningSeat> bookedSeats = screeningDomainService.lockSeats(screening, seatIds);
-            log.debug("Locked seats: {} for Screening: {}", seatIds, screening);
+            Set<ScreeningSeat> bookedSeats = screeningDomainService.lockSeats(screeningById.get(), seatIds);
+            log.debug("Locked seats: {} for Screening: {}", seatIds, screeningById.get());
             applicationEventPublisher.publishEvent(new SuccessfulSeatsBookingEvent(reservationDTO.id(), bookedSeats.stream()
                     .map(seatMapper::toPricedSeatDTO)
                     .toList()));
@@ -97,6 +104,10 @@ class ShowingApplicationService implements ScreeningApplicationService {
         catch (ScreeningSeatsAlreadyBookedException e) {
             log.error("Screening seats already booked: {}", e.getAlreadyReservedIds());
             applicationEventPublisher.publishEvent(new SeatsAlreadyLockedEvent(reservationDTO.id(), e.getAlreadyReservedIds()));
+        }
+        catch (ScreeningSeatsBookingException e) {
+            log.error("Screening seats booking exception: {}", e.getMessage());
+            applicationEventPublisher.publishEvent(new NoSeatsToBookEvent(reservationDTO.id()));
         }
     }
 
