@@ -16,6 +16,13 @@ class KafkaTopicsConfiguration {
     }
 
     @Bean
+    public NewTopic screeningSeatsBookingFailedTopic() {
+        return TopicBuilder
+                .name("screening_seats_booking_failed")
+                .build();
+    }
+
+    @Bean
     public NewTopic successfulSeatsLockTopic() {
         return TopicBuilder
                 .name("successful_seats_booking")
