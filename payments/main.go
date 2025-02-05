@@ -1,10 +1,9 @@
 package main
 
 import (
-	"context"
+	"payments/rest"
 )
 
 func main() {
-	conn := GetDbConnection()
-	defer conn.Close(context.Background())
+	rest.Init()
 }
