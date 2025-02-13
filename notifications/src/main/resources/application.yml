@@ -1,7 +1,20 @@
+# Spring framework properties
 spring:
   application:
     name: notifications-service
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:michalprotas00@gmail.com}
+    password: ${MAIL_PASSWORD:password}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.debug: true
+
+# Server properties
 server:
   port: ${PORT:8401}
   servlet:
     context-path: /notifications
+
