@@ -25,5 +25,5 @@ func GetTopic(paymentDTO model.PaymentDTO) string {
 		return PaymentSuccessfulTopic
 	}
 
-	return ""
+	panic("Invalid payment status")
 }
