@@ -14,8 +14,6 @@ func Listen(topic string) {
 	log.Println("Received message on topic: ", topic)
 	listener, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": "localhost:9092",
-		"group.id":          "payments",
-		"auto.offset.reset": "earliest",
 	})
 
 	if err != nil {
@@ -38,9 +36,5 @@ func Listen(topic string) {
 			fmt.Println("Error reading message: ", err)
 		}
 	}
-
-}
-
-func test() {
 
 }
