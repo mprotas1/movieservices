@@ -2,14 +2,14 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
-const SERVER_PORT = ":8001"
-const CONTEXT_PATH = "/api/v1/pricing"
+const ContextPath = "/api/v1/pricing"
 
 func main() {
 	router := GetRouter()
-	err := router.Run(SERVER_PORT)
+	err := router.Run(GetPort())
 	if err != nil {
 		panic(err)
 	}
@@ -17,7 +17,7 @@ func main() {
 
 func GetRouter() *gin.Engine {
 	router := gin.Default()
-	router.POST(CONTEXT_PATH, CalculatePrice)
+	router.POST(ContextPath, CalculatePrice)
 	return router
 }
 
@@ -39,6 +39,16 @@ func BuildProblemDetail(detail string, title string, status int) ProblemDetail {
 		Title:    title,
 		Status:   status,
 		Detail:   detail,
-		Instance: CONTEXT_PATH,
+		Instance: ContextPath,
 	}
+}
+
+func GetPort() string {
+	port, isSet := os.LookupEnv("SERVER_PORT")
+
+	if !isSet {
+		return ":8001"
+	}
+
+	return port
 }
