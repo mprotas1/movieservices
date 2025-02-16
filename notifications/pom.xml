@@ -110,7 +110,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.movieapp.reservations.ReservationsApplication</mainClass>
+                    <mainClass>com.protas.notifications.NotificationsApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
