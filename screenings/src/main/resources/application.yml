@@ -10,6 +10,10 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show_sql: true
+  kafka:
+    consumer:
+      group-id: ${KAFKA_GROUP_ID:screenings-group}
+    bootstrap-servers: ${KAFKA_ADDRESS:localhost:9092}
 
 # Server properties
 server:
@@ -21,6 +25,8 @@ server:
 app:
   db:
     address: ${DB_ADDRESS:jdbc:postgresql://localhost:5443/screeningsdb}
+    username: ${DB_USER:user}
+    password: ${DB_PASSWORD:secret}
 
 # Movies service configuration
 movies:
