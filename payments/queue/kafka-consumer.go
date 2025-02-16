@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/signal"
 	"payments/core"
+	"payments/environment"
 	"payments/model"
 
 	"github.com/confluentinc/confluent-kafka-go/kafka"
@@ -21,10 +22,12 @@ func InitQueue(p core.PaymentProcessor) {
 
 func Listen(topic string) {
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
-		"group.id":          "payment-group",
+		"bootstrap.servers": environment.GetKafkaAddress(),
+		"group.id":          environment.GetKafkaGroupId(),
 		"auto.offset.reset": "earliest",
 	})
+
+	log.Printf("Consumer subscribed to the Kafka on bootstrap.servers: %s and group.id: %s", environment.GetKafkaAddress(), environment.GetKafkaGroupId())
 
 	if err != nil {
 		panic(err)

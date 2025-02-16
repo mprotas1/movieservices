@@ -3,6 +3,7 @@ package queue
 import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"log"
+	"payments/environment"
 )
 
 const (
@@ -14,8 +15,11 @@ type KafkaProducer struct{}
 
 func (kafkaProducer *KafkaProducer) Notify(topic string, message []byte) error {
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
+		"bootstrap.servers": environment.GetKafkaAddress(),
+		"group.id":          environment.GetKafkaGroupId(),
 	})
+
+	log.Printf("Producer subscribed to the Kafka on bootstrap.servers: %s and group.id: %s", environment.GetKafkaAddress(), environment.GetKafkaGroupId())
 
 	if err != nil {
 		return err
