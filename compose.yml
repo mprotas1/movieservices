@@ -1,21 +1,153 @@
 services:
-  # Eureka Discovery Service
-  eurekaservice:
-    container_name: eurekaservice
+  ### Microservices ###
+
+  # Users service
+  users-service:
+    container_name: users-service
     build:
-      context: ./eureka
+      context: ./users
       dockerfile: Dockerfile
     ports:
-      - "8761:8761"
+      - "8081:8081"
     networks:
-      - customers
-      - cinemas
-      - screenings
+      - internal
     expose:
-      - "8761"
+      - "8081"
+    depends_on:
+      - customersdb
+      - kafka
+    environment:
+      - DB_ADDRESS=jdbc:postgresql://customersdb:5432/usersdb
+      - DB_USER=user
+      - DB_PASSWORD=secret
     restart: unless-stopped
 
-  # Databases
+  # Cinemas service
+  cinemas-service:
+    container_name: cinemas-service
+    build:
+      context: ./cinemas
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8082"
+    networks:
+      - internal
+    expose:
+      - "8082"
+    depends_on:
+      - cinemasdb
+      - kafka
+    restart: unless-stopped
+
+  # Screenings service
+  screenings-service:
+    container_name: screenings-service
+    build:
+      context: ./screenings
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8083"
+    networks:
+      - internal
+    environment:
+      - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
+      - DB_USER=user
+      - DB_PASSWORD=secret
+      - MOVIES_SERVICE_URL=http://movies-service:8086/movies
+      - CINEMAS_SERVICE_URL=http://cinemas-service:8082/cinemas
+      - PRICING_SERVICE_URL=http://pricing-service:8087/api/v1/pricing
+      - KAFKA_ADDRESS=kafka:9092
+      - KAFKA_GROUP_ID=screenings-group
+    expose:
+      - "8083"
+    depends_on:
+      - screeningsdb
+      - kafka
+    restart: unless-stopped
+
+  # Reservations service
+  reservations-service:
+    container_name: reservations-service
+    build:
+      context: ./reservations
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8084"
+    networks:
+      - internal
+    environment:
+      - DATABASE_URL=jdbc:postgresql://reservationsdb:5432/reservationsdb
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=secret
+      - SCREENINGS_URL=http://screenings-service:8083/screenings
+      - CINEMAS_URL=http://cinemas-service:8082
+      - KAFKA_ADDRESS=kafka:9092
+      - KAFKA_GROUP_ID=reservations-group
+    expose:
+      - "8084"
+    depends_on:
+      - reservationsdb
+      - kafka
+    restart: unless-stopped
+
+  # Payments service
+  payments-service:
+    build:
+      context: ./payments
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8085"
+    networks:
+      - internal
+    expose:
+      - "8085"
+    environment:
+      - KAFKA_ADDRESS=kafka:9092
+      - KAFKA_GROUP_ID=payments-group
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_PORT=5432
+      - DB_NAME=paymentsdb
+      - DB_HOST=paymentsdb
+    depends_on:
+      - paymentsdb
+      - kafka
+    restart: unless-stopped
+
+
+  # Pricing service
+  pricing-service:
+    container_name: pricing-service
+    build:
+      context: ./pricing
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8087"
+    networks:
+      - internal
+    expose:
+      - "8087"
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  # Notifications service
+  notifications-service:
+    container_name: notifications-service
+    build:
+      context: ./notifications
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    networks:
+      - internal
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  ### Databases ###
+
+  # Customers Database
   customersdb:
     container_name: customersdb
     image: postgres:latest
@@ -29,11 +161,12 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - customers
+      - internal
     expose:
       - "5432"
     restart: unless-stopped
 
+  # Payments Database
   paymentsdb:
     container_name: paymentsdb
     image: postgres:latest
@@ -49,9 +182,10 @@ services:
     expose:
       - "5445"
     networks:
-      - payments
+      - internal
     restart: unless-stopped
 
+  # Screenings Database
   screeningsdb:
     container_name: screeningsdb
     image: postgres:latest
@@ -67,9 +201,10 @@ services:
     expose:
       - "5443"
     networks:
-      - screenings
+      - internal
     restart: unless-stopped
 
+  # Reservations Database
   reservationsdb:
     container_name: reservationsdb
     image: postgres:latest
@@ -85,9 +220,10 @@ services:
     expose:
       - "5444"
     networks:
-      - reservations
+      - internal
     restart: unless-stopped
 
+  # Cinemas Database
   cinemasdb:
     container_name: cinemasdb
     image: mysql:latest
@@ -97,15 +233,16 @@ services:
       - MYSQL_USER=user
       - MYSQL_DATABASE=cinemasdb
     ports:
-        - "3306:3306"
+      - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql
     networks:
-      - cinemas
+      - internal
     expose:
-        - "3306"
+      - "3306"
     restart: unless-stopped
 
+  # Movies Database
   moviesdb:
     container_name: moviesdb
     image: postgres:latest
@@ -121,10 +258,11 @@ services:
     expose:
       - "5453"
     networks:
-      - movies
+      - internal
     restart: unless-stopped
 
-  # Database Management Tools
+    ### Database Management Tools ###
+    # MySQL Admin
   mysqladmin:
     container_name: mysqladmin
     image: phpmyadmin/phpmyadmin:latest
@@ -136,9 +274,10 @@ services:
     ports:
       - "8001:80"
     networks:
-      - cinemas
+      - internal
     restart: unless-stopped
 
+    # PostgreSQL Admin page
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4:latest
@@ -151,14 +290,11 @@ services:
     ports:
       - "5050:80"
     networks:
-      - customers
-      - screenings
-      - movies
-      - reservations
-      - payments
+      - internal
     restart: unless-stopped
 
-  # Apache Kafka
+  ### Apache Kafka ###
+  # Zookeeper
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -166,7 +302,10 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+    networks:  # Dodaj tę sekcję
+      - internal
 
+  # Apache Kafka
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
@@ -175,27 +314,22 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     expose:
       - "9092"
+    depends_on:
+      - zookeeper
+    networks:
+      - internal
 
 networks:
-  customers:
-    driver: bridge
-  cinemas:
-    driver: bridge
-  screenings:
-    driver: bridge
-  movies:
-    driver: bridge
-  reservations:
-    driver: bridge
-  payments:
+  internal:
     driver: bridge
 
 volumes:
   postgres:
   pgadmin:
   mysql:
-  vault:
