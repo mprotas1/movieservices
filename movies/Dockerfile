@@ -1,5 +1,8 @@
-FROM python:3.9
+FROM python:alpine3.8
+COPY . /app
 WORKDIR /app
-COPY app.py .
-RUN pip install flask
-CMD ["python", "app.py"]
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+EXPOSE 5001
+ENTRYPOINT [ "python" ]
+CMD [ "demo.py" ]
