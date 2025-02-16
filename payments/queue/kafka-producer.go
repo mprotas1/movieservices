@@ -10,7 +10,9 @@ const (
 	PaymentFailedTopic     = "payment-failed"
 )
 
-func Notify(topic string, message []byte) error {
+type KafkaProducer struct{}
+
+func (kafkaProducer *KafkaProducer) Notify(topic string, message []byte) error {
 	producer, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": "localhost:9092",
 	})

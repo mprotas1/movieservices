@@ -43,15 +43,25 @@ type ProblemDetail struct {
 	Instance string `json:"instance"`
 }
 
-func (reservationDTO *ReservationBookedDTO) ToEntity(status string) *PaymentEntity {
+func (reservationDTO *ReservationBookedDTO) NewPayment() *PaymentEntity {
 	return &PaymentEntity{
 		ID:            uuid.New(),
 		ReservationID: reservationDTO.ReservationID,
 		UserID:        reservationDTO.UserID,
 		Amount:        reservationDTO.Amount,
-		Status:        status,
+		Status:        PaymentPending,
 		CreatedAt:     time.Now().UTC(),
 		UpdatedAt:     time.Now().UTC(),
+	}
+}
+
+func (entity *PaymentEntity) ToDTO() *PaymentDTO {
+	return &PaymentDTO{
+		PaymentID:     entity.ID.String(),
+		ReservationID: entity.ReservationID,
+		UserID:        entity.UserID,
+		Amount:        entity.Amount,
+		Status:        entity.Status,
 	}
 }
 
