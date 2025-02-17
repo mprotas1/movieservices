@@ -1,4 +1,5 @@
 services:
+
   ### Microservices ###
 
   # Users service
@@ -8,11 +9,9 @@ services:
       context: ./users
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - "8081:8080"
     networks:
-      - internal
-    expose:
-      - "8081"
+      - movieservices
     depends_on:
       - customersdb
       - kafka
@@ -20,6 +19,7 @@ services:
       - DB_ADDRESS=jdbc:postgresql://customersdb:5432/usersdb
       - DB_USER=user
       - DB_PASSWORD=secret
+      - PORT=8080
     restart: unless-stopped
 
   # Cinemas service
@@ -29,15 +29,20 @@ services:
       context: ./cinemas
       dockerfile: Dockerfile
     ports:
-      - "8082:8082"
+      - "8005:8082"
     networks:
-      - internal
-    expose:
-      - "8082"
+      - movieservices
+    environment:
+      - DB_ADDRESS=jdbc:mysql://cinemasdb:3306/cinemasdb
+      - DB_USER=user
+      - DB_PASSWORD=secret
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - SERVER_PORT=8082
     depends_on:
       - cinemasdb
       - kafka
     restart: unless-stopped
+
 
   # Screenings service
   screenings-service:
@@ -46,9 +51,9 @@ services:
       context: ./screenings
       dockerfile: Dockerfile
     ports:
-      - "8083:8083"
+      - "8020:8008"
     networks:
-      - internal
+      - movieservices
     environment:
       - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
       - DB_USER=user
@@ -58,8 +63,7 @@ services:
       - PRICING_SERVICE_URL=http://pricing-service:8087/api/v1/pricing
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=screenings-group
-    expose:
-      - "8083"
+      - PORT=8008
     depends_on:
       - screeningsdb
       - kafka
@@ -72,19 +76,17 @@ services:
       context: ./reservations
       dockerfile: Dockerfile
     ports:
-      - "8084:8084"
+      - "8400:8084"
     networks:
-      - internal
+      - movieservices
     environment:
       - DATABASE_URL=jdbc:postgresql://reservationsdb:5432/reservationsdb
       - DATABASE_USER=user
       - DATABASE_PASSWORD=secret
-      - SCREENINGS_URL=http://screenings-service:8083/screenings
+      - SCREENINGS_URL=http://screenings-service:8020/screenings
       - CINEMAS_URL=http://cinemas-service:8082
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=reservations-group
-    expose:
-      - "8084"
     depends_on:
       - reservationsdb
       - kafka
@@ -96,11 +98,9 @@ services:
       context: ./payments
       dockerfile: Dockerfile
     ports:
-      - "8085:8085"
+      - "8000:8002"
     networks:
-      - internal
-    expose:
-      - "8085"
+      - movieservices
     environment:
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=payments-group
@@ -122,11 +122,9 @@ services:
       context: ./pricing
       dockerfile: Dockerfile
     ports:
-      - "8087:8087"
+      - "8060:8001"
     networks:
-      - internal
-    expose:
-      - "8087"
+      - movieservices
     depends_on:
       - kafka
     restart: unless-stopped
@@ -140,7 +138,7 @@ services:
     ports:
       - "8088:8088"
     networks:
-      - internal
+      - movieservices
     depends_on:
       - kafka
     restart: unless-stopped
@@ -161,9 +159,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - internal
-    expose:
-      - "5432"
+      - movieservices
     restart: unless-stopped
 
   # Payments Database
@@ -179,10 +175,8 @@ services:
       - postgres:/data/postgres
     ports:
       - "5445:5432"
-    expose:
-      - "5445"
     networks:
-      - internal
+      - movieservices
     restart: unless-stopped
 
   # Screenings Database
@@ -198,10 +192,8 @@ services:
       - postgres:/data/postgres
     ports:
       - "5443:5432"
-    expose:
-      - "5443"
     networks:
-      - internal
+      - movieservices
     restart: unless-stopped
 
   # Reservations Database
@@ -217,10 +209,8 @@ services:
       - postgres:/data/postgres
     ports:
       - "5444:5432"
-    expose:
-      - "5444"
     networks:
-      - internal
+      - movieservices
     restart: unless-stopped
 
   # Cinemas Database
@@ -237,9 +227,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql
     networks:
-      - internal
-    expose:
-      - "3306"
+      - movieservices
     restart: unless-stopped
 
   # Movies Database
@@ -255,10 +243,8 @@ services:
       - postgres:/data/postgres
     ports:
       - "5453:5432"
-    expose:
-      - "5453"
     networks:
-      - internal
+      - movieservices
     restart: unless-stopped
 
     ### Database Management Tools ###
@@ -274,7 +260,7 @@ services:
     ports:
       - "8001:80"
     networks:
-      - internal
+      - movieservices
     restart: unless-stopped
 
     # PostgreSQL Admin page
@@ -290,7 +276,7 @@ services:
     ports:
       - "5050:80"
     networks:
-      - internal
+      - movieservices
     restart: unless-stopped
 
   ### Apache Kafka ###
@@ -303,7 +289,7 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
     networks:  # Dodaj tę sekcję
-      - internal
+      - movieservices
 
   # Apache Kafka
   kafka:
@@ -323,10 +309,10 @@ services:
     depends_on:
       - zookeeper
     networks:
-      - internal
+      - movieservices
 
 networks:
-  internal:
+  movieservices:
     driver: bridge
 
 volumes:
