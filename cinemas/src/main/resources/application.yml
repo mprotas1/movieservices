@@ -1,23 +1,28 @@
 spring:
+  # Application properties
   application:
     name: cinemas-service
+
+  # Datasource properties
   datasource:
     url: ${DB_ADDRESS:jdbc:mysql://localhost:3306/cinemasdb}
-    username: user
-    password: secret
+    username: ${DB_USER:user}
+    password: ${DB_PASSWORD:secret}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # JPA properties
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: true
 
+  # Flyway properties
   flyway:
     enabled: true
     locations: classpath:db/migration
     url: ${DB_ADDRESS:jdbc:mysql://localhost:3306/cinemasdb}
-    user: user
-    password: secret
+    user: ${DB_USER:user}
+    password: ${DB_PASSWORD:secret}
 
 server:
   port: ${PORT:8005}
@@ -31,3 +36,7 @@ eureka:
 
 googlemaps:
   api-key: ${GOOGLE_MAPS_API_KEY}
+
+logging:
+  level:
+    com.movieapp.cinemas: ${LOGGING_LEVEL:debug}
