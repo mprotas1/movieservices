@@ -2,6 +2,7 @@ package com.movieapp.reservations.interfaces.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.movieapp.reservations.application.events.PaymentStatusEvent;
 import com.movieapp.reservations.application.events.ScreeningDoesNotExistEvent;
 import com.movieapp.reservations.application.dto.ScreeningSeatsAlreadyLockedDTO;
 import com.movieapp.reservations.application.events.SuccessfulSeatsBookingEvent;
@@ -46,6 +47,12 @@ class ReservationsKafkaListener {
         reservationApplicationService.cancelReservation(new ReservationId(getReservationIdFromEvent(noSeatsToBookEvent)));
     }
 
+    @KafkaListener(topics = "payment_status", groupId = "basic")
+    void onPaymentStatusReceived(String paymentStatusEvent) {
+        PaymentStatusEvent event = deserialize(paymentStatusEvent, PaymentStatusEvent.class);
+        log.debug("Payment status event received: {}", event);
+    }
+
     private <T> T deserialize(String json, Class<T> clazz) {
         try {
             return objectMapper.readValue(json, clazz);
@@ -54,6 +61,7 @@ class ReservationsKafkaListener {
         }
     }
 
+    // REFACTOR
     private UUID getReservationIdFromEvent(String eventJson) {
         ScreeningSeatsAlreadyLockedDTO dto = null;
         try {

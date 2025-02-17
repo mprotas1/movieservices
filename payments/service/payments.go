@@ -10,31 +10,26 @@ import (
 	"time"
 )
 
-func EnqueuePayment(dto model.ReservationBookedDTO) model.PaymentDTO {
-	fmt.Println("Enqueueing payment for reservation: ", dto.ReservationID)
+type PaymentService struct {
+	PaymentNotifier queue.PaymentNotifier
+}
 
-	var entity = dto.ToEntity("PAYMENT_PENDING")
+func (s *PaymentService) EnqueuePayment(dto model.ReservationBookedDTO) model.PaymentDTO {
+	fmt.Println("Enqueueing payment for reservation:", dto.ReservationID)
 
-	payment, err := db.SavePayment(entity)
-
+	payment, err := db.SavePayment(dto.NewPayment())
 	if err != nil {
-		log.Println("Error saving payment: ", err)
+		log.Println("Error saving payment:", err)
 		panic(err)
 	}
 
-	go ProcessPayment(payment)
+	go s.ProcessPayment(payment)
 
-	fmt.Println("Payment enqueued: ", payment.ID)
-	return model.PaymentDTO{
-		PaymentID:     payment.ID.String(),
-		ReservationID: payment.ReservationID,
-		UserID:        payment.UserID,
-		Amount:        payment.Amount,
-		Status:        payment.Status,
-	}
+	log.Println("Payment enqueued:", payment.ID)
+	return *payment.ToDTO()
 }
 
-func FindAllPayments() []model.PaymentDTO {
+func (s *PaymentService) FindAllPayments() []model.PaymentDTO {
 	entities, err := db.FindAll()
 
 	if err != nil {
@@ -53,11 +48,11 @@ func FindAllPayments() []model.PaymentDTO {
 		})
 	}
 
-	fmt.Println("Found all payments: ", len(payments))
+	log.Println("Found all payments: ", len(payments))
 	return payments
 }
 
-func FindUserPayments(userId int) ([]model.PaymentDTO, error) {
+func (s *PaymentService) FindUserPayments(userId int) ([]model.PaymentDTO, error) {
 	entities, err := db.FindByUserId(userId)
 
 	if err != nil {
@@ -76,12 +71,12 @@ func FindUserPayments(userId int) ([]model.PaymentDTO, error) {
 		})
 	}
 
-	fmt.Println("Found user payments: ", len(payments))
+	log.Println("Found user payments: ", len(payments))
 	return payments, nil
 }
 
-func ProcessPayment(payment *model.PaymentEntity) {
-	fmt.Println("Asynchronously processing payment: ", payment.ID)
+func (s *PaymentService) ProcessPayment(payment *model.PaymentEntity) {
+	log.Println("Asynchronously processing payment: ", payment.ID)
 	WaitSeconds(5, 10)
 
 	GeneratePaymentStatus(payment)
@@ -89,27 +84,22 @@ func ProcessPayment(payment *model.PaymentEntity) {
 	entity, err := db.UpdatePayment(*payment)
 
 	if err != nil {
-		fmt.Println("Error updating payment: ", err)
+		log.Println("Error updating payment: ", err)
 		panic(err)
 	}
 
-	dto := model.PaymentDTO{
-		PaymentID:     entity.ID.String(),
-		ReservationID: entity.ReservationID,
-		UserID:        entity.UserID,
-		Amount:        entity.Amount,
-		Status:        entity.Status,
-	}
-	err = queue.NotifyPaymentStatus(dto)
+	err = s.PaymentNotifier.NotifyPaymentStatus(*entity.ToDTO())
+
 	if err != nil {
 		return
 	}
-	sprintf := fmt.Sprintf("Payment processed: %s with status: %s", entity.ID, entity.Status)
-	fmt.Println(sprintf)
+
+	formatted := fmt.Sprintf("Payment: %s processed with status: %s", entity.ID, entity.Status)
+	log.Println(formatted)
 }
 
-func GetUserPayments(userId int) []model.PaymentDTO {
-	entities, err := FindUserPayments(userId)
+func (s *PaymentService) GetUserPayments(userId int) []model.PaymentDTO {
+	dtos, err := s.FindUserPayments(userId)
 
 	if err != nil {
 		log.Println("Error finding user payments: ", err)
@@ -117,17 +107,11 @@ func GetUserPayments(userId int) []model.PaymentDTO {
 	}
 
 	var payments []model.PaymentDTO
-	for _, entity := range entities {
-		payments = append(payments, model.PaymentDTO{
-			PaymentID:     entity.PaymentID,
-			ReservationID: entity.ReservationID,
-			UserID:        entity.UserID,
-			Amount:        entity.Amount,
-			Status:        entity.Status,
-		})
+	for _, dto := range dtos {
+		payments = append(payments, dto)
 	}
 
-	fmt.Println("Found user payments: ", len(payments))
+	log.Printf("Found: %d user payments\n", len(payments))
 	return payments
 }
 

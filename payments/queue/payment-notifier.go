@@ -5,7 +5,11 @@ import (
 	"payments/model"
 )
 
-func NotifyPaymentStatus(paymentDTO model.PaymentDTO) error {
+type PaymentNotifier struct {
+	KafkaProducer KafkaProducer
+}
+
+func (paymentNotifier PaymentNotifier) NotifyPaymentStatus(paymentDTO model.PaymentDTO) error {
 	topic := GetTopic(paymentDTO)
 	message, err := json.Marshal(paymentDTO)
 
@@ -13,7 +17,7 @@ func NotifyPaymentStatus(paymentDTO model.PaymentDTO) error {
 		return err
 	}
 
-	return Notify(topic, message)
+	return paymentNotifier.KafkaProducer.Notify(topic, message)
 }
 
 func GetTopic(paymentDTO model.PaymentDTO) string {
@@ -25,5 +29,5 @@ func GetTopic(paymentDTO model.PaymentDTO) string {
 		return PaymentSuccessfulTopic
 	}
 
-	return ""
+	panic("Invalid payment status")
 }

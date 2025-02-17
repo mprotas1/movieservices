@@ -11,7 +11,7 @@ public record ScreeningSeats(Set<ScreeningSeat> screeningSeats) {
 
     public void lockSeats(List<SeatId> seatIds) throws ScreeningSeatsAlreadyBookedException, ScreeningSeatsBookingException {
         validateScreeningSeatsState(seatIds);
-        lockValidSeats(seatIds);
+        reserveSeats(seatIds);
     }
 
     private void validateScreeningSeatsState(List<SeatId> seatIds) throws ScreeningSeatsAlreadyBookedException, ScreeningSeatsBookingException {
@@ -24,7 +24,8 @@ public record ScreeningSeats(Set<ScreeningSeat> screeningSeats) {
         }
 
         List<SeatId> alreadyReservedSeatIds = getAlreadyReservedSeats();
-        if (!alreadyReservedSeatIds.isEmpty()) {
+
+        if (anySeatIsAlreadyBooked(seatIds, alreadyReservedSeatIds)) {
             throw new ScreeningSeatsAlreadyBookedException(alreadyReservedSeatIds);
         }
     }
@@ -36,10 +37,14 @@ public record ScreeningSeats(Set<ScreeningSeat> screeningSeats) {
                 .toList();
     }
 
-    private void lockValidSeats(List<SeatId> seatIds) {
+    private void reserveSeats(List<SeatId> seatIds) {
         screeningSeats.stream()
                 .filter(screeningSeat -> seatIds.contains(screeningSeat.getSeatId()))
                 .forEach(screeningSeat -> screeningSeat.setReserved(true));
+    }
+
+    private boolean anySeatIsAlreadyBooked(List<SeatId> seatIds, List<SeatId> alreadyReservedSeatIds) {
+        return alreadyReservedSeatIds.stream().anyMatch(seatIds::contains);
     }
 
 }

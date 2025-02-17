@@ -10,6 +10,8 @@ import (
 const Port = ":8002"
 const ContextPath = "/api/v1/payments"
 
+var paymentService = &service.PaymentService{}
+
 func Init() {
 	router := GetRouter()
 	err := router.Run(Port)
@@ -34,12 +36,12 @@ func Pay(c *gin.Context) {
 		return
 	}
 
-	payment := service.EnqueuePayment(reservationDTO)
+	payment := paymentService.EnqueuePayment(reservationDTO)
 	c.IndentedJSON(200, payment)
 }
 
 func FindAllPaymentsAPI(c *gin.Context) {
-	payments := service.FindAllPayments()
+	payments := paymentService.FindAllPayments()
 	c.IndentedJSON(200, payments)
 }
 
@@ -57,7 +59,7 @@ func FindUserPaymentsAPI(c *gin.Context) {
 		return
 	}
 
-	payments := service.GetUserPayments(id)
+	payments := paymentService.GetUserPayments(id)
 	c.IndentedJSON(200, payments)
 }
 

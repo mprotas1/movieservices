@@ -60,6 +60,7 @@ class ReservationAppService implements ReservationApplicationService {
         notifyReservationIsBooked(reservation);
         return reservationMapper.toDTO(reservation);
     }
+
     @Override
     public ReservationDTO findById(ReservationId reservationId) {
         return reservationRepository.findById(reservationId)

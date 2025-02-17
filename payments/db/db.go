@@ -6,18 +6,17 @@ import (
 	"github.com/jackc/pgx/v5"
 	_ "github.com/jackc/pgx/v5"
 	"os"
-)
-
-const (
-	host     = "localhost"
-	port     = 5445
-	username = "postgres"
-	password = "postgres"
-	dbname   = "paymentsdb"
+	"payments/environment"
 )
 
 func GetDbConnection() *pgx.Conn {
-	connUrl := "postgres://postgres:postgres@localhost:5445/paymentsdb"
+	username := environment.GetDBUsername()
+	password := environment.GetDBPassword()
+	host := environment.GetDBHost()
+	port := environment.GetDBPort()
+	dbname := environment.GetDBName()
+
+	connUrl := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", username, password, host, port, dbname)
 
 	conn, err := pgx.Connect(context.Background(), connUrl)
 	if err != nil {

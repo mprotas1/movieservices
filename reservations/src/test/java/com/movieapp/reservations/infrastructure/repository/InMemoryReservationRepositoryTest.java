@@ -3,10 +3,10 @@ package com.movieapp.reservations.infrastructure.repository;
 import com.movieapp.reservations.domain.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryReservationRepositoryTest {
     private final ReservationRepository inMemoryReservationRepository = new InMemoryReservationRepository();
@@ -15,7 +15,7 @@ class InMemoryReservationRepositoryTest {
     void shouldSaveReservation() {
         Reservation reservation = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
@@ -28,7 +28,7 @@ class InMemoryReservationRepositoryTest {
     void shouldFindReservationById() {
         Reservation reservation = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
@@ -41,7 +41,7 @@ class InMemoryReservationRepositoryTest {
     void shouldNotFindReservationById() {
         Reservation reservation = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
@@ -57,13 +57,13 @@ class InMemoryReservationRepositoryTest {
 
         Reservation reservation = new Reservation(
                 screeningId,
-                seatId,
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
         inMemoryReservationRepository.save(reservation);
-        var reservationByScreeningIdAndSeatId = inMemoryReservationRepository.findByScreeningIdAndSeatId(screeningId, seatId);
-        assertTrue(reservationByScreeningIdAndSeatId.isPresent());
+        var reservationByScreeningIdAndSeatId = inMemoryReservationRepository.findByScreeningId(screeningId);
+        assertFalse(reservationByScreeningIdAndSeatId.isEmpty());
     }
 
     @Test
@@ -73,12 +73,12 @@ class InMemoryReservationRepositoryTest {
 
         Reservation reservation = new Reservation(
                 screeningId,
-                seatId,
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
         inMemoryReservationRepository.save(reservation);
-        var reservationByScreeningIdAndSeatId = inMemoryReservationRepository.findByScreeningIdAndSeatId(new ScreeningId(UUID.randomUUID()), new SeatId(UUID.randomUUID()));
+        var reservationByScreeningIdAndSeatId = inMemoryReservationRepository.findByScreeningId(new ScreeningId(UUID.randomUUID()));
         assertTrue(reservationByScreeningIdAndSeatId.isEmpty());
     }
 
@@ -86,13 +86,13 @@ class InMemoryReservationRepositoryTest {
     void shouldFindAllReservations() {
         Reservation reservation1 = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
         Reservation reservation2 = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
@@ -108,13 +108,13 @@ class InMemoryReservationRepositoryTest {
 
         Reservation reservation1 = new Reservation(
                 screeningId,
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
         Reservation reservation2 = new Reservation(
                 screeningId,
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
@@ -130,13 +130,13 @@ class InMemoryReservationRepositoryTest {
 
         Reservation reservation1 = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 userId
         );
 
         Reservation reservation2 = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 userId
         );
 
@@ -150,7 +150,7 @@ class InMemoryReservationRepositoryTest {
     void shouldDeleteReservation() {
         Reservation reservation = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 
@@ -164,7 +164,7 @@ class InMemoryReservationRepositoryTest {
     void shouldDeleteReservationById() {
         Reservation reservation = new Reservation(
                 new ScreeningId(UUID.randomUUID()),
-                new SeatId(UUID.randomUUID()),
+                List.of(new SeatId(UUID.randomUUID())),
                 new UserId(1L)
         );
 

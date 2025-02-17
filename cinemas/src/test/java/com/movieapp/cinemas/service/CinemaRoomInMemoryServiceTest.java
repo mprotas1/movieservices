@@ -27,7 +27,8 @@ class CinemaRoomInMemoryServiceTest {
     CinemaRoomInMemoryServiceTest() {
         this.cinemaRepository = new InMemoryCinemaRepository();
         this.cinemaRoomRepository = new InMemoryCinemaRoomRepository();
-        this.cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository);
+        SeatsMapper seatsMapper = new SeatConcreteMapper();
+        this.cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository, seatsMapper);
     }
 
     @BeforeEach

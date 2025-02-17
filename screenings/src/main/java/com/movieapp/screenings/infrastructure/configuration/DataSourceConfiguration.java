@@ -14,13 +14,19 @@ class DataSourceConfiguration {
     @Value("${app.db.address}")
     private String address;
 
+    @Value("${app.db.username}")
+    private String username;
+
+    @Value("${app.db.password}")
+    private String password;
+
     @Bean
     @Primary
     public DataSource postgreSQLDataSource() {
         return DataSourceBuilder.create()
                 .url(address)
-                .username("user")
-                .password("secret")
+                .username(username)
+                .password(password)
                 .driverClassName("org.postgresql.Driver")
                 .build();
     }

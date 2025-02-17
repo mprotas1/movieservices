@@ -3,6 +3,7 @@ package com.movieapp.reservations.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,13 +20,12 @@ class ReservationTest {
 
         Reservation reservation = new Reservation(
             screeningId,
-            seatId,
+                List.of(new SeatId(UUID.randomUUID())),
             userId
         );
 
         assertEquals(ReservationStatus.PENDING, reservation.getStatus());
         assertEquals(screeningId, reservation.getScreeningId());
-        assertEquals(seatId, reservation.getSeatId());
         assertEquals(userId, reservation.getUserId());
     }
 
@@ -38,7 +38,7 @@ class ReservationTest {
 
         Reservation reservation = new Reservation(
             screeningId,
-            seatId,
+                List.of(new SeatId(UUID.randomUUID())),
             userId
         );
 
@@ -50,12 +50,11 @@ class ReservationTest {
     @DisplayName("Domain object should be confirmed")
     void shouldConfirmReservation() {
         var screeningId = new ScreeningId(UUID.randomUUID());
-        var seatId = new SeatId(UUID.randomUUID());
         var userId = new UserId(1L);
 
         Reservation reservation = new Reservation(
             screeningId,
-            seatId,
+                List.of(new SeatId(UUID.randomUUID())),
             userId
         );
 
@@ -72,7 +71,7 @@ class ReservationTest {
 
         Reservation reservation = new Reservation(
             screeningId,
-            seatId,
+                List.of(new SeatId(UUID.randomUUID())),
             userId
         );
 
