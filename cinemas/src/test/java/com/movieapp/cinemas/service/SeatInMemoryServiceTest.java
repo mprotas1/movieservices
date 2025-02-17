@@ -24,7 +24,8 @@ class SeatInMemoryServiceTest {
     void setUp() {
         cinemaRepository = new InMemoryCinemaRepository();
         cinemaRoomRepository = new InMemoryCinemaRoomRepository();
-        cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository);
+        SeatsMapper seatsMapper = new SeatConcreteMapper();
+        cinemaRoomService = new ScreeningRoomService(cinemaRepository, cinemaRoomRepository, seatsMapper);
 
         baseCinema = cinemaRepository.save(baseCinema);
     }
