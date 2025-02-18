@@ -2,6 +2,26 @@ services:
 
   ### Microservices ###
 
+  # API Gateway
+  api-gateway:
+    container_name: api-gateway
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8500:8500"
+    networks:
+      - movieservices
+    depends_on:
+      - users-service
+      - cinemas-service
+      - screenings-service
+      - reservations-service
+      - payments-service
+      - pricing-service
+      - notifications-service
+    restart: unless-stopped
+
   # Users service
   users-service:
     container_name: users-service
@@ -113,7 +133,6 @@ services:
       - paymentsdb
       - kafka
     restart: unless-stopped
-
 
   # Pricing service
   pricing-service:
@@ -247,8 +266,38 @@ services:
       - movieservices
     restart: unless-stopped
 
-    ### Database Management Tools ###
-    # MySQL Admin
+  # NGINX
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    networks:
+      - movieservices
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    links:
+      - api-gateway
+      - users-service
+      - cinemas-service
+      - screenings-service
+      - reservations-service
+      - payments-service
+      - pricing-service
+      - notifications-service
+    depends_on:
+      - api-gateway
+      - users-service
+      - cinemas-service
+      - screenings-service
+      - reservations-service
+      - payments-service
+      - pricing-service
+      - notifications-service
+    restart: unless-stopped
+
+  ### Database Management Tools ###
+  # MySQL Admin
   mysqladmin:
     container_name: mysqladmin
     image: phpmyadmin/phpmyadmin:latest
@@ -288,7 +337,7 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-    networks:  # Dodaj tę sekcję
+    networks:
       - movieservices
 
   # Apache Kafka
@@ -319,3 +368,4 @@ volumes:
   postgres:
   pgadmin:
   mysql:
+  nginx:

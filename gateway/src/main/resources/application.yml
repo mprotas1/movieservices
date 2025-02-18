@@ -1,0 +1,58 @@
+server:
+  port: ${PORT:8500}
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: users-service
+          uri: ${NGINX_URI:http://nginx:80}
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - StripPrefix=1
+
+        - id: cinemas-service
+          uri: ${NGINX_URI:http://nginx:80}
+          predicates:
+            - Path=/api/cinemas/**
+          filters:
+            - StripPrefix=1
+
+        - id: screenings-service
+          uri: ${NGINX_URI:http://nginx:80}
+          predicates:
+            - Path=/api/screenings/**
+          filters:
+            - StripPrefix=1
+
+        - id: reservations-service
+          uri: ${NGINX_URI:http://nginx:80}
+          predicates:
+            - Path=/api/reservations/**
+          filters:
+            - StripPrefix=1
+
+        - id: payments-service
+          uri: ${NGINX_URI:http://nginx:80}
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - StripPrefix=1
+
+        - id: pricing-service
+          uri: ${NGINX_URI:http://nginx:80}
+          predicates:
+            - Path=/api/pricing/**
+          filters:
+            - StripPrefix=1
+
+        - id: movies-service
+          uri: ${NGINX_URI:http://nginx:80}
+          predicates:
+            - Path=/api/movies/**
+          filters:
+            - StripPrefix=1
+  main:
+    web-application-type: reactive
