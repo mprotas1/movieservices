@@ -15,7 +15,7 @@ services:
     depends_on:
       - users-service
       - cinemas-service
-      - screenings-service
+      - screenings-service-1
       - reservations-service
       - payments-service
       - pricing-service
@@ -29,7 +29,7 @@ services:
       context: ./users
       dockerfile: Dockerfile
     ports:
-      - "8081:8080"
+      - "8400:8400"
     networks:
       - movieservices
     depends_on:
@@ -39,7 +39,7 @@ services:
       - DB_ADDRESS=jdbc:postgresql://customersdb:5432/usersdb
       - DB_USER=user
       - DB_PASSWORD=secret
-      - PORT=8080
+      - PORT=8400
     restart: unless-stopped
 
   # Cinemas service
@@ -49,7 +49,7 @@ services:
       context: ./cinemas
       dockerfile: Dockerfile
     ports:
-      - "8005:8082"
+      - "8150:8150"
     networks:
       - movieservices
     environment:
@@ -57,36 +57,54 @@ services:
       - DB_USER=user
       - DB_PASSWORD=secret
       - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
-      - SERVER_PORT=8082
+      - PORT=8150
     depends_on:
       - cinemasdb
       - kafka
     restart: unless-stopped
 
-
   # Screenings service
-  screenings-service:
-    container_name: screenings-service
+  screenings-service-1:
+    container_name: screenings-service-1
     build:
       context: ./screenings
       dockerfile: Dockerfile
     ports:
-      - "8020:8008"
+      - "8300:8300"
     networks:
       - movieservices
     environment:
       - DB_ADDRESS=jdbc:postgresql://screeningsdb:5432/screeningsdb
       - DB_USER=user
       - DB_PASSWORD=secret
-      - MOVIES_SERVICE_URL=http://movies-service:8086/movies
-      - CINEMAS_SERVICE_URL=http://cinemas-service:8082/cinemas
-      - PRICING_SERVICE_URL=http://pricing-service:8087/api/v1/pricing
+      - MOVIES_SERVICE_URL=http://movies-service:8100/movies
+      - CINEMAS_SERVICE_URL=http://cinemas-service:8150/cinemas
+      - PRICING_SERVICE_URL=http://pricing-service:8350/api/v1/pricing
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=screenings-group
-      - PORT=8008
+      - PORT=8300
     depends_on:
       - screeningsdb
       - kafka
+    restart: unless-stopped
+
+  # Movies service
+  movies-service:
+    container_name: movies-service
+    build:
+      context: ./movies
+      dockerfile: Dockerfile
+    ports:
+      - "8100:8100"
+    networks:
+      - movieservices
+    environment:
+      - DB_ADDRESS=jdbc:postgresql://moviesdb:5432/moviesdb
+      - DB_USER=user
+      - DB_PASSWORD=secret
+      - PORT=8100
+    depends_on:
+      - moviesdb
     restart: unless-stopped
 
   # Reservations service
@@ -96,7 +114,7 @@ services:
       context: ./reservations
       dockerfile: Dockerfile
     ports:
-      - "8400:8084"
+      - "8250:8250"
     networks:
       - movieservices
     environment:
@@ -107,6 +125,7 @@ services:
       - CINEMAS_URL=http://cinemas-service:8082
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=reservations-group
+      - PORT=8250
     depends_on:
       - reservationsdb
       - kafka
@@ -118,7 +137,7 @@ services:
       context: ./payments
       dockerfile: Dockerfile
     ports:
-      - "8000:8002"
+      - "8200:8200"
     networks:
       - movieservices
     environment:
@@ -129,6 +148,7 @@ services:
       - DB_PORT=5432
       - DB_NAME=paymentsdb
       - DB_HOST=paymentsdb
+      - PORT=:8200
     depends_on:
       - paymentsdb
       - kafka
@@ -141,9 +161,11 @@ services:
       context: ./pricing
       dockerfile: Dockerfile
     ports:
-      - "8060:8001"
+      - "8350:8350"
     networks:
       - movieservices
+    environment:
+      - PORT=8350
     depends_on:
       - kafka
     restart: unless-stopped
@@ -280,7 +302,7 @@ services:
       - api-gateway
       - users-service
       - cinemas-service
-      - screenings-service
+      - screenings-service-1
       - reservations-service
       - payments-service
       - pricing-service
@@ -289,7 +311,7 @@ services:
       - api-gateway
       - users-service
       - cinemas-service
-      - screenings-service
+      - screenings-service-1
       - reservations-service
       - payments-service
       - pricing-service

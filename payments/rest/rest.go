@@ -4,17 +4,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"payments/model"
 	"payments/service"
+	"payments/environment"
 	"strconv"
 )
 
 const Port = ":8002"
-const ContextPath = "/api/v1/payments"
+const ContextPath = "/payments"
 
 var paymentService = &service.PaymentService{}
 
 func Init() {
 	router := GetRouter()
-	err := router.Run(Port)
+	err := router.Run(environment.GetOrDefault("PORT", Port))
 	if err != nil {
 		panic(err)
 	}

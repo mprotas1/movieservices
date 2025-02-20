@@ -9,7 +9,7 @@ public class CinemaPropertiesAccessor {
     private final String CINEMA_ROOM_SEAT_PER_ROW = "room.seat-per-row";
 
     public int getSeatPerRowFromProperties() {
-        Properties properties = getCinemaProperties();
+        //Properties properties = getCinemaProperties();
         String seatsPerRow = "20";
         return Integer.parseInt(seatsPerRow);
     }

@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const ContextPath = "/api/v1/pricing"
+const ContextPath = "/pricing"
 
 func InitRest() {
 	router := GetRouter()

@@ -17,7 +17,7 @@ spring:
 
 # Server properties
 server:
-  port: 8008
+  port: ${PORT:8008}
   servlet:
     context-path: /screenings
 

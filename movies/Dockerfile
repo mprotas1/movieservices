@@ -1,8 +1,15 @@
-FROM python:alpine3.8
-COPY . /app
+FROM python:3.9-slim
+
+# Instalacja zależności systemowych wymaganych dla psycopg2
+RUN apt-get update && apt-get install -y \
+    libpq-dev gcc && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-EXPOSE 5001
-ENTRYPOINT [ "python" ]
-CMD [ "demo.py" ]
+
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+EXPOSE 5000
+CMD ["python", "main.py"]

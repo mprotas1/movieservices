@@ -5,6 +5,10 @@ from database import get_db, Base, engine
 from models import Movie
 from schemas import Movie as MovieSchema, MovieCreate
 
+import uvicorn
+import os
+
+
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
@@ -31,3 +35,7 @@ async def get_movie_by_id(movie_id: int, db: Session = Depends(get_db)):
     if not movie:
         raise HTTPException(status_code=404, detail="Movie not found")
     return movie
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8100)))
