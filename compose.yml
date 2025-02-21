@@ -79,7 +79,7 @@ services:
       - DB_PASSWORD=secret
       - MOVIES_SERVICE_URL=http://movies-service:8100/movies
       - CINEMAS_SERVICE_URL=http://cinemas-service:8150/cinemas
-      - PRICING_SERVICE_URL=http://pricing-service:8350/api/v1/pricing
+      - PRICING_SERVICE_URL=http://pricing-service:8350/pricing
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=screenings-group
       - PORT=8300
@@ -165,7 +165,7 @@ services:
     networks:
       - movieservices
     environment:
-      - PORT=8350
+      - PORT=:8350
     depends_on:
       - kafka
     restart: unless-stopped
