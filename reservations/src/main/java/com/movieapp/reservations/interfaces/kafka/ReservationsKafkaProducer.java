@@ -25,7 +25,7 @@ class ReservationsKafkaProducer implements KafkaProducer {
         String topic = "reservation_created";
         log.debug("Sending the reservation created event to Kafka topic: {} with the following data: {}", topic, event.dto());
         String jsonReservation = serializeJsonEvent(event.dto());
-        kafkaTemplate.send(topic, jsonReservation);
+        kafkaTemplate.send(topic, event.dto().id().toString(), jsonReservation);
         log.debug("Reservation created event sent");
     }
 
@@ -35,7 +35,7 @@ class ReservationsKafkaProducer implements KafkaProducer {
         String topic = "reservation_payment";
         log.debug("Sending the reservation payment event to Kafka topic: {} with the following data: {}", topic, event);
         String jsonReservation = serializeJsonEvent(event);
-        kafkaTemplate.send(topic, jsonReservation);
+        kafkaTemplate.send(topic, event.reservationId().toString(), jsonReservation);
     }
 
     private String serializeJsonEvent(Object event) {

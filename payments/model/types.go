@@ -43,6 +43,12 @@ type ProblemDetail struct {
 	Instance string `json:"instance"`
 }
 
+type PaymentStatus struct {
+	ReservationId string `json:"reservationId"`
+	Status        string `json:"status"`
+	UserId        int64  `json:"userId"`
+}
+
 func (reservationDTO *ReservationBookedDTO) NewPayment() *PaymentEntity {
 	return &PaymentEntity{
 		ID:            uuid.New(),
@@ -65,14 +71,22 @@ func (entity *PaymentEntity) ToDTO() *PaymentDTO {
 	}
 }
 
-func (p *PaymentDTO) IsSuccessful() bool {
-	return p.Status == PaymentSuccessful
+func (paymentDTO *PaymentDTO) ToStatus() *PaymentStatus {
+	return &PaymentStatus{
+		ReservationId: paymentDTO.ReservationID,
+		Status:        paymentDTO.Status,
+		UserId:        paymentDTO.UserID,
+	}
 }
 
-func (p *PaymentDTO) IsFailed() bool {
-	return p.Status == PaymentFailed
+func (paymentDTO *PaymentDTO) IsSuccessful() bool {
+	return paymentDTO.Status == PaymentSuccessful
 }
 
-func (p *PaymentDTO) IsPending() bool {
-	return p.Status == PaymentPending
+func (paymentDTO *PaymentDTO) IsFailed() bool {
+	return paymentDTO.Status == PaymentFailed
+}
+
+func (paymentDTO *PaymentDTO) IsPending() bool {
+	return paymentDTO.Status == PaymentPending
 }

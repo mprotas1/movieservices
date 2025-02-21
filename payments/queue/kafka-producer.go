@@ -7,8 +7,7 @@ import (
 )
 
 const (
-	PaymentSuccessfulTopic = "payment-successful"
-	PaymentFailedTopic     = "payment-failed"
+	PaymentStatusTopic = "payment_status"
 )
 
 type KafkaProducer struct{}

@@ -2,8 +2,14 @@ package com.movieapp.reservations.application.mapper;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
+import com.movieapp.reservations.domain.Reservation;
+import com.movieapp.reservations.domain.ScreeningId;
+import com.movieapp.reservations.domain.SeatId;
+import com.movieapp.reservations.domain.UserId;
+import com.movieapp.reservations.application.events.ReservationPaymentEvent;
 import com.movieapp.reservations.domain.*;
 import com.movieapp.reservations.infrastructure.entity.ReservationEntity;
+import com.movieapp.reservations.infrastructure.entity.SeatEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,6 +23,17 @@ public class ReservationMapper {
                                 .toList(),
                 reservation.getUserId().id(),
                 reservation.getStatus().name()
+        );
+    }
+
+    public ReservationDTO toDTO(ReservationEntity entity) {
+        return new ReservationDTO(entity.getId(),
+                entity.getScreeningId(),
+                entity.getSeats().stream()
+                        .map(SeatEntity::getId)
+                        .toList(),
+                entity.getUserId(),
+                entity.getStatus()
         );
     }
 
@@ -35,11 +52,9 @@ public class ReservationMapper {
                 new ReservationId(entity.getId()),
                 new ScreeningId(entity.getScreeningId()),
                 entity.getSeats().stream()
-                        .map(reservationSeatEntity -> new SeatId(reservationSeatEntity.getScreeningSeatId()))
+                        .map(seatEntity -> new SeatId(seatEntity.getId()))
                         .toList(),
-                new UserId(entity.getUserId()),
-                ReservationStatus.valueOf(entity.getStatus()),
-                new ReservationPrice(entity.getPrice())
+                new UserId(entity.getUserId())
         );
     }
 
@@ -51,8 +66,7 @@ public class ReservationMapper {
                         .map(SeatId::id)
                         .toList(),
                 reservation.getUserId().id(),
-                reservation.getStatus().name(),
-                reservation.getPrice() == null ? null : reservation.getPrice().price()
+                reservation.getStatus().name()
         );
     }
 

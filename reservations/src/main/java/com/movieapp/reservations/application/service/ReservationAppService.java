@@ -26,6 +26,7 @@ class ReservationAppService implements ReservationApplicationService {
     private final ApplicationEventPublisher eventPublisher;
 
     @Override
+    @Transactional
     public ReservationDTO makeReservation(ReservationCreateRequest request) {
         log.debug("Making reservation for request: {}", request);
         Reservation createdReservation = reservationDomainService.makeReservation(request);
@@ -46,18 +47,6 @@ class ReservationAppService implements ReservationApplicationService {
     public ReservationDTO cancelReservation(ReservationId reservationId) {
         log.debug("Cancelling reservation with id: {}", reservationId.getId());
         Reservation reservation = reservationDomainService.cancelReservation(reservationId);
-        return reservationMapper.toDTO(reservation);
-    }
-
-    @Override
-    public ReservationDTO bookReservation(SuccessfulSeatsBookingEvent bookingEvent) {
-        Double price = priceCalculator.calculatePrice(bookingEvent.seats());
-        Reservation reservation = reservationDomainService.bookReservation(
-                new ReservationId(bookingEvent.reservationId()),
-                new ReservationPrice(price)
-        );
-        log.debug("Reservation booked: {}", reservation);
-        notifyReservationIsBooked(reservation);
         return reservationMapper.toDTO(reservation);
     }
 
@@ -99,16 +88,24 @@ class ReservationAppService implements ReservationApplicationService {
         reservationRepository.delete(reservation);
     }
 
+    @Override
+    @Transactional
+    public void handlePaymentStatus(PaymentStatusEvent event) {
+        Reservation reservation = reservationRepository.findById(new ReservationId(event.reservationId()))
+                .orElseThrow(() -> new EntityNotFoundException("Reservation with id: " + event.reservationId() + " not found"));
+
+        PaymentStatus paymentStatus = PaymentStatus.fromString(event.status());
+        reservation.setStatus(ReservationStatus.fromPaymentStatus(paymentStatus));
+
+        reservationRepository.save(reservation);
+    }
+
     private void notifyReservationIsCreated(ReservationDTO dto) {
         eventPublisher.publishEvent(new ReservationCreatedEvent(dto));
     }
 
     private void notifyReservationIsBooked(Reservation reservation) {
-        eventPublisher.publishEvent(new ReservationPaymentEvent(
-                reservation.getReservationId().getId(),
-                reservation.getUserId().id(),
-                reservation.getPrice().price())
-        );
+        eventPublisher.publishEvent(reservationMapper.toPaymentEvent(reservation));
     }
 
 }

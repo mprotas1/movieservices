@@ -6,7 +6,6 @@ import com.movieapp.screenings.application.dto.SuccessfulSeatsBookingEvent;
 import com.movieapp.screenings.application.events.NoSeatsToBookEvent;
 import com.movieapp.screenings.application.events.ScreeningDoesNotExistEvent;
 import com.movieapp.screenings.application.events.SeatsAlreadyLockedEvent;
-import com.movieapp.screenings.domain.exception.ScreeningSeatsBookingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -24,28 +23,28 @@ class ScreeningsKafkaProducer {
     void seatsAlreadyReserved(SeatsAlreadyLockedEvent lockedSeatsEvent) {
         String topic = "screening_seats_already_reserved";
         log.debug("Sending the seats already reserved event to Kafka topic: {}", topic);
-        kafkaTemplate.send(topic, mapEvent(lockedSeatsEvent));
+        kafkaTemplate.send(topic, lockedSeatsEvent.getReservationId().toString(), mapEvent(lockedSeatsEvent));
     }
 
     @EventListener
     void successfulSeatsBooking(SuccessfulSeatsBookingEvent successfulSeatsBookingEvent) {
         String topic = "successful_seats_booking";
         log.debug("Sending the successful reservation seats booked event to Kafka topic: {}", topic);
-        kafkaTemplate.send(topic, mapEvent(successfulSeatsBookingEvent));
+        kafkaTemplate.send(topic, successfulSeatsBookingEvent.getReservationId().toString(), mapEvent(successfulSeatsBookingEvent));
     }
 
     @EventListener
     void onSeatsBookingFailed(ScreeningDoesNotExistEvent event) {
         String topic = "screening_seats_booking_failed";
         log.debug("Sending the screening does not exist event to Kafka topic: {}", topic);
-        kafkaTemplate.send(topic, mapEvent(event));
+        kafkaTemplate.send(topic, event.reservationId().toString(), mapEvent(event));
     }
 
     @EventListener
     void noSeatsToBook(NoSeatsToBookEvent noSeatsToBookEvent) {
         String topic = "no_seats_to_book";
         log.debug("Sending the no seats to book event to Kafka topic: {}", topic);
-        kafkaTemplate.send(topic, mapEvent(noSeatsToBookEvent));
+        kafkaTemplate.send(topic, noSeatsToBookEvent.reservationId().toString(), mapEvent(noSeatsToBookEvent));
     }
 
     private String mapEvent(Object event) {

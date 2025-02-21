@@ -10,24 +10,12 @@ type PaymentNotifier struct {
 }
 
 func (paymentNotifier PaymentNotifier) NotifyPaymentStatus(paymentDTO model.PaymentDTO) error {
-	topic := GetTopic(paymentDTO)
-	message, err := json.Marshal(paymentDTO)
+	paymentStatus := paymentDTO.ToStatus()
+	message, err := json.Marshal(paymentStatus)
 
 	if err != nil {
 		return err
 	}
 
-	return paymentNotifier.KafkaProducer.Notify(topic, message)
-}
-
-func GetTopic(paymentDTO model.PaymentDTO) string {
-	if paymentDTO.IsFailed() {
-		return PaymentFailedTopic
-	}
-
-	if paymentDTO.IsSuccessful() {
-		return PaymentSuccessfulTopic
-	}
-
-	panic("Invalid payment status")
+	return paymentNotifier.KafkaProducer.Notify(PaymentStatusTopic, message)
 }

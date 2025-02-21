@@ -51,6 +51,7 @@ class ReservationsKafkaListener {
     void onPaymentStatusReceived(String paymentStatusEvent) {
         PaymentStatusEvent event = deserialize(paymentStatusEvent, PaymentStatusEvent.class);
         log.debug("Payment status event received: {}", event);
+        reservationApplicationService.handlePaymentStatus(event);
     }
 
     private <T> T deserialize(String json, Class<T> clazz) {
