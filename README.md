@@ -36,7 +36,7 @@ The application is tailored to handle critical tasks such as user management, th
 * PostgreSQL
 * Google Maps API
 
-## Requirments
+## Requirements
 The application (every Java service) needs for correct boot at least Java with version 21 and a running Docker Deamon for running all dependent containers. For Python services - use Python 3 and FastAPI.
 
 ## Installation
