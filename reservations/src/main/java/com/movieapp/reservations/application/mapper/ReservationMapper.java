@@ -2,14 +2,14 @@ package com.movieapp.reservations.application.mapper;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
+import com.movieapp.reservations.application.events.ReservationPaymentEvent;
 import com.movieapp.reservations.domain.Reservation;
 import com.movieapp.reservations.domain.ScreeningId;
 import com.movieapp.reservations.domain.SeatId;
 import com.movieapp.reservations.domain.UserId;
-import com.movieapp.reservations.application.events.ReservationPaymentEvent;
 import com.movieapp.reservations.domain.*;
 import com.movieapp.reservations.infrastructure.entity.ReservationEntity;
-import com.movieapp.reservations.infrastructure.entity.SeatEntity;
+import com.movieapp.reservations.infrastructure.entity.ReservationSeatEntity;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -30,7 +30,7 @@ public class ReservationMapper {
         return new ReservationDTO(entity.getId(),
                 entity.getScreeningId(),
                 entity.getSeats().stream()
-                        .map(SeatEntity::getId)
+                        .map(ReservationSeatEntity::getId)
                         .toList(),
                 entity.getUserId(),
                 entity.getStatus()
@@ -54,7 +54,8 @@ public class ReservationMapper {
                 entity.getSeats().stream()
                         .map(seatEntity -> new SeatId(seatEntity.getId()))
                         .toList(),
-                new UserId(entity.getUserId())
+                new UserId(entity.getUserId()),
+                ReservationStatus.fromString(entity.getStatus())
         );
     }
 
@@ -70,4 +71,11 @@ public class ReservationMapper {
         );
     }
 
+    public Object toPaymentEvent(Reservation reservation) {
+        return new ReservationPaymentEvent(
+                reservation.getReservationId().getId(),
+                reservation.getUserId().id(),
+                reservation.getPrice().price()
+        );
+    }
 }

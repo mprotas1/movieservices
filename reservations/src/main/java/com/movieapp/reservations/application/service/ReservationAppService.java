@@ -2,12 +2,14 @@ package com.movieapp.reservations.application.service;
 
 import com.movieapp.reservations.application.dto.ReservationCreateRequest;
 import com.movieapp.reservations.application.dto.ReservationDTO;
+import com.movieapp.reservations.application.events.PaymentStatusEvent;
 import com.movieapp.reservations.application.events.SuccessfulSeatsBookingEvent;
 import com.movieapp.reservations.application.events.ReservationCreatedEvent;
 import com.movieapp.reservations.application.events.ReservationPaymentEvent;
 import com.movieapp.reservations.application.mapper.ReservationMapper;
 import com.movieapp.reservations.domain.*;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -51,6 +53,19 @@ class ReservationAppService implements ReservationApplicationService {
     }
 
     @Override
+    public ReservationDTO bookReservation(SuccessfulSeatsBookingEvent bookingEvent) {
+        Double price = priceCalculator.calculatePrice(bookingEvent.seats());
+        Reservation reservation = reservationDomainService.bookReservation(
+                new ReservationId(bookingEvent.reservationId()),
+                new ReservationPrice(price)
+        );
+        log.debug("Reservation booked: {}", reservation);
+        notifyReservationIsBooked(reservation);
+        return reservationMapper.toDTO(reservation);
+    }
+
+
+    @Override
     public ReservationDTO findById(ReservationId reservationId) {
         return reservationRepository.findById(reservationId)
                 .map(reservationMapper::toDTO)
@@ -87,6 +102,7 @@ class ReservationAppService implements ReservationApplicationService {
                 );
         reservationRepository.delete(reservation);
     }
+
 
     @Override
     @Transactional

@@ -42,6 +42,18 @@ public class Reservation {
         this.status = ReservationStatus.PENDING;
     }
 
+    public Reservation(ReservationId reservationId,
+                       ScreeningId screeningId,
+                       List<SeatId> list,
+                       UserId userId,
+                       ReservationStatus status) {
+        this.reservationId = reservationId;
+        this.screeningId = screeningId;
+        this.seatIds = list;
+        this.userId = userId;
+        this.status = status;
+    }
+
     public void confirm() {
         if(this.status == ReservationStatus.CANCELLED) {
             throw new InvalidReservationTransitionException("Cannot confirm a cancelled reservation");
