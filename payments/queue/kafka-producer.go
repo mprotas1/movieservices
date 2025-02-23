@@ -43,6 +43,7 @@ func (kafkaProducer *KafkaProducer) Notify(topic string, message []byte) error {
 
 	e := <-deliveryChan
 	m := e.(*kafka.Message)
+
 	if m.TopicPartition.Error != nil {
 		return m.TopicPartition.Error
 	}

@@ -31,7 +31,8 @@ class ReservationsKafkaListener {
     @KafkaListener(topics = "screening_seats_already_reserved", groupId = "basic")
     void onScreeningSeatsReserved(String screeningSeatsReservedEvent) {
         log.info("Screening seats already reserved event received: {}", screeningSeatsReservedEvent);
-        reservationApplicationService.cancelReservation(new ReservationId(getReservationIdFromEvent(screeningSeatsReservedEvent)));
+        ScreeningSeatsAlreadyLockedDTO dto = deserialize(screeningSeatsReservedEvent, ScreeningSeatsAlreadyLockedDTO.class);
+        reservationApplicationService.cancelReservation(new ReservationId(dto.reservationId()));
     }
 
     @KafkaListener(topics = "screening_seats_booking_failed", groupId = "basic")
@@ -44,10 +45,11 @@ class ReservationsKafkaListener {
     @KafkaListener(topics = "no_seats_to_book", groupId = "basic")
     void onNoSeatsToBook(String noSeatsToBookEvent) {
         log.debug("No seats to book event received: {}", noSeatsToBookEvent);
-        reservationApplicationService.cancelReservation(new ReservationId(getReservationIdFromEvent(noSeatsToBookEvent)));
+        ScreeningSeatsAlreadyLockedDTO dto = deserialize(noSeatsToBookEvent, ScreeningSeatsAlreadyLockedDTO.class);
+        reservationApplicationService.cancelReservation(new ReservationId(dto.reservationId()));
     }
 
-    @KafkaListener(topics = "payment_status", groupId = "basic")
+    @KafkaListener(topics = "payment_status", groupId = "payment-group")
     void onPaymentStatusReceived(String paymentStatusEvent) {
         PaymentStatusEvent event = deserialize(paymentStatusEvent, PaymentStatusEvent.class);
         log.debug("Payment status event received: {}", event);
@@ -60,17 +62,6 @@ class ReservationsKafkaListener {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    // REFACTOR
-    private UUID getReservationIdFromEvent(String eventJson) {
-        ScreeningSeatsAlreadyLockedDTO dto = null;
-        try {
-            dto = objectMapper.readValue(eventJson, ScreeningSeatsAlreadyLockedDTO.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        return dto.reservationId();
     }
 
 }

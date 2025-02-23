@@ -52,10 +52,11 @@ public class ReservationMapper {
                 new ReservationId(entity.getId()),
                 new ScreeningId(entity.getScreeningId()),
                 entity.getSeats().stream()
-                        .map(seatEntity -> new SeatId(seatEntity.getId()))
+                        .map(seatEntity -> new SeatId(seatEntity.getScreeningSeatId()))
                         .toList(),
                 new UserId(entity.getUserId()),
-                ReservationStatus.fromString(entity.getStatus())
+                ReservationStatus.fromString(entity.getStatus()),
+                new ReservationPrice(entity.getPrice())
         );
     }
 
@@ -67,15 +68,17 @@ public class ReservationMapper {
                         .map(SeatId::id)
                         .toList(),
                 reservation.getUserId().id(),
-                reservation.getStatus().name()
+                reservation.getStatus().name(),
+                reservation.getPrice() == null ? null : reservation.getPrice().price()
         );
     }
 
-    public Object toPaymentEvent(Reservation reservation) {
+    public ReservationPaymentEvent toPaymentEvent(Reservation reservation) {
         return new ReservationPaymentEvent(
                 reservation.getReservationId().getId(),
                 reservation.getUserId().id(),
                 reservation.getPrice().price()
         );
     }
+
 }

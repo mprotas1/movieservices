@@ -32,14 +32,6 @@ public class ReservationEntity {
         this.price = price;
     }
 
-    public ReservationEntity(UUID id, UUID screeningId, List<UUID> seatIds, Long userId, String status) {
-        this.id = id;
-        this.screeningId = screeningId;
-        this.seats = createSeatEntities(seatIds);
-        this.userId = userId;
-        this.status = status;
-    }
-
     private List<ReservationSeatEntity> createSeatEntities(List<UUID> seatIds) {
         return seatIds.stream()
                 .map(seatId -> new ReservationSeatEntity(seatId, this))
