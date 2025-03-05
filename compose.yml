@@ -18,7 +18,9 @@ services:
       - screenings-service-1
       - reservations-service-1
       - payments-service
-      - pricing-service
+      - pricing-service-1
+      - pricing-service-2
+      - pricing-service-3
       - notifications-service
     restart: unless-stopped
 
@@ -79,7 +81,7 @@ services:
       - DB_PASSWORD=secret
       - MOVIES_SERVICE_URL=http://movies-service:8100/movies
       - CINEMAS_SERVICE_URL=http://cinemas-service:8150/cinemas
-      - PRICING_SERVICE_URL=http://pricing-service:8350/pricing
+      - PRICING_SERVICE_URL=http://pricing-service-1:8350/pricing
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=screenings-group
       - PORT=8300
@@ -87,7 +89,7 @@ services:
       - screeningsdb
       - kafka
     restart: unless-stopped
-
+    
   # Movies service
   movies-service:
     container_name: movies-service
@@ -155,8 +157,8 @@ services:
     restart: unless-stopped
 
   # Pricing service
-  pricing-service:
-    container_name: pricing-service
+  pricing-service-1:
+    container_name: pricing-service-1
     build:
       context: ./pricing
       dockerfile: Dockerfile
@@ -166,6 +168,38 @@ services:
       - movieservices
     environment:
       - PORT=:8350
+    depends_on:
+      - kafka
+    restart: unless-stopped
+    
+      # Pricing service
+  pricing-service-2:
+    container_name: pricing-service-2
+    build:
+      context: ./pricing
+      dockerfile: Dockerfile
+    ports:
+      - "8351:8350"
+    networks:
+      - movieservices
+    environment:
+      - PORT=:8351
+    depends_on:
+      - kafka
+    restart: unless-stopped
+    
+          # Pricing service
+  pricing-service-3:
+    container_name: pricing-service-3
+    build:
+      context: ./pricing
+      dockerfile: Dockerfile
+    ports:
+      - "8352:8350"
+    networks:
+      - movieservices
+    environment:
+      - PORT=:8352
     depends_on:
       - kafka
     restart: unless-stopped
@@ -305,7 +339,9 @@ services:
       - screenings-service-1
       - reservations-service-1
       - payments-service
-      - pricing-service
+      - pricing-service-1
+      - pricing-service-2
+      - pricing-service-3
       - notifications-service
     depends_on:
       - api-gateway
@@ -314,7 +350,9 @@ services:
       - screenings-service-1
       - reservations-service-1
       - payments-service
-      - pricing-service
+      - pricing-service-1
+      - pricing-service-2
+      - pricing-service-3
       - notifications-service
     restart: unless-stopped
 
