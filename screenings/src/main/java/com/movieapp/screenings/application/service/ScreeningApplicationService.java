@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface ScreeningApplicationService {
     ScreeningDTO createScreening(ScreeningCreateRequest request);
     List<ScreeningDTO> findAll();
+    List<ScreeningDTO> findByMovieAndCinemaId(Long movieId, UUID cinemaId);
     ScreeningDTO findById(UUID screeningId);
     void lockSeats(ReservationDTO reservationDTO);
 }

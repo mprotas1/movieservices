@@ -1,9 +1,6 @@
 package com.movieapp.screenings.infrastructure.persistence;
 
-import com.movieapp.screenings.domain.model.MovieId;
-import com.movieapp.screenings.domain.model.Screening;
-import com.movieapp.screenings.domain.model.ScreeningId;
-import com.movieapp.screenings.domain.model.ScreeningRoomId;
+import com.movieapp.screenings.domain.model.*;
 import com.movieapp.screenings.domain.repository.ScreeningRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
@@ -36,6 +33,13 @@ class InMemoryScreeningRepository implements ScreeningRepository {
     public List<Screening> findAllByMovieId(MovieId movieId) {
         return screenings.stream()
                 .filter(screening -> movieId.equals(screening.getMovieId()))
+                .toList();
+    }
+
+    @Override
+    public List<Screening> findAllByMovieAndCinemaId(MovieId movieId, CinemaId cinemaId) {
+        return screenings.stream()
+                .filter(screening -> movieId.equals(screening.getMovieId()) && cinemaId.equals(screening.getCinemaId()))
                 .toList();
     }
 

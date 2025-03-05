@@ -42,6 +42,12 @@ class ScreeningController {
         return ResponseEntity.ok(screening);
     }
 
+    @GetMapping("/byMovieAndCinema")
+    ResponseEntity<List<ScreeningDTO>> findByMovieAndCinema(@RequestParam Long movieId, @RequestParam String cinemaId) {
+        var screenings = screeningService.findByMovieAndCinemaId(movieId, UUID.fromString(cinemaId));
+        return ResponseEntity.ok(screenings);
+    }
+
     private URI getScreeningLocation(ScreeningDTO screening) {
         return ServletUriComponentsBuilder.fromCurrentRequest().path("/{reservationId}")
                 .buildAndExpand(screening.screeningId())

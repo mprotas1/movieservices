@@ -74,6 +74,13 @@ class ShowingApplicationService implements ScreeningApplicationService {
     }
 
     @Override
+    public List<ScreeningDTO> findByMovieAndCinemaId(Long movieId, UUID cinemaId) {
+        return repository.findAllByMovieAndCinemaId(new MovieId(movieId), new CinemaId(cinemaId)).stream()
+                .map(screeningMapper::toDTO)
+                .toList();
+    }
+
+    @Override
     public ScreeningDTO findById(UUID screeningId) {
         return repository.findById(new ScreeningId(screeningId))
                 .map(screeningMapper::toDTO)
