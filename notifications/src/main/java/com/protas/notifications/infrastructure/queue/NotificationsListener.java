@@ -6,11 +6,12 @@ import com.protas.notifications.application.NotificationRequest;
 import com.protas.notifications.application.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 @Service
 @Slf4j
-class NotificationsListener implements NotificationConsumer {
+class NotificationsListener {
     private final NotificationService notificationService;
     private final ObjectMapper objectMapper;
 
@@ -19,10 +20,10 @@ class NotificationsListener implements NotificationConsumer {
         this.objectMapper = objectMapper;
     }
 
-    @Override
+    @KafkaListener(topics = "send_notification")
     public void handleNotificationRequest(String notificationRequest) throws JsonProcessingException {
         NotificationRequest request = objectMapper.readValue(notificationRequest, NotificationRequest.class);
-        // log.info("Received notification request from Kafka queue: {}", request);
+        log.info("Received notification request from Kafka queue: {}", request);
         notificationService.handle(request);
     }
 

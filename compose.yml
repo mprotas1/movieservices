@@ -109,7 +109,7 @@ services:
       - moviesdb
     restart: unless-stopped
 
-  # Reservations service
+  # Reservations service - instance 1
   reservations-service-1:
     container_name: reservations-service-1
     build:
@@ -128,6 +128,54 @@ services:
       - KAFKA_ADDRESS=kafka:9092
       - KAFKA_GROUP_ID=reservations-group
       - PORT=8250
+    depends_on:
+      - reservationsdb
+      - kafka
+    restart: unless-stopped
+    
+  # Reservations service - instance 2
+  reservations-service-2:
+    container_name: reservations-service-2
+    build:
+      context: ./reservations
+      dockerfile: Dockerfile
+    ports:
+      - "8251:8250"
+    networks:
+      - movieservices
+    environment:
+      - DATABASE_URL=jdbc:postgresql://reservationsdb:5432/reservationsdb
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=secret
+      - SCREENINGS_URL=http://screenings-service:8300/screenings
+      - CINEMAS_URL=http://cinemas-service:8150
+      - KAFKA_ADDRESS=kafka:9092
+      - KAFKA_GROUP_ID=reservations-group
+      - PORT=8251
+    depends_on:
+      - reservationsdb
+      - kafka
+    restart: unless-stopped
+    
+  # Reservations service - instance 3
+  reservations-service-3:
+    container_name: reservations-service-3
+    build:
+      context: ./reservations
+      dockerfile: Dockerfile
+    ports:
+      - "8252:8250"
+    networks:
+      - movieservices
+    environment:
+      - DATABASE_URL=jdbc:postgresql://reservationsdb:5432/reservationsdb
+      - DATABASE_USER=user
+      - DATABASE_PASSWORD=secret
+      - SCREENINGS_URL=http://screenings-service:8300/screenings
+      - CINEMAS_URL=http://cinemas-service:8150
+      - KAFKA_ADDRESS=kafka:9092
+      - KAFKA_GROUP_ID=reservations-group
+      - PORT=8252
     depends_on:
       - reservationsdb
       - kafka
@@ -168,38 +216,6 @@ services:
       - movieservices
     environment:
       - PORT=:8350
-    depends_on:
-      - kafka
-    restart: unless-stopped
-    
-      # Pricing service
-  pricing-service-2:
-    container_name: pricing-service-2
-    build:
-      context: ./pricing
-      dockerfile: Dockerfile
-    ports:
-      - "8351:8350"
-    networks:
-      - movieservices
-    environment:
-      - PORT=:8351
-    depends_on:
-      - kafka
-    restart: unless-stopped
-    
-          # Pricing service
-  pricing-service-3:
-    container_name: pricing-service-3
-    build:
-      context: ./pricing
-      dockerfile: Dockerfile
-    ports:
-      - "8352:8350"
-    networks:
-      - movieservices
-    environment:
-      - PORT=:8352
     depends_on:
       - kafka
     restart: unless-stopped
